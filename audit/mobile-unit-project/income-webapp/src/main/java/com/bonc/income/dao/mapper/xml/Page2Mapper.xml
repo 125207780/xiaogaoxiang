@@ -1,0 +1,113 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="com.bonc.income.dao.mapper.Page2Mapper">
+ <!-- 表格 -->
+    <select id="selectTable" resultType="java.util.Map"
+		parameterType="java.util.Map">
+   SELECT 
+   		STATIS_MONTH,
+   		AREA_ID,
+   		PROD_ID,  
+       PACKAGE_ID,  
+       PACKAGE_NAME, 
+       CAMPN_KIND,  
+       CAMPN_TYP,  
+       ORDER_USR_M,  
+       ORDER_USR_TQ,  
+       ORDER_USR_OLD,  
+       COST_FEE_NEW,  
+       COST_FEE_OLD,  
+       COST_FEE_TOTAL, 
+       COST_FEE_TQ,  
+       INCOME_FEE_NEW-COST_FEE_NEW  COST_FEE_NEW_N,  
+       INCOME_FEE_OLD-COST_FEE_OLD  COST_FEE_OLD_N, 
+       INCOME_FEE_TOTAL-COST_FEE_TOTAL COST_FEE_TOTAL_N ,  
+       case when COST_FEE_NEW = 0 and INCOME_FEE_TOTAL = 0 then 0 when COST_FEE_NEW = 0 and INCOME_FEE_TOTAL > 0 then 1 else (INCOME_FEE_TOTAL - COST_FEE_NEW) * 1.0000 / COST_FEE_NEW end  OUT_IN_RA ,
+	   INCOME_FEE_TQ  
+  FROM BONC03.MK_ACTIVE_FEE_01_PORTRAIT_M
+ WHERE STATIS_MONTH = #{statisMonth }
+   and AREA_ID = #{areaId}  
+   
+   
+	</select>
+	<!-- 当月新增订购成本与收入 -->
+	<select id="getCharts1" resultType="java.util.Map"
+		parameterType="java.util.Map">
+	SELECT PROD_ID,  
+       PACKAGE_ID, 
+       PACKAGE_NAME,  
+       COMP_MONTH, 
+       0-COST_FEE_NEW  as COST_FEE_NEW,  
+       INCOME_FEE_NEW , 
+       CASE WHEN COST_FEE_NEW = 0 AND INCOME_FEE_NEW = 0 THEN  0 WHEN COST_FEE_NEW = 0 AND INCOME_FEE_NEW > 0 THEN 1 ELSE (INCOME_FEE_NEW - COST_FEE_NEW) * 1.0000 / COST_FEE_NEW END OUT_IN_RA 
+  FROM BONC03.MK_ACTIVE_FEE_02_PORTRAIT_M
+ 
+ WHERE STATIS_MONTH =  #{statisMonth }
+   and PROD_ID =#{prodId }
+   and PACKAGE_ID = #{packageId }
+   AND COMP_MONTH >= concat(TRIM(char(STATIS_MONTH/100)) , '01' )
+   and AREA_ID = #{areaId}
+   order by COMP_MONTH
+	</select>
+	<!-- 当月总成本与收入 -->
+	<select id="getCharts2" resultType="java.util.Map"
+		parameterType="java.util.Map">
+	SELECT PROD_ID,  
+       PACKAGE_ID,  
+       PACKAGE_NAME,  
+       COMP_MONTH,  
+       0-COST_FEE_TOTAL as COST_FEE_TOTAL, 
+       INCOME_FEE_TOTAL, 
+ 
+       CASE WHEN COST_FEE_TOTAL = 0 AND INCOME_FEE_TOTAL = 0 THEN  0 WHEN COST_FEE_TOTAL = 0 AND INCOME_FEE_TOTAL > 0 THEN 1 ELSE (INCOME_FEE_TOTAL - COST_FEE_TOTAL) * 1.0000 / COST_FEE_TOTAL END OUT_IN_RA  
+  FROM BONC03.MK_ACTIVE_FEE_02_PORTRAIT_M
+ 
+ WHERE STATIS_MONTH =  #{statisMonth }
+   and PROD_ID =#{prodId }
+   and PACKAGE_ID = #{packageId }
+   AND COMP_MONTH >= concat(TRIM(char(STATIS_MONTH/100)) , '01' )
+   and AREA_ID = #{areaId}
+   order by COMP_MONTH
+	</select>
+	 <!-- 当月成本构成-->
+	 	<select id="getCharts3" resultType="java.util.Map"
+		parameterType="java.util.Map">
+	SELECT PROD_ID,  
+       PACKAGE_ID,  
+       PACKAGE_NAME,  
+       CASE WHEN ACTIVE_MONTH &lt; concat(TRIM(char(STATIS_MONTH/100)) , '01' ) THEN '存量订购' else SUBSTR(ACTIVE_MONTH,5,2) || '月订购'  END ACTIVE_MONTH,  
+       sum(COST_FEE) AS COST_FEE  
+  FROM BONC03.MK_ACTIVE_FEE_03_PORTRAIT_M
+  WHERE STATIS_MONTH =  #{statisMonth }
+   and PROD_ID =#{prodId }
+   and PACKAGE_ID = #{packageId }
+    
+   and AREA_ID = #{areaId}
+ group BY PROD_ID,
+          PACKAGE_ID,
+          PACKAGE_NAME,
+          CASE WHEN ACTIVE_MONTH &lt; concat(TRIM(char(STATIS_MONTH/100)) , '01' ) THEN '存量订购' else SUBSTR(ACTIVE_MONTH,5,2) || '月订购'  END  
+		  
+	</select> 
+	 <!-- 当月收入构成 -->
+	 	<select id="getCharts4" resultType="java.util.Map"
+		parameterType="java.util.Map">
+	SELECT PROD_ID,  
+       PACKAGE_ID, 
+       PACKAGE_NAME,  
+       CASE WHEN ACTIVE_MONTH  &lt; concat(TRIM(char(STATIS_MONTH/100)) , '01' ) THEN '存量订购' else SUBSTR(ACTIVE_MONTH,5,2) || '月订购'  END ACTIVE_MONTH, 
+       sum(INCOME_FEE - COST_FEE) AS INCOME_FEE  
+  FROM BONC03.MK_ACTIVE_FEE_03_PORTRAIT_M
+WHERE STATIS_MONTH =  #{statisMonth }
+   and PROD_ID =#{prodId }
+   and PACKAGE_ID = #{packageId }
+   
+   and AREA_ID = #{areaId}
+ group BY PROD_ID,
+          PACKAGE_ID,
+          PACKAGE_NAME,
+          CASE WHEN ACTIVE_MONTH  &lt; concat(TRIM(char(STATIS_MONTH/100)) , '01' ) THEN '存量订购' else SUBSTR(ACTIVE_MONTH,5,2) || '月订购'  END
+	  
+	</select>
+	
+	 
+ </mapper>

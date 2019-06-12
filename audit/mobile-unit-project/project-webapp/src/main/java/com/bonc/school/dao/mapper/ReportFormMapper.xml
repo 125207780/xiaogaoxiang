@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.school.dao.mapper.ReportFormMapper">
+
+	
+	<select id="getReportForm1" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		SELECT   STATIS_DATE ,  
+       SCH_AREA_NAME, 
+       CNTY_NAME , 
+       SCH_ID ,
+       SCH_NAME, 
+      SCH_PART_ID,
+      SCH_PART_NAME,
+       ADD_CMCC_D, 
+       ADD_SHARE_CMCC_D, 
+       ADD_CMCC_M, 
+       ADD_CUCC_M, 
+       ADD_CTCC_M, 
+       ADD_SHARE_CMCC_M, 
+       RANK_ADD_CMCC_M, 
+      ADD_CMCC_AFTER0801,
+      ADD_CUCC_AFTER0801,
+      ADD_CTCC_AFTER0801,
+       ADD_SHARE_CMCC_AFTER0801, 
+       RANK_ADD_CMCC_AFTER0801, 
+       CALL_CMCC, 
+       CALL_CUCC, 
+       CALL_CTCC, 
+       CALL_SHARE_CMCC, 
+       CALL_RANK_CMCC, 
+       CALL_SHARE_CUCC,
+       CALL_SHARE_CTCC, 
+       COMMUNI_CMCC, 
+       COMMUNI_CUCC,
+       COMMUNI_CTCC, 
+       COMMUNI_SHARE_CMCC, 
+       COMMUNI_RANK_CMCC,
+       COMMUNI_SHARE_CUCC, 
+       COMMUNI_SHARE_CTCC, 
+       G4_CMCC_D, 
+       G4_CMCC_M, 
+       G4_CMCC, 
+       G4_RATE, 
+       G4_RANK, 
+       UMLIMIT_CMCC_D, 
+       UMLIMIT_CMCC_M, 
+       UNLIMIT_CMCC, 
+       UNLIMIT_RATE, 
+       UNLIMIT_RANK, 
+       UNLIMIT_DIEJIA, 
+       ARPU, 
+       ARPU_HB, 
+       DOU, 
+       DOU_HB, 
+       MOU, 
+       MOU_HB, 
+       VNET, 
+       VNET_RATE, 
+       CHARGE,
+       CHARGE_RATE,
+       KD_CMCC_D, 
+       KD_CMCC_M, 
+       KD_CMCC,
+       KD_RATE, 
+       CONTRACT_CMCC,
+       CONTRACT_PHONE_CMCC,
+       CONTRACT_KD_CMCC, 
+       CONTRACT_OTHER_CMCC, 
+       CONTRACT_CMCC_TOL, 
+       HY_RATE  
+  FROM BONC02.RP_SALE_LABEL_D_TOL
+ WHERE STATIS_DATE =#{statisMonth}
+   AND TYPE = 1
+			
+	</select>
+	
+	<select id="getReportForm2" parameterType="java.lang.String"
+		resultType="java.util.Map">
+			SELECT city_name,  
+			sch_id, 
+			sch_name, 
+			LEVEL_NAME,
+			SCH_PART_ID,
+			SCH_PART_NAME,
+			lac_cell_id ,
+			cell_name , 
+			Life_cyc_stats 
+			FROM BONC02.DIM_COLLEGE_SCH_LAC_CELL_INFO_M
+	</select>
+
+	<select id="getReportForm3" parameterType="java.lang.String"
+		resultType="java.util.Map">
+	  SELECT   STATIS_DATE , 
+       SCH_AREA_NAME, 
+       CNTY_NAME , 
+       ADD_CMCC_D, 
+       ADD_SHARE_CMCC_D, 
+       ADD_CMCC_M, 
+       ADD_CUCC_M, 
+       ADD_CTCC_M, 
+       ADD_SHARE_CMCC_M, 
+       RANK_ADD_CMCC_M, 
+      ADD_CMCC_AFTER0801,
+      ADD_CUCC_AFTER0801,
+      ADD_CTCC_AFTER0801,
+       ADD_SHARE_CMCC_AFTER0801, 
+       RANK_ADD_CMCC_AFTER0801, 
+       CALL_CMCC, 
+       CALL_CUCC, 
+       CALL_CTCC, 
+       CALL_SHARE_CMCC, 
+       CALL_RANK_CMCC, 
+       CALL_SHARE_CUCC, 
+       CALL_SHARE_CTCC, 
+       COMMUNI_CMCC, 
+       COMMUNI_CUCC,
+       COMMUNI_CTCC, 
+       COMMUNI_SHARE_CMCC, 
+       COMMUNI_RANK_CMCC, 
+       COMMUNI_SHARE_CUCC, 
+       COMMUNI_SHARE_CTCC, 
+       G4_CMCC_D, 
+       G4_CMCC_M, 
+       G4_CMCC, 
+       G4_RATE, 
+       G4_RANK, 
+       UMLIMIT_CMCC_D, 
+       UMLIMIT_CMCC_M, 
+       UNLIMIT_CMCC,
+       UNLIMIT_RATE, 
+       UNLIMIT_RANK, 
+       UNLIMIT_DIEJIA, 
+       ARPU, 
+       ARPU_HB, 
+       DOU, 
+       DOU_HB,
+       MOU,
+       MOU_HB, 
+       VNET, 
+       VNET_RATE, 
+       CHARGE,
+       CHARGE_RATE,
+       KD_CMCC_D, 
+       KD_CMCC_M, 
+       KD_CMCC,
+       KD_RATE, 
+       CONTRACT_CMCC, 
+       CONTRACT_PHONE_CMCC, 
+       CONTRACT_KD_CMCC, 
+       CONTRACT_OTHER_CMCC, 
+       CONTRACT_CMCC_TOL, 
+       HY_RATE
+  FROM BONC02.RP_SALE_LABEL_D_TOL
+ WHERE STATIS_DATE = #{statisMonth}
+   AND TYPE = 2     
+ 
+	</select>
+
+	<select id="getReportForm4" parameterType="java.lang.String"
+		resultType="java.util.Map">
+	SELECT STATIS_MONTH, 
+       SCH_AREA_NAME, 
+       CNTY_NAME, 
+       ADD_CMCC_M, 
+       ADD_CUCC_M, 
+       ADD_CTCC_M, 
+       ADD_SHARE_CMCC_M, 
+       RANK_ADD_CMCC_M, 
+      ADD_CMCC_AFTER0801,
+      ADD_CUCC_AFTER0801,
+      ADD_CTCC_AFTER0801,
+       ADD_SHARE_CMCC_AFTER0801, 
+       RANK_ADD_CMCC_AFTER0801, 
+       CALL_CMCC, 
+       CALL_CUCC, 
+       CALL_CTCC, 
+       CALL_SHARE_CMCC,
+       CALL_RANK_CMCC, 
+       CALL_SHARE_CUCC,
+       CALL_SHARE_CTCC, 
+       COMMUNI_CMCC, 
+       COMMUNI_CUCC, 
+       COMMUNI_CTCC, 
+       COMMUNI_SHARE_CMCC, 
+       COMMUNI_RANK_CMCC, 
+       COMMUNI_SHARE_CUCC, 
+       COMMUNI_SHARE_CTCC, 
+       G4_CMCC_M, 
+       G4_CMCC, 
+       G4_RATE, 
+       G4_RANK, 
+       UMLIMIT_CMCC_M, 
+       UNLIMIT_CMCC, 
+       UNLIMIT_RATE, 
+       UNLIMIT_RANK, 
+       UNLIMIT_DIEJIA,
+       ARPU, 
+       ARPU_TWO_MONTH, 
+       ARPU_MEAN, 
+       MOU, 
+       MOU_TWO_MONTH, 
+       MOU_MEAN, 
+       DOU, 
+       DOU_TWO_MONTH, 
+       DOU_MEAN, 
+       VNET, 
+       VNET_RATE, 
+       CHARGE, 
+       CHARGE_RATE, 
+       KD_CMCC_M, 
+       KD_CMCC, 
+       KD_RATE, 
+       CONTRACT_CMCC, 
+       CONTRACT_PHONE_CMCC, 
+       CONTRACT_KD_CMCC, 
+       CONTRACT_OTHER_CMCC, 
+       CONTRACT_CMCC_TOL, 
+       HY_RATE
+  FROM BONC02.RP_SALE_LABEL_M_TOL
+ WHERE STATIS_MONTH = #{statisMonth}
+   AND TYPE = 5
+	</select>
+	
+	<select id="getReportForm5" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		SELECT  STATIS_MONTH, 
+       SCH_AREA_NAME, 
+       CNTY_NAME, 
+       SCH_ID, 
+       SCH_NAME, 
+      SCH_PART_ID,
+      SCH_PART_NAME,
+       ADD_CMCC_M, 
+       ADD_CUCC_M, 
+       ADD_CTCC_M, 
+       ADD_SHARE_CMCC_M, 
+       RANK_ADD_CMCC_M, 
+      ADD_CMCC_AFTER0801,
+      ADD_CUCC_AFTER0801,
+      ADD_CTCC_AFTER0801,
+       ADD_SHARE_CMCC_AFTER0801, 
+       RANK_ADD_CMCC_AFTER0801, 
+       CALL_CMCC, 
+       CALL_CUCC, 
+       CALL_CTCC, 
+       CALL_SHARE_CMCC, 
+       CALL_RANK_CMCC, 
+       CALL_SHARE_CUCC, 
+       CALL_SHARE_CTCC, 
+       COMMUNI_CMCC, 
+       COMMUNI_CUCC, 
+       COMMUNI_CTCC, 
+       COMMUNI_SHARE_CMCC, 
+       COMMUNI_RANK_CMCC, 
+       COMMUNI_SHARE_CUCC, 
+       COMMUNI_SHARE_CTCC,
+       G4_CMCC_M, 
+       G4_CMCC, 
+       G4_RATE, 
+       G4_RANK, 
+       UMLIMIT_CMCC_M, 
+       UNLIMIT_CMCC, 
+       UNLIMIT_RATE, 
+       UNLIMIT_RANK, 
+       UNLIMIT_DIEJIA, 
+       ARPU, 
+       ARPU_TWO_MONTH, 
+       ARPU_MEAN,
+       MOU, 
+       MOU_TWO_MONTH, 
+       MOU_MEAN, 
+       DOU, 
+       DOU_TWO_MONTH, 
+       DOU_MEAN, 
+       VNET, 
+       VNET_RATE, 
+       CHARGE, 
+       CHARGE_RATE, 
+       KD_CMCC_M,
+       KD_CMCC, 
+       KD_RATE, 
+       CONTRACT_CMCC,
+       CONTRACT_PHONE_CMCC, 
+       CONTRACT_KD_CMCC,
+       CONTRACT_OTHER_CMCC, 
+       CONTRACT_CMCC_TOL, 
+       HY_RATE
+  FROM BONC02.RP_SALE_LABEL_M_TOL
+ WHERE STATIS_MONTH = #{statisMonth}
+   AND TYPE = 6
+		
+	</select>
+	
+	<select id="getReportForm6" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		SELECT STATIS_DATE,
+			SCH_AREA_NAME,
+			CNTY_NAME,
+			SCH_ID,
+			SCH_NAME,
+			SCH_PART_ID,
+			SCH_PART_NAME,
+			PACK_HE,
+			PACK_CHANG,
+			PACK_DISTRI_FLOW,
+			PACK_VOICE,
+			PACK_FLOW_SPEED_UP,
+			ACCESS_DISC_FEE,
+			ACCESS_DISC_TICKET,
+			ACCESS_DISC_VOICE,
+			ACCESS_DISC_GROUP,
+			DISC_FEE,
+			DISC_TICKET,
+			DISC_UNLIMIT,
+			TERMI_DISC_HOT,
+			TERMI_DISC_CREDIT,
+			KD_DISC_MULTI,
+			KD_DISC_DIAJIA,
+			KD_DISC_SINGAL,
+			DISC_TAOCAN
+		FROM BONC02.RP_BW_ZD_SALE_LABEL_T3_D
+		 where STATIS_DATE = #{statisMonth}
+	
+	</select>
+	
+	<select id="getReportForm7" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		SELECT  STATIS_DATE,
+		SCH_AREA_NAME,
+		CNTY_NAME,
+		SCH_ID,
+		SCH_NAME,
+		SCH_PART_ID,
+		SCH_PART_NAME,
+		LEVEL_1_NAME,
+		DISCNT_ID,
+		DISCNT_NAME,
+		ORDER_TODAY,
+		ORDER_MONTH,
+		ORDER_TOTAL
+		FROM BONC02.RP_BW_ZD_SALE_LABEL_T4_D
+		 WHERE STATIS_DATE = #{statisMonth}
+	
+	</select>
+	
+	<select id="getReportForm8" parameterType="java.lang.String"
+		resultType="java.util.Map">
+	SELECT STATIS_DATE, 
+       SCH_AREA_NAME, 
+       CNTY_NAME, 
+       SCH_ID,
+       SCH_NAME, 
+       SCH_PART_ID,
+       SCH_PART_NAME,
+       pz_usrs, 
+       onnet_usrs, 
+       onnet_rate 
+  FROM BONC02.RP_BW_PAI_ZHAO_TOL_D
+ WHERE STATIS_DATE =#{statisMonth}
+	
+	</select>
+	
+	<select id="getReportForm9" parameterType="java.lang.String"
+		resultType="java.util.Map">
+	select 
+	area_name,	
+	'' qx_name,	
+	sch_id, 
+	sch_name,	
+	svc_code,	
+	arpu,	
+	dou,	
+	mou,	
+	TAOCAN_ID, 	
+	TAOCAN_NAME,	
+	case when IS_4G=1 then '是' else '否' end is_4g,	
+	case when IS_VNET=1 then '是' else '否' end IS_VNET,  
+	case when IS_KD=1 then '是' else '否' end IS_KD, 
+	case when IS_CONTRACT=1 then '存费' when IS_CONTRACT_PHONE=1 then '终端' 
+		 when IS_CONTRACT_KD=1 then '宽带' when IS_CONTRACT_OTHER=1 then '其他' end CONTRACT_CAT,	
+	CONT_PRODUCT_ID,	 
+	CONT_PRODUCT_NAME,	
+	CONT_PACKAGE_ID,	
+	CONT_PACKAGE_NAME,	
+	CONT_INVAL,	
+	ONLINE_MONTH,	
+	FEE_DISCNT,	
+	DISCNT_YOUHUI_ID,	
+	DISCNT_YOUHUI_RANK,	
+	DISCNT_ID,	
+	DISCNT_NAME 	
+from BONC02.RP_SALE_LABEL_M
+where statis_month=#{statisMonth}
+	
+	</select>
+	
+	<select id="getReportForm10" parameterType="java.lang.String"
+		resultType="java.util.Map">
+	select 
+	city_name,  
+	'' qx_name,        
+	sch_id,    
+	sch_name,   
+	othr_party, 
+	case when other_oprat_typ_id='20' then '联通' when other_oprat_typ_id='21' then '电信' end other_oprat_typ,  --运营商
+	sch_users circle_users
+from BONC02.MK_SCH_OTH_USER_INFO
+where statis_month=#{statisMonth}
+	
+	</select>
+	
+	
+	<select id="getReportForm11" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		SELECT
+		STATIS_MONTH
+		,LL_ZONG
+		,LL_BUXIAL
+		,LL_ZONG_ZHU
+		,ZHU_LL_0
+		,ZHU_LL_100M
+		,ZHU_LL_5G
+		,ZHU_LL_10G
+		,ZHU_LL_15G
+		,ZHU_LL_20G
+		,ZHU_LL_40G
+		,ZHU_LL_50G
+		,LL_ZONG_QINGCHUN
+		,QC_LL_0
+		,QC_LL_100M
+		,QC_LL_5G
+		,QC_LL_10G
+		,QC_LL_15G
+		,QC_LL_20G
+		,QC_LL_40G
+		,QC_LL_50G
+		,LL_ZONG_DIE
+		,DIE_LL_0
+		,DIE_LL_100M
+		,DIE_LL_5G
+		,DIE_LL_10G
+		,DIE_LL_15G
+		,DIE_LL_20G
+		,DIE_LL_40G
+		,DIE_LL_50G
+		,LL_ZONG_RIZU
+		,RIZU_LL_0
+		,RIZU_LL_100M
+		,RIZU_LL_5G
+		,RIZU_LL_10G
+		,RIZU_LL_15G
+		,RIZU_LL_20G
+		,RIZU_LL_40G
+		,RIZU_LL_50G
+		,LL_ZONG_FEIBU
+		,FEIBU_LL_0
+		,FEIBU_LL_100M
+		,FEIBU_LL_5G
+		,FEIBU_LL_10G
+		,FEIBU_LL_15G
+		,FEIBU_LL_20G
+		,FEIBU_LL_40G
+		,FEIBU_LL_50G
+		,LL_ZONG_HEXING
+		,LL_ZONG_CHANG_30G
+		,LL_ZONG_CHANG_40G
+		,LL_WLAN
+		,DOU
+		FROM BONC02.MK_SCH_YUEBAO_M WHERE STATIS_MONTH=#{statisMonth}
+
+	</select>
+	
+	<select id="getReportForm12" parameterType="java.lang.String"
+		resultType="java.util.Map">
+	SELECT STATIS_DATE,
+		187 SCH_NUM, 
+		178.1 SCH_USER,
+		44.26 SCH_NEW_USER,
+		168 SCH_ACTIVE,
+		'主推青春卡资费，通过基本资费+定向流量包方式实现，同时强化校园权益宣传' COMP_INFO,
+		152 SCH_ASIT_CMCC,
+		76 SCH_ASIT_CUCC,
+		108 SCH_ASIT_CTCC,
+       FLOW_RATE,
+       SCH_WLAN,
+       SCH_KD,
+       NUM_QUDAO,
+       NEWNUM,
+       NEWNUM_UNLIMIT,
+       NEWNUM_YOUTH,
+       NEWNUM_PACK,
+       NEWNUM_DPACK,
+       NEWNUM_LIMIT,
+       NEWNUM_AND_PACK,
+       NEWNUM_WLAN_PACK,
+       NUM,
+       NUM_UNLIMIT,
+       NUM_YOUTH,
+       NUM_PACK,
+       NUM_DPACK,
+       NUM_LIMIT,
+       NUM_AND_PACK,
+       NUM_WLAN_PACK,
+       SCH_HB,
+       NUM_HB,
+       NUM_SPCL,
+       NUM_FEIXIN,
+       NUM_KD,
+       NUM_VNET,
+       NUM_WLAN
+  FROM BONC02.RP_SCH_SALES_WEEK
+ where STATIS_DATE =#{statisMonth}
+
+	</select>
+	
+	<select id="getReportForm13" parameterType="java.lang.String"
+	resultType="java.util.Map">
+		SELECT 
+		STATIS_MONTH,
+		CITY_NAME,
+		SCH_ID,
+		SCH_NAME,
+		SCH_PART_ID,
+		SCH_PART_NAME,
+		ALL_NUM,
+		CMCC,
+		ALL_COMPI,
+		CUCC,
+		CTCC,
+		RATE_BENWANG ,
+		RATE_COMPI,
+		ALL_NEW_NUM,
+		NEW_CMCC,
+		ALL_NEW_COMPI,
+		NEW_CUCC,
+		NEW_CTCC,
+		RATE_NEW_BENWANG,
+		RATE_NEW_COMPI,
+		ALL_NUM_S,
+		CMCC_S,
+		ALL_COMPI_S,
+		CUCC_S,
+		CTCC_S,
+		RATE_BENWANG_S,
+		RATE_COMPI_S,
+		ALL_NEW_NUM_S,
+		NEW_CMCC_S,
+		NEW_COMPI_S,
+		NEW_CUCC_S,
+		NEW_CTCC_S,
+		RATE_NEW_BENWANG_S,
+		RATE_NEW_COMPI_S
+	FROM  RP_SCH_USER_RATE_M
+	WHERE STATIS_MONTH=#{statisMonth}
+	
+	</select>
+	
+	<select id="getReportForm14" parameterType="java.lang.String"
+	resultType="java.util.Map">
+		SELECT 
+		STATIS_DATE,
+		CITY_NAME,
+		SCH_ID,
+		SCH_NAME,
+		SCH_PART_ID,
+		SCH_PART_NAME,
+		ALL_NUM,
+		CMCC,
+		ALL_COMPI,
+		CUCC,
+		CTCC,
+		RATE_BENWANG ,
+		RATE_COMPI,
+		ALL_NEW_NUM,
+		NEW_CMCC,
+		ALL_NEW_COMPI,
+		NEW_CUCC,
+		NEW_CTCC,
+		RATE_NEW_BENWANG,
+		RATE_NEW_COMPI,
+		ALL_NUM_S,
+		CMCC_S,
+		ALL_COMPI_S,
+		CUCC_S,
+		CTCC_S,
+		RATE_BENWANG_S,
+		RATE_COMPI_S,
+		ALL_NEW_NUM_S,
+		NEW_CMCC_S,
+		NEW_COMPI_S,
+		NEW_CUCC_S,
+		NEW_CTCC_S,
+		RATE_NEW_BENWANG_S,
+		RATE_NEW_COMPI_S
+	FROM  RP_SCH_USER_RATE_D
+	WHERE STATIS_DATE=#{statisMonth}
+	</select>
+	
+	<insert id="saveImportData" parameterType="com.bonc.school.dao.entity.SaveFile">
+	 	INSERT INTO BONC02.MK_SCH_RPT_FILE_CFG
+	(FILE_ID,FILE_NAME, ADDRES, CREATE_TIME)
+	VALUES( #{saveFile.fileId},#{saveFile.fileName}, #{saveFile.addres},#{saveFile.createTime})
+	  </insert>
+	  
+	  <select id="findFile" parameterType="java.lang.String"
+	resultType="java.util.Map">
+		SELECT FILE_NAME,ADDRES FROM  BONC02.MK_SCH_RPT_FILE_CFG
+	  </select>
+	  
+	    <select id="findByFileName" parameterType="java.lang.String"
+	resultType="java.util.Map">
+		SELECT FILE_NAME,ADDRES FROM  BONC02.MK_SCH_RPT_FILE_CFG where FILE_NAME =#{fileName}
+	  </select>
+	  
+	  <delete id="deleteFileByName" parameterType="java.lang.String">
+		delete FROM BONC02.MK_SCH_RPT_FILE_CFG where FILE_NAME =#{fileName}
+	</delete>
+	
+	<select id="findByUser" parameterType="java.lang.String" 
+	resultType="java.util.Map">
+		SELECT OA_NAME,MOBILE FROM BONC02.SCHOOL_HELP_USER
+	</select>
+	
+	<select id="findByOaId" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(*) FROM BONC02.SCHOOL_HELP_USER WHERE OA_ID=#{oaId}
+	</select>
+	
+</mapper>

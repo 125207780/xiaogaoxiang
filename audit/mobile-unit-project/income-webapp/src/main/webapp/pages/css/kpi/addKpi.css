@@ -1,0 +1,73 @@
+@CHARSET "UTF-8";
+/**指标筛选*/
+#topwindow101context{
+	height: 400px !important;
+	background: url(../../images/frameBg.png) center !important;
+}
+#topwindow101context > .modal-body{
+	height: 325px !important;
+}
+#topwindow101context > .modal-body,.modal-bottom{
+	background: none;
+}
+#topwindow101context > .modal-bottom > button {
+	height: 25px !important;
+   	line-height: 0px !important;
+   	margin-top: -5px;
+}
+.addKpi-all{
+	width: 100%;
+	height: 100%;
+	color: #fff;
+	font-family: '宋体';
+	/* border: 1px solid #00E1FD; */
+}
+.addKpi-title{
+    width: 100%;
+    height: 30px;
+    line-height: 29px;
+    font-size: 17px;
+    background: #1673b3;
+}
+.addKpi-name{
+    /* width: 80%; */
+    height: 30px;
+    line-height: 27px;
+    /* border: 1px solid #00E1FD; */
+    font-size: 15px;
+    text-align: center;
+    cursor: pointer;
+}
+.addKpi-name:hover{
+	/* color: #1673b3 !important; */
+}
+.addKpi-content{
+	width: 94%;
+    height: 30px;
+    margin-left: 3%;
+	/* border: 1px solid #00E1FD; */
+}
+.addKpi-list{
+	/* width:100%; */
+	height:30px;
+	margin-top: 10px;
+	display: block;
+	float: left;
+	margin-left: 3%;
+	/* border: 1px solid #00E1FD; */
+}
+.addKpi-content > input {
+	width: 40px;
+    height: 18px;
+    display: block;
+    float: left;
+}
+.addKpi-list > input {
+	width: 40px;
+    height: 18px;
+    display: block;
+    float: left;
+}
+.modal-dialog {
+	width: 50% !important;
+}

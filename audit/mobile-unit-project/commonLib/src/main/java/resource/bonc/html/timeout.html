@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../css/timeout.css" rel="stylesheet" type="text/css">
+<!--[if !IE]><!-->
+	<script src="../../ace/js/jquery.js"></script>
+<!--<![endif]-->
+
+<!--[if IE]>
+<script type="text/javascript">
+	window.jQuery || document.write("<script src='../../ace/js/jquery1x.js'>"+"<"+"/script>");
+</script>
+<![endif]-->
+<script src="../js/base.js"></script>
+
+</head>
+<body>
+	<div class="img"></div>
+    <div class="tit">
+	  <p>抱歉，您的会话已经超时！
+	  <br><br>
+	  <span id="time" class="num">3&nbsp;</span>秒后自动转入登录页</p>
+	</div>
+	<script>
+	var count=4;
+	$(function(){
+		loop();
+	});
+	
+	function loop(){
+		count=count-1;
+		$("#time").html(count);
+		if(count==0){
+			count=4;
+			$.getTopObj(window).href=$.cxt+"/pages/jsp/login/login.jsp";
+		}
+		setTimeout(loop,1000);
+	}
+	</script>
+</body>
+</html>

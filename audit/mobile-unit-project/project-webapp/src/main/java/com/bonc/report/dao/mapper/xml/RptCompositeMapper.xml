@@ -1,0 +1,1698 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.report.dao.mapper.RptCompositeMapper">
+	<resultMap id="MapInfoMap" type="com.bonc.map.dao.entity.MapInfo" >
+    	<id column="ORG_ID" property="orgId" jdbcType="VARCHAR" />
+    	<result column="TYPE_ID" property="typeId" jdbcType="VARCHAR" />
+    	<result column="SHAPE" property="shape" jdbcType="VARCHAR" />
+    	<result column="COLOR" property="color" jdbcType="VARCHAR" />
+    	<result column="NAME" property="name" jdbcType="VARCHAR" />
+    	<result column="LOGIN_ID" property="loginId" jdbcType="VARCHAR" />
+  	</resultMap>
+  	
+	<select id="selectformTeleNo" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			*
+		FROM 
+			FORM_TELE_NO
+		WHERE
+			1 = 1
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND V_TYPE = 1
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND 
+					V_TYPE = 2
+				AND
+					CITY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND 
+					V_TYPE = 3
+				AND
+					CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND 
+					V_TYPE = 4
+				AND
+					GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND V_TYPE in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND 
+					V_TYPE in(2,3,4)
+				AND
+					CITY_CODE = #{orgId} 
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND 
+					V_TYPE in(3,4)
+				AND
+					CNTY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 4">
+				AND 
+					V_TYPE = in(4)
+				AND
+					GRID_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND 
+					STATIS_DATE = #{statisDate,jdbcType=INTEGER}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+		
+	<select id="selectformBroadBandAdd" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			*
+		FROM 
+			FORM_BROADBAND_ADD
+		WHERE
+			1 = 1
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND V_TYPE = 1
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND 
+					V_TYPE = 2
+				AND
+					CITY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND 
+					V_TYPE = 3
+				AND
+					CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND 
+					V_TYPE = 4
+				AND
+					GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND V_TYPE IN (1, 2, 3, 4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND 
+					V_TYPE IN (2, 3, 4)
+				AND
+					CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND 
+					V_TYPE IN (3, 4)
+				AND
+					CNTY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 4">
+				AND 
+					V_TYPE IN (4)
+				AND
+					GRID_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<select id="getFormCustomerFeeInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			*
+    	FROM 
+    		FORM_CUSTOMER_FEE
+    	where 1 = 1
+    		<if test="orgLevel == 1">
+			  	AND V_TYPE = 1
+			</if>
+    		<if test="orgLevel == 2">
+    			AND 
+					V_TYPE = 2
+			  	AND 
+			  		CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND 
+					V_TYPE = 3
+		 	  	AND 
+		 	  		CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND 
+					V_TYPE = 4
+				AND	
+					GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 1">
+			  	AND V_TYPE in(1,2,3,4)
+			</if>
+    		<if test="userOrgLevel == 2">
+    			AND 
+					V_TYPE in(2,3,4)
+			  	AND 
+			  		CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 3">
+				AND 
+					V_TYPE in(3,4)
+		 	  	AND 
+		 	  		CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 4">
+				AND 
+					V_TYPE in(4)
+				AND	
+					GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+    		<if test="conditionOne == 'GRKHZJFSR'.toString()">
+    			AND	cus_type = 0
+    		</if>
+    		<if test="conditionOne == 'XZKHZJFSR'.toString()">
+    			AND cus_type = 1
+    		</if>
+    		<if test="statisDate != null and statisDate != ''">
+    			AND
+    				STATIS_DATE = #{statisDate}
+    		</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>	
+	
+	<select id="totalFormCustomerFeeInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			SUM(TARGET_D) AS target_d, SUM(FEE_M) AS fee_m
+    	FROM 
+    		FORM_CUSTOMER_FEE
+    	WHERE 1 = 1
+    		<if test="orgLevel == 1">
+			  	AND V_TYPE = 1
+			  	AND ORG_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+    		<if test="orgLevel == 2">
+    			AND 
+					V_TYPE = 1
+			  	AND 
+			  		CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND 
+					V_TYPE = 2
+		 	  	AND 
+		 	  		CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND 
+					V_TYPE = 3
+				AND	
+					GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+    		<if test="conditionOne == 'GRKHZJFSR'.toString()">
+    			AND	cus_type = 0
+    		</if>
+    		<if test="conditionOne == 'XZKHZJFSR'.toString()">
+    			AND cus_type = 1
+    		</if>
+    		<if test="statisDate != null and statisDate != ''">
+    		AND 
+    			STATIS_DATE = #{statisDate}
+    		</if>
+	</select>
+	
+	<select id="selectFormCustomerFusion" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			V_TYPE, ORG_LEVEL, ORG_ID, ORG_NAME, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			CHNL_CODE, CHNL_NAME, TARGET, HEAD_CLIENT, FUSE_TYPE_BRO, FUSE_RETA, OWE, RATE, ORDER1, ORDER2
+		FROM
+			FORM_CUSTOMER_FUSION
+		WHERE 1 = 1
+			<if test="orgLevel == 1">
+				AND V_TYPE = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND V_TYPE = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND V_TYPE = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND V_TYPE = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 1">
+				AND V_TYPE IN (1, 2, 3, 4)
+			</if>
+			<if test="userOrgLevel == 2">
+				AND V_TYPE IN (2, 3, 4)
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 3">
+				AND V_TYPE IN (3, 4)
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 4">
+				AND V_TYPE IN (4)
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND 
+					STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<select id="selectFormEnclosureSum" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			V_TYPE, ORG_LEVEL, ORG_ID, ORG_NAME, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME,
+			GRID_CODE, GRID_NAME, CHNL_CODE, CHNL_NAME, TARGET_D, COMPLETE_D, MIC_BRO_D,
+			ENTERPRISE_D, OWE_D, RATE_D, ORDER1_D, ORDER2_D, TARGET_M, COMPLETE_M, MIC_BRO_M,
+			ENTERPRISE_M, OWE_M, RATE_M, ORDER1_M, ORDER2_M
+		FROM
+			FORM_ENCLOSURE_SUM
+		WHERE 1 = 1
+			<if test="orgLevel == 1">
+				AND V_TYPE = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND V_TYPE = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND V_TYPE = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND V_TYPE = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 1">
+				AND V_TYPE IN (1, 2, 3, 4)
+			</if>
+			<if test="userOrgLevel == 2">
+				AND V_TYPE IN (2, 3, 4)
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 3">
+				AND V_TYPE IN (3, 4)
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 4">
+				AND 
+					V_TYPE IN (4)
+				AND	
+					GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND 
+					STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, LTRIM(RTRIM(CITY_NAME)), CNTY_CODE, GRID_NAME
+	</select>
+	
+	<!-- 头部客户整体情况-->
+	<select id="selectFormCustomerOverall" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			ORGLEVEL, AREA_CODE, AREA_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME, USR_CNT_2018, TB_CNT_2018, ZB_CNT_2018, DD_CNT_2018,
+			USR_CNT_L1M, TB_CNT_L1M, ZB_CNT_L1M, DD_CNT_L1M, USR_CNT_M, TB_CNT_M, ZB_CNT_M, DD_CNT_M, JINZ_TB, GB_TB, UP_TB, DOWN_TB,
+			LW_TB, NET_MON_1, NET_MON_2, NET_MON_3, Y_JINZ_TB, Y_GB_TB, Y_UP_TB, Y_DOWN_TB, Y_LW_TB, Y_NET_MON_1, Y_NET_MON_2, Y_NET_MON_3
+		FROM 
+			RP_TB_USR_TO_GRID_TOL_M
+		WHERE 1 = 1
+		<if test="orgLevel == 1">
+			AND ORGLEVEL = '1'
+		</if>
+		<if test="orgLevel == 2">
+			AND ORGLEVEL = '2'
+			AND AREA_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND ORGLEVEL = '3'
+			AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND ORGLEVEL = '3'
+			AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="userOrgLevel == 1">
+			AND ORGLEVEL IN ('1', '2', '3', '4') 
+		</if>
+		<if test="userOrgLevel == 2">
+			AND orglevel IN ('2', '3', '4')
+			AND AREA_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="userOrgLevel == 3">
+			AND ORGLEVEL IN ('3', '4')
+			AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="userOrgLevel == 4">
+			AND ORGLEVEL = '3'
+			AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="statisDate != null and statisDate != ''">
+			AND
+				STATIS_MONTH = #{statisDate,jdbcType=VARCHAR}
+		</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	
+	<!-- 头部客户目标值 -->
+	<select id="getSumFormCustomerOverall" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			USR_CNT_L1M AS TARGET,
+			USR_CNT_M AS FUSE_RETA
+		FROM
+			RP_TB_USR_TO_GRID_TOL_M
+		WHERE 1 = 1
+		<if test="orgLevel == 1">
+			AND ORGLEVEL = '1'
+			AND ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 2">
+			AND
+				ORGLEVEL = '1'
+			AND
+				AREA_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND
+				ORGLEVEL = '2'
+			AND
+				CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND
+				ORGLEVEL = '3'
+			AND
+				GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="statisDate != null and statisDate != ''">
+			AND
+				STATIS_MOMTH = #{statisDate,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	
+	<!-- 校园客户整体情况-->
+	<select id="selectFormSchoolCustomer" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_MONTH, orglevel, org_id, SCH_ID, SCH_NAME, GRID_CODE, GRID_NAME, CNTY_ID, CNTY_NAME, SCH_AREA_ID, SCH_AREA_NAME,
+			CMCC_NUM, VNET_RATE, TELE_MOBILE_RATE, CMCC_RATE, CTCC_RATE, CUCC_RATE, KD_NUM, CMCC_TELE_RATE, CTCC_TELE_RATE, CUCC_TELE_RATE
+		FROM 
+			RP_SCH_INFO_DETAIL_M
+		WHERE 1 = 1
+		<if test="orgLevel == 1">
+			AND ORGLEVEL = '1'
+		</if>
+		<if test="orgLevel == 2">
+			AND ORGLEVEL = '2'
+			AND SCH_AREA_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND ORGLEVEL = '3'
+			AND CNTY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND ORGLEVEL = '4'
+			AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="userOrgLevel == 1">
+			AND ORGLEVEL IN ('1', '2', '3', '4')
+		</if>
+		<if test="userOrgLevel == 2">
+			AND ORGLEVEL IN ('2', '3', '4')
+			AND SCH_AREA_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="userOrgLevel == 3">
+			AND ORGLEVEL IN ('3', '4')
+			AND CNTY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="userOrgLevel == 4">
+			AND ORGLEVEL = '4'
+			AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="statisDate != null and statisDate != ''">
+			AND
+				STATIS_MONTH = #{statisDate,jdbcType=VARCHAR}
+		</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	
+	<!-- 校园客户目标值-->
+	<select id="getSumFormSchoolCustomer" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			CMCC_RATE AS TARGET,
+			(CTCC_RATE + CUCC_RATE) AS FUSE_RETA
+		FROM
+			RP_SCH_INFO_DETAIL_M
+		WHERE 1 = 1
+		<if test="orgLevel == 1">
+			AND ORGLEVEL = '1'
+			AND ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 2">
+			AND
+				ORGLEVEL = '1'
+			AND
+				SCH_AREA_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND
+				ORGLEVEL = '2'
+			AND
+				CNTY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND
+				ORGLEVEL = '3'
+			AND
+				GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="statisDate != null and statisDate != ''">
+			AND
+				STATIS_MONTH = #{statisDate,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<!-- 小微市场-->
+	<select id="selectFormSmallMarket" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			GC_CODE, GC_NAME, GRID_CODE, GRID_NAME, AREA_CODE, AREA_NAME, CNTY_CODE, CNTY_NAME, GC_SIZE, GC_FALG, KD_CNT, QSY_CNT, HJD_CNT, VUSR_CNT
+		FROM 
+			RP_CD_GC_DETAIL_D
+		WHERE 1 = 1
+		<if test="orgLevel == 1">
+			AND ORGLEVEL = '1'
+		</if>
+		<if test="orgLevel == 2">
+			AND ORGLEVEL = '2'
+			AND AREA_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND ORGLEVEL = '3'
+			AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND ORGLEVEL = '4'
+			AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="userOrgLevel == 1">
+			AND ORGLEVEL IN ('1', '2', '3' ,'4')
+		</if>
+		<if test="userOrgLevel == 2">
+			AND ORGLEVEL IN ('2', '3', '4')
+			AND AREA_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="userOrgLevel == 3">
+			AND ORGLEVEL IN ('3', '4')
+			AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="userOrgLevel == 4">
+			AND ORGLEVEL = '4'
+			AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="statisDate != null and statisDate != ''">
+			AND
+				STATIS_DATE = #{statisDate,jdbcType=VARCHAR}
+		</if>
+		<if test="gcFalg != null and gcFalg != ''">
+			AND
+				GC_FALG = #{gcFalg,jdbcType=VARCHAR}
+		</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<!-- 小微市场目标值 -->
+	<select id="getSumFormSmallMarket" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			GC_CODE AS TARGET,
+			KD_CNT AS FUSE_RETA
+		FROM
+			RP_CD_GC_DETAIL_D
+		WHERE 1 = 1
+		<if test="orgLevel == 1">
+			AND ORGLEVEL = '1'
+			AND ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 2">
+			AND
+				ORGLEVEL = '1'
+			AND
+				AREA_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND
+				ORGLEVEL = '2'
+			AND
+				CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND
+				ORGLEVEL = '3'
+			AND
+				GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="statisDate != null and statisDate != ''">
+			AND
+				STATIS_DATE = #{statisDate,jdbcType=VARCHAR}
+		</if>
+		<if test="gcFalg != null and gcFalg != ''">
+			AND
+				GC_FALG = #{gcFalg,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<!-- 获取不同地区的高价值低占小区渗透提升数据 -->
+	<select id="getInfiltrationCellGroupByArea" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			*
+		FROM
+			FORM_INFILTRATION_CELL
+		<where>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND V_TYPE = 1
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND V_TYPE = 2
+				AND CITY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND V_TYPE = 3
+				AND CNTY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND V_TYPE = 4
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND V_TYPE in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND V_TYPE in(2,3,4)
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND V_TYPE in(3,4)
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 4">
+				AND V_TYPE in(4)
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+		</where>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<!-- 获取不同地区的高价值低占小区渗透提升数据 版本1-->
+	<select id="getInfiltrationCellGroupByArea1" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			*
+		FROM
+			FORM_INFILTRATION_CELL_ADD
+		<where>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND ORG_LEVEL in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND ORG_LEVEL in(2,3,4)
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND ORG_LEVEL in(3,4)
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+		</where>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<!-- 获取90后客户规模提升-->
+	<select id="getFormCusaddAfterNinety" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			*
+		FROM
+			FORM_CUSADD_AFTER_NINETY
+		<where>
+		        1=1
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND ORG_LEVEL in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND ORG_LEVEL in(2,3,4)
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND ORG_LEVEL in(3,4)
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+		</where>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<!-- 获取90后客户规模提升SUMMARY-->
+	<select id="getFormCusaddAfterNinetySummary" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			<if test="conditionTwo == 'day'.toString()">
+				SUM(DEPADD_TARGET_D) AS HZONE, SUM(DEPADD_D) AS HZTWO
+			</if>
+			<if test="conditionTwo != 'day'.toString()">
+				SUM(DEPADD_TARGET_M) AS HZONE, SUM(DEPADD_M) AS HZTWO
+			</if>
+		FROM
+			FORM_CUSADD_AFTER_NINETY
+		<where>
+		        1=1 
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND ORG_LEVEL = 1
+				AND ORG_ID = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND ORG_LEVEL = 1
+				AND CITY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND ORG_LEVEL = 2
+				AND CNTY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND ORG_LEVEL = 3
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND ORG_LEVEL in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND ORG_LEVEL in(2,3,4)
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND ORG_LEVEL in(3,4)
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取高价值低占小区渗透提升汇总数据 -->
+	<select id="getInfiltrationCellSummary1" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			<if test="conditionTwo == 'day'.toString()">
+				SUM(TARGET_D) AS HZONE, SUM(CELL_COUNT_D) AS HZTWO
+			</if>
+			<if test="conditionTwo != 'day'.toString()">
+				SUM(TARGET_M) AS HZONE, SUM(CELL_COUNT) AS HZTWO
+			</if>
+		FROM
+			FORM_INFILTRATION_CELL_ADD
+		<where>  
+		        1=1 
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND ORG_LEVEL = 1
+				AND ORG_ID =#{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND ORG_LEVEL = 1
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND ORG_LEVEL = 2
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND ORG_LEVEL = 3
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND ORG_LEVEL in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND ORG_LEVEL in(2,3,4)
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND ORG_LEVEL in(3,4)
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取高价值低占小区渗透提升汇总数据 -->
+	<select id="getInfiltrationCellSummary" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			TARGET AS HZONE, PERMEABILITY AS HZTWO
+		FROM
+			FORM_INFILTRATION_CELL
+		<where>
+			<if test="orgLevel == '1'.toString()">
+				AND V_TYPE = 1
+				AND ORG_ID = #{orgId}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+				AND V_TYPE = 1
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+				AND V_TYPE = 2
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+				AND V_TYPE = 3
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 获取不同地区的新增价值洼地数据 -->
+	<select id="getDepressionAddGroupByArea" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			*
+		FROM
+			FORM_DEPRESSION_ADD
+		WHERE 
+		    1 = 1
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '1'.toString()">
+				AND V_TYPE = 1
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '2'.toString()">
+				AND V_TYPE = 2
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '3'.toString()">
+				AND V_TYPE = 3
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '4'.toString()">
+				AND V_TYPE = 4
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == '1'.toString()">
+				AND V_TYPE in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == '2'.toString()">
+				AND V_TYPE in(2,3,4)
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == '3'.toString()">
+				AND V_TYPE in(3,4)
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == '4'.toString()">
+				AND V_TYPE in(4)
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND 
+					STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<!-- 获取新增价值洼地汇总数据 -->
+	<select id="getDepressionAddSummary" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			SUM(TARGET) AS HZONE, SUM(CELL_SUM) AS HZTWO
+		FROM
+			FORM_DEPRESSION_ADD
+		<where>
+			<if test="orgLevel == '1'.toString()">
+				AND V_TYPE = 1
+				AND ORG_ID=#{orgId}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+				AND V_TYPE = 2
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+				AND V_TYPE = 3
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+				AND V_TYPE = 4
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+		</where>
+	</select>
+	
+	<select id="totalinfo" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			<if test="conditionOne != null and conditionOne != '' and conditionOne == 'FH'.toString()">
+				SUM(TARGET_D) AS TARGET_D, SUM(TELE_D) AS TELE_D, SUM(TARGET_M) AS TARGET_M, SUM(TELE_M) AS TELE_M
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne == 'XZKD'.toString()">
+				SUM(TARGET_D) AS TARGET_D, SUM(ORDER_SUM_D) AS ORDER_SUM_D, SUM(TARGET_M) AS TARGET_M, SUM(ORDER_SUM_M) AS ORDER_SUM_M
+			</if>
+		FROM 
+			<if test="conditionOne != null and conditionOne != '' and conditionOne == 'FH'.toString()">
+			FORM_TELE_NO
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne == 'XZKD'.toString()">
+			FORM_BROADBAND_ADD
+			</if>
+		WHERE 
+			1 = 1
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+			AND V_TYPE = 1
+			AND ORG_ID = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+			AND 
+				V_TYPE = 1
+			AND
+				CITY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+			AND 
+				V_TYPE = 2
+			AND
+				CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+			AND 
+				V_TYPE = 3
+			AND
+				GRID_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+			AND
+				STATIS_DATE = #{statisDate}
+			</if>
+	</select>
+	
+	<select id="getformterminalcontract" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			*
+		FROM 
+			FORM_TERMINAL_CONTRACT
+		WHERE 1 = 1 
+ 			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND V_TYPE = 1
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND 
+					V_TYPE = 2
+				AND
+					CITY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND 
+					V_TYPE = 3
+				AND
+					CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND 
+					V_TYPE = 4
+				AND
+					GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND V_TYPE in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND 
+					V_TYPE in(2,3,4)
+				AND
+					CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND 
+					V_TYPE in(3,4)
+				AND
+					CNTY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 4">
+				AND 
+					V_TYPE in(4)
+				AND
+					GRID_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND 
+					STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<select id="getformhomenetadd" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+		     *
+		FROM 
+			FORM_HOMENET_ADD
+		WHERE 1 = 1 
+ 			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+			AND V_TYPE = 1
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+			AND 
+				V_TYPE = 2
+			AND
+				CITY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+			AND 
+				V_TYPE = 3
+			AND
+				CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+			AND 
+				V_TYPE = 4
+			AND
+				GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+			AND V_TYPE in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+			AND 
+				V_TYPE in(2,3,4)
+			AND
+				CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+			AND 
+				V_TYPE in(3,4)
+			AND
+				CNTY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 4">
+			AND 
+				V_TYPE in(4)
+			AND
+				GRID_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+			AND
+				STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<select id="getHeadCustomerAddInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			* 
+		FROM 
+			FORM_CUSTOMER_FUSION_ADD
+		WHERE
+			 1=1
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND ORG_LEVEL in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND ORG_LEVEL in(2,3,4)
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND ORG_LEVEL in(3,4)
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<select id="getheadcustomeraddinfoSummaryDay" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			SUM(FUSION_TARGET_D) AS HZONE, SUM(FUSION_D) AS HZTWO
+		FROM 
+			FORM_CUSTOMER_FUSION_ADD
+		WHERE
+			 1 = 1  
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND ORG_LEVEL = 1
+				AND ORG_ID = '1'
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND ORG_LEVEL = 1
+				AND CITY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND ORG_LEVEL = 2
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND ORG_LEVEL = 3
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND ORG_LEVEL in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND ORG_LEVEL in(2,3,4)
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND ORG_LEVEL in(3,4)
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+	</select>
+	
+	<select id="getheadcustomeraddinfoSummary" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			<if test="conditionTwo == 'day'.toString()">
+				SUM(FUSION_TARGET_D) AS HZONE, SUM(FUSION_D) AS HZTWO
+			</if>
+			<if test="conditionTwo != 'day'.toString()">
+				SUM(FUSION_TARGET_M) AS HZONE, SUM(FUSION_M) AS HZTWO
+			</if>
+		FROM 
+			FORM_CUSTOMER_FUSION_ADD
+		WHERE
+			 1 = 1   
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+				AND ORG_LEVEL = 1
+				AND ORG_ID = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+				AND ORG_LEVEL = 1
+				AND CITY_CODE = #{orgId}
+			</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+				AND ORG_LEVEL = 2
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+				AND ORG_LEVEL = 3
+				AND GRID_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 1">
+				AND ORG_LEVEL in(1,2,3,4)
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 2">
+				AND ORG_LEVEL in(2,3,4)
+				AND CITY_CODE = #{orgId}
+			</if>
+			<if test="userOrgLevel != null and userOrgLevel != '' and userOrgLevel == 3">
+				AND ORG_LEVEL in(3,4)
+				AND CNTY_CODE = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+	</select>
+	
+	<select id="getformterminalcontractsum" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			SUM(MOBILE_CONTRACT_D) AS MOBILE_CONTRACT_D, SUM(TARGET_D) AS TARGET_D, SUM(MOBILE_CONTRACT_M) AS MOBILE_CONTRACT_M, SUM(TARGET_M) AS TARGET_M
+		FROM 
+			FORM_TERMINAL_CONTRACT
+		WHERE 
+			1 = 1 
+ 		<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+			AND V_TYPE = 1
+			AND ORG_ID = #{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+			AND 
+				V_TYPE = 1
+			AND
+				CITY_CODE = #{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+			AND 
+				V_TYPE = 2
+			AND
+				CNTY_CODE = #{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+			AND 
+				V_TYPE = 3
+			AND
+				GRID_CODE = #{orgId}
+		</if>
+		<if test="statisDate != null and statisDate != ''">
+			AND 
+				STATIS_DATE = #{statisDate}
+		</if>
+	</select>
+	
+	<select id="getformhomenetaddsum" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+		     SUM(TARGET_D) AS TARGET_D, SUM(HOMENET_ADD_D) AS HOMENET_ADD_D, SUM(TARGET_M) AS TARGET_M, SUM(HOMENET_ADD_M) AS HOMENET_ADD_M
+		FROM 
+			FORM_HOMENET_ADD
+		WHERE 1=1 
+ 		<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+			AND V_TYPE = 1
+			AND ORG_ID =#{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+			AND 
+				V_TYPE = 1
+			AND
+				CITY_CODE = #{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+			AND 
+				V_TYPE = 2
+			AND
+				CNTY_CODE = #{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+			AND 
+				V_TYPE = 3
+			AND
+				GRID_CODE = #{orgId}
+		</if>
+		<if test="statisDate != null and statisDate != ''">
+			AND 
+				STATIS_DATE = #{statisDate}
+		</if>
+	</select>
+	
+	<select id="getSumFormCustomerFusion" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			TARGET AS TARGET,
+			FUSE_RETA as FUSE_RETA
+		FROM 
+			FORM_CUSTOMER_FUSION
+		WHERE 
+			1 = 1
+			<if test="orgLevel == 1">
+			  	AND V_TYPE = 1
+			  	AND ORG_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+    		<if test="orgLevel == 2">
+    			AND 
+					V_TYPE = 1
+			  	AND 
+			  		CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND 
+					V_TYPE = 2
+		 	  	AND 
+		 	  		CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND 
+					V_TYPE = 3
+				AND	
+					GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND
+					STATIS_DATE = #{statisDate}
+			</if>
+	</select>
+	
+	<select id="getSumFormEnclosureSum" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			SUM(TARGET_D) AS TARGET_D, SUM(COMPLETE_D) AS COMPLETE_D, SUM(TARGET_M) AS TARGET_M, SUM(COMPLETE_M) AS COMPLETE_M
+		FROM 
+			FORM_ENCLOSURE_SUM
+		WHERE 1 = 1
+			<if test="orgLevel == 1">
+			  	AND V_TYPE = 1
+			  	AND ORG_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+    		<if test="orgLevel == 2">
+    			AND 
+					V_TYPE = 1
+			  	AND 
+			  		CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND 
+					V_TYPE = 2
+		 	  	AND 
+		 	  		CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND 
+					V_TYPE = 3
+				AND	
+					GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+			AND
+				STATIS_DATE = #{statisDate}
+			</if>
+	</select>
+	
+	<!-- 查询网格轮廓信息 -->
+	<select id="getGridInfoByOrgId" resultMap="MapInfoMap" parameterType="java.lang.String" >
+    	SELECT
+			SYS_ORG.ORG_ID,
+			SYS_ORG.NAME,
+			GRID_DETAIL.TYPE_ID,
+			GRID_DETAIL.SHAPE,
+			GRID_DETAIL.COLOR
+		FROM
+			GRID_DETAIL
+		LEFT JOIN SYS_ORG ON
+			SYS_ORG.ORG_ID = GRID_DETAIL.ORG_ID
+		WHERE
+			SYS_ORG.ORG_ID = #{orgId,jdbcType=VARCHAR} 
+  	</select>
+  	
+  	<select id="changeOrgSysInfo" parameterType="java.lang.String" resultType="java.util.Map">
+  		SELECT PID FROM SYS_ORG WHERE ORG_ID = #{orgId,jdbcType=VARCHAR}
+  	</select>
+  	
+  	<select id="allList" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+		     *
+		FROM 
+		    <if test="conditionOne != null and conditionOne != '' and conditionOne =='FH'">
+			FORM_TELE_NO
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='XZKD'">
+			FORM_BROADBAND_ADD
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='ZDHY'">
+			FORM_TERMINAL_CONTRACT
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='JTWXZ'">
+			FORM_HOMENET_ADD
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='ZXWQYQDXD'">
+			FORM_ENCLOSURE_SUM
+			</if>
+			 <if test="conditionOne != null and conditionOne != '' and conditionOne =='GJZDZXQSTTS'">
+			FORM_INFILTRATION_CELL
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='XZJZWC'">
+			FORM_DEPRESSION_ADD
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='TBKHGYRHL'">
+			FORM_CUSTOMER_FUSION	
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='GRKHZJFSR'">
+			FORM_CUSTOMER_FEE	
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='XZKHZJFSR'">
+			FORM_CUSTOMER_FEE
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='TBKHZTQK'">
+			RP_TB_USR_TO_GRID_TOL_M	
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='XWSC'">
+			RP_CD_GC_DETAIL_D
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='XYKH'">
+			RP_SCH_INFO_DETAIL_M
+			</if>
+		WHERE 1=1 
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='TBKHZTQK' ">
+				<if test="orgLevel == 1">
+		        	AND ORGLEVEL = '1'
+		       	</if>
+			   	<if test="orgLevel == 2">
+					AND ORGLEVEL = '2'
+					AND area_code = #{orgId,jdbcType=VARCHAR}
+			   	</if>
+			   	<if test="orgLevel == 3">
+					AND ORGLEVEL = '3'
+					AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			   	</if>
+				<if test="orgLevel == 4">
+					AND ORGLEVEL = '3'
+					AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+				</if>
+				<if test="statisDate != null and statisDate != ''">
+					AND 
+						STATIS_MONTH = #{statisDate,jdbcType=VARCHAR}
+				</if>
+			</if>
+			<if test="conditionOne != null and conditionOne != '' and conditionOne =='XWSC' ">	 
+				<if test="orgLevel == 1">
+		        	AND ORGLEVEL = '1'
+		      	</if>
+			   	<if test="orgLevel == 2">
+					AND ORGLEVEL = '2'
+					AND area_code = #{orgId,jdbcType=VARCHAR}
+			   	</if>
+			   	<if test="orgLevel == 3">
+					AND ORGLEVEL = '3'
+					AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			   	</if>
+				<if test="orgLevel == 4">
+					AND ORGLEVEL = '3'
+					AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+				</if>
+			    <if test="statisDate != null and statisDate != ''">
+			    	AND
+			    		STATIS_DATE = #{statisDate,jdbcType=VARCHAR}
+		        </if>
+				<if test="gcFalg != null and gcFalg != ''">
+					AND
+						GC_FALG = #{gcFalg,jdbcType=VARCHAR}
+				</if>
+			</if>
+		 	<if test="conditionOne != null and conditionOne != '' and conditionOne =='XYKH'">
+			 	<if test="orgLevel == 1">
+			 		AND ORGLEVEL = '1'
+		     	</if>
+				<if test="orgLevel == 2">
+					AND ORGLEVEL = '2'
+					AND SCH_AREA_ID = #{orgId,jdbcType=VARCHAR}
+				</if>
+				<if test="orgLevel == 3">
+					AND ORGLEVEL = '3'
+					AND CNTY_ID = #{orgId,jdbcType=VARCHAR}
+				</if>
+				<if test="orgLevel == 4">
+					AND ORGLEVEL = '4'
+					AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+				</if>
+				<if test="statisDate != null and statisDate != ''">
+					AND 
+						STATIS_MONTH = #{statisDate,jdbcType=VARCHAR}
+				</if>
+			</if>
+		 	<if test="conditionOne != null and conditionOne != '' and conditionOne !='TBKHZTQK' and conditionOne !='XWSC' and conditionOne !='XYKH'">
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+					AND V_TYPE = 1
+				</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+					AND 
+						V_TYPE = 2
+					AND
+						CITY_CODE = #{orgId}
+				</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+					AND 
+						V_TYPE = 3
+					AND
+						CNTY_CODE = #{orgId}
+				</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+					AND 
+						V_TYPE = 4
+					AND
+						GRID_CODE = #{orgId}
+				</if>
+				<if test="statisDate != null and statisDate != ''">
+					AND 
+						STATIS_DATE = #{statisDate}
+				</if>
+			</if>
+		 	<if test="conditionOne != null and conditionOne != '' and conditionOne =='GRKHZJFSR'">
+				AND cus_type = 0	
+				<if test="statisDate != null and statisDate != ''">
+					AND 
+						STATIS_DATE = #{statisDate}
+				</if>
+			</if>
+		 	<if test="conditionOne != null and conditionOne != '' and conditionOne =='XZKHZJFSR'">
+				AND cus_type = 1	
+				<if test="statisDate != null and statisDate != ''">
+					AND 
+						STATIS_DATE = #{statisDate}
+				</if>
+			</if>
+	</select>
+	
+	<select id="getSignalAreaOrChnlInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			ORG_ID AREA_ID,
+			NAME AREA_NAME 
+		FROM
+			SYS_ORG 
+		WHERE
+			1 = 1
+			<if test="orgId != null and orgId != ''">
+				AND ORG_ID = #{orgId}
+			</if>
+	</select>
+	
+	<select id="getAreaOrChnlInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			ORG_ID AREA_ID,
+			NAME AREA_NAME 
+		FROM
+			SYS_ORG 
+		WHERE
+			1 = 1
+			<if test="orgId != null and orgId != ''">
+				AND PID = #{orgId}
+			</if>
+	</select>
+	
+	<select id="getChildrenSysOrgInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			ORG_ID ORGID,
+			NAME ORGNAME
+		FROM
+			SYS_ORG
+		WHERE
+			1 = 1
+			<if test="type == 'cntySelect11'.toString()">
+				AND 
+					PID = #{orgId}
+				AND 
+					ORGLEVEL = 3
+			</if>
+			<if test="type == 'gridSelect11'.toString()">
+				AND 
+					PID = #{orgId}
+				AND 
+					ORGLEVEL = 4
+			</if>
+			<if test="type == 'chnlSelect11'.toString()">
+				<if test="orgId != null and orgId != ''">
+				AND 
+					PID = (SELECT PID FROM SYS_ORG WHERE ORG_ID = #{orgId})
+				</if>
+				<if test="orgId == null or orgId == ''">
+					<if test="orgLevel == 3">
+					AND 
+						PID = #{areaId}
+					</if>
+					<if test="orgLevel == 4">
+					AND 
+						ORG_ID = #{areaId}
+					</if>
+				</if>
+			</if>
+	</select>
+	
+	<select id="getMaxDate" resultType="java.util.Map">
+		SELECT 
+			<choose>
+       			 <when test="conditionOne !=null and conditionOne != ''  and (conditionOne=='XYYXBBYHBM'.toString() or conditionOne=='XYYHHXBM'.toString()
+       			 or conditionOne=='XYYXBBXYKHQKM'.toString() or conditionOne=='XYYHFEFBM'.toString() or conditionOne=='XYYWYHBM'.toString() or conditionOne=='CJYB'.toString())
+       			 ">
+          		  MAX(STATIS_MONTH) AS STATIS_DATE
+       			 </when>
+       		 <otherwise>
+            	 MAX(STATIS_DATE) AS STATIS_DATE
+       		 </otherwise>
+    		</choose>
+		FROM 
+			<if test="conditionOne == 'FH'.toString()">
+				FORM_TELE_NO
+			</if>
+			<if test="conditionOne == 'XZKD'.toString()">
+				FORM_BROADBAND_ADD
+			</if>
+			<if test="conditionOne == 'ZDHY'.toString()">
+				FORM_TERMINAL_CONTRACT
+			</if>
+			<if test="conditionOne == 'JTWXZ'.toString()">
+				FORM_HOMENET_ADD
+			</if>
+			<if test="conditionOne == 'GJZDZXQSTTS'.toString()">
+				FORM_INFILTRATION_CELL
+			</if>
+			<if test="conditionOne == 'XZJZWD'.toString()">
+				FORM_DEPRESSION_ADD
+			</if>
+			<if test="conditionOne == 'TBKHGYRHL'.toString()">
+				FORM_CUSTOMER_FUSION
+			</if>
+			<if test="conditionOne == 'ZXWQYQDXD'.toString()">
+				FORM_ENCLOSURE_SUM
+			</if>
+			<if test="conditionOne == 'GRKHZJFSR'.toString()">
+				FORM_CUSTOMER_FEE
+			</if>
+			<if test="conditionOne == 'XZKHZJFSR'.toString()">
+				FORM_CUSTOMER_FEE
+			</if>
+			<if test="conditionOne == 'GJDZXQKDXZ'.toString()">
+				FORM_INFILTRATION_CELL_ADD
+			</if>
+			<if test="conditionOne == '90HKHGMTS'.toString()">
+				FORM_CUSADD_AFTER_NINETY
+			</if>
+			<if test="conditionOne == 'TBKHKDXZ'.toString()">
+				FORM_CUSTOMER_FUSION_ADD
+			</if>
+			<if test="conditionOne == 'XYYXBBYHBM'.toString()">
+				RP_WG_SALE_LABEL_M
+			</if>
+			<if test="conditionOne == 'XYYHHXBM'.toString()">
+				RP_WG_SCH_USER_LABEL_M
+			</if>
+			<if test="conditionOne == 'XYYXBBXYKHQKD'.toString()">
+				RP_WG_SALE_LABEL_D_TOL
+			</if>
+			<if test="conditionOne == 'XYYXBBXYKHQKM'.toString()">
+				RP_wg_SALE_LABEL_M_TOL
+			</if>
+			<if test="conditionOne == 'XYYXBBXYZDHDBLQKD'.toString()">
+				RP_WG_BW_ZD_SALE_LABEL_T3_D
+			</if>
+			<if test="conditionOne == 'XYYXBBXYZDHDBLMXQKD'.toString()">
+				RP_WG_BW_ZD_SALE_LABEL_T4_D
+			</if>
+			<if test="conditionOne == 'XYYXBBCLXYKHBYQKRBBD'.toString()">
+				RP_WG_BW_PAI_ZHAO_TOL_D
+			</if>
+			<if test="conditionOne == 'XYYHFEFBD'.toString()">
+				RP_WG_SCH_USER_RATE_D
+			</if>
+			<if test="conditionOne == 'XYYHFEFBM'.toString()">
+				RP_WG_SCH_USER_RATE_M
+			</if>
+			<if test="conditionOne == 'XYYWYHBM'.toString()">
+				MK_WG_SCH_OTH_USER_INFO
+			</if>
+			<if test="conditionOne == 'WGYWBLDAY'.toString()">
+				GRID_BUSINESS_TARGET_DONE_DAY
+			</if>
+			<if test="conditionOne == 'WGYWBLWEEK'.toString()">
+				GRID_BUSINESS_TARGET_DONE_WEEK
+			</if>
+			<if test="conditionOne == 'WGYWBLMONTH'.toString()">
+				GRID_BUSINESS_TARGET_DONE_MON
+			</if>
+			<if test="conditionOne == 'WGYWBLD'.toString()">
+				GRID_BUSINESS_TARGET_DONE_D
+			</if>
+			<if test="conditionOne == 'WGYWBLW'.toString()">
+				GRID_BUSINESS_TARGET_DONE_W
+			</if>
+			<if test="conditionOne == 'WGYWBLM'.toString()">
+				GRID_BUSINESS_TARGET_DONE_M
+			</if>
+			<if test="conditionOne == 'CJYB'.toString()">
+				WG_REWORK
+			</if>
+			<if test="conditionOne == '网格基础信息'.toString()">
+				grid_info_home_page_main
+			</if>
+			<if test="conditionOne == 'WGJCXX'.toString()">
+				GRID_FORM_INFO_WHOLE_PRO
+			</if>
+			<if test="conditionOne == 'RYLJBB'.toString()">
+				RP_GRID_KPI_ADD_D
+			</if>
+			<if test="conditionOne == 'KHFZD'.toString()">
+				FORM_CUS_DVP_DAY
+			</if>
+			<if test="conditionOne == 'KHFZW'.toString()">
+				FORM_CUS_DVP_WEEK
+			</if>
+			<if test="conditionOne == 'KHFZM'.toString()">
+				FORM_CUS_DVP_MON
+			</if>
+			<if test="conditionOne == 'RWYB'.toString()">
+				FORM_TASK_SPLIT
+			</if>
+			<if test="conditionOne == 'XXRW'.toString()">
+				RP_MARKETING_TASK
+			</if>
+	</select>
+</mapper>

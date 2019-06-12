@@ -1,0 +1,889 @@
+@CHARSET "UTF-8";
+html,body{
+	color:#FFF;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+.visual-left {
+	width: 33%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.visual-middle {
+	width: 34%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.visual-right {
+	width: 33%;
+	height: 100%;
+	float: left;
+}
+.middle-up {
+	height: 50%;
+	width: 100%;
+}
+.middle-down {
+	height: 49%;
+	width: 100%;
+	margin-top: 1%;
+}
+#mainMap {
+	width: 100%;
+	height: 100%;
+}
+.left-up {
+	height: 50%;
+	width: 100%;
+}
+.left-down {
+	height: 50%;
+	width: 100%;
+}
+.grid-scale {
+	width: 96%;
+	height: 24%;
+	margin-left: 1%;
+	margin-top:1%;
+}
+.scale-top {
+	width: 100%;
+	height: 30%;
+	text-align: center;
+    background: url(../../images/gis/dataVisual/u1009.png);
+    background-size: 100% 100%;
+}
+.scale-down {
+	width: 100%;
+	height: 70%;
+}
+.scaleType {
+	display: block;
+    float: left;
+    background: inherit;
+    background-color: rgba(0, 73, 131, 0.356862745098039);
+    border: none;
+    border-radius: 5px;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    width: 32%;
+    height: 85%;
+    margin-top: 1%;
+    text-align: center;
+}
+#scaleType {
+	margin-left: 2%;
+}
+.scaleType > div {
+	font-size: xx-small;
+}
+.flow-scale {
+	height: 98%;
+	margin-top: 1%;
+	width: 96%;
+	margin-left:1%;
+}
+.flow-top {
+	width: 100%;
+	height: 8%;
+	background: url(../../images/gis/pageOne/img_bg_yewuguimozhanbi.png) no-repeat;
+    background-size: 100% 100%;
+}
+.flow-down {
+	width: 100%;
+	height: 91%;
+	border: 1px solid #09416e;
+    border-top: none;
+    background: url(../../images/gis/dataVisual/u333.png) no-repeat center;
+    background-size: 90% 80%;
+}
+.flow-top > span {
+	margin-left: 2%;
+}
+.flowContent {
+	width: 25%;
+    height: 42%;
+    display: block;
+    float: left;
+    /* border: 1px solid #0377ea; */
+    margin: 2.5% 4.1%;
+    background: url(../../images/gis/dataVisual/u662.png);
+    background-size: 100% 100%;
+    position: relative;
+}
+.flowLeftUp {
+	border-width: 0px;
+    position: absolute;
+    left: -5px;
+    top: -5px;
+    width: 5px;
+    height: 5px;
+    background: inherit;
+    background-color: rgba(0, 138, 208, 1);
+    border: none;
+    border-radius: 0px;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.flowLeftDown {
+	border-width: 0px;
+    position: absolute;
+    left: -5px;
+    bottom: -5px;
+    width: 5px;
+    height: 5px;
+    background: inherit;
+    background-color: rgba(0, 138, 208, 1);
+    border: none;
+    border-radius: 0px;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.flowRightUp {
+	border-width: 0px;
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    width: 5px;
+    height: 5px;
+    background: inherit;
+    background-color: rgba(0, 138, 208, 1);
+    border: none;
+    border-radius: 0px;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.flowRightDown {
+	border-width: 0px;
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    width: 5px;
+    height: 5px;
+    background: inherit;
+    background-color: rgba(0, 138, 208, 1);
+    border: none;
+    border-radius: 0px;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.sum-top {
+	width: 100%;
+	height: 8.5%;
+	background: url(../../images/gis/pageOne/img_bg_yewuguimozhanbi.png) no-repeat;
+    background-size: 100% 100%;
+}
+.sum-top > span {
+	margin-left: 5%;
+}
+.sum-down {
+	width: 100%;
+	height: 91.5%;
+	border: 1px solid #09416e;
+    border-top: none;
+}
+
+.view-top {
+	width: 100%;
+	height: 8.5%;
+	background: url(../../images/gis/pageOne/img_bg_yewuguimozhanbi.png) no-repeat;
+    background-size: 100% 100%;
+}
+.view-top > span {
+	margin-left: 5%;
+}
+.view-down {
+	width: 100%;
+	height: 91.5%;
+	border: 1px solid #09416e;
+    border-top: none;
+    position: relative;
+}
+.right-top {
+	height: 50%;
+	width: 96%;
+	margin-left: 2%;
+}
+.right-down {
+	height: 49%;
+	width: 96%;
+	margin-left: 2%;
+	margin-top: 1%;
+}
+.flow-content {
+	width: 100%;
+	height: 100%;
+}
+.contentImg1 {
+	width: 30%;
+	height: 30%;
+	margin-left: 35%;
+    margin-top: 10%;
+	background: url(../../images/gis/dataVisual/u699.png);
+    background-size: 100% 100%;
+}
+.contentImg2 {
+	width: 30%;
+	height: 30%;
+	margin-left: 35%;
+    margin-top: 10%;
+	background: url(../../images/gis/dataVisual/u702.png);
+    background-size: 100% 100%;
+}
+.contentImg3 {
+	width: 30%;
+	height: 30%;
+	margin-left: 35%;
+    margin-top: 10%;
+	background: url(../../images/gis/dataVisual/u705.png);
+    background-size: 100% 100%;
+}
+.contentImg4 {
+	width: 30%;
+	height: 30%;
+	margin-left: 35%;
+    margin-top: 10%;
+	background: url(../../images/gis/dataVisual/u1000.png);
+    background-size: 100% 100%;
+}
+.contentImg5 {
+	width: 30%;
+	height: 30%;
+	margin-left: 35%;
+    margin-top: 10%;
+	background: url(../../images/gis/dataVisual/u711.png);
+    background-size: 100% 100%;
+}
+.contentImg6 {
+	width: 30%;
+	height: 30%;
+	margin-left: 35%;
+    margin-top: 10%;
+	background: url(../../images/gis/dataVisual/u714.png);
+    background-size: 100% 100%;
+}
+.downContent {
+	width: 100%;
+    margin-top: 8%;
+    font-size: 12px;
+    text-align: center;
+}
+.sum-select {
+	font-size: 12px;
+    width: 100%;
+    height: 13.7%;
+    padding: 1% 1%;
+    display: block;
+    float: left;
+}
+.rate-radio {
+	width: 100%;
+	height: 11.7%;
+	padding: 1%;
+	float: right;
+}
+.sumSelect {
+	height: auto;
+	padding-top:0%;
+	width: 29%;
+    float: left;
+}
+.sumSelect > select {
+	width: 68%;
+	height: 23px !important;
+	padding: 0px 0px !important;
+}
+.rateRadio {
+	width: 16%;
+	height: 50%;
+	display: block;
+	float: left;
+}
+.rateRadio > input {
+	float: left;
+	width: 12px !important;
+}
+.rateRadio > span {
+	font-size: 12px;
+	display: block;
+	float: left;
+}
+.rateRadio > div {
+	font-size: 12px;
+}
+.option-top {
+	width: 90%;
+	height: 12%;
+	padding-top: 1%;
+	margin-left:1%;
+}
+.option-top > input {
+	height: 27px;
+	width: 150px;
+}
+.glyphicon {
+	margin-top: 5px !important;
+}
+.glyphicon-search {
+	position: absolute;
+    padding: 4px 8px;
+    color: #00e1fd;
+}
+.btn-primary {
+	width: 65px;
+    height: 27px;
+    padding: 0;
+}
+.sumRight {
+	width: 94%;
+	height: 22%;
+	padding-top: 1%;
+	margin-left:3%;
+}
+.org-select {
+	width: 50%;
+	display: block;
+	float: left;
+	padding-top: 1%;
+	text-align: right;
+}
+.org-select > span {
+	font-size: 12px;
+}
+.org-select > select {
+	width: 70%;
+	height: 20px !important;
+	padding: 0px 4px !important;
+}
+.firstTypeGrid {
+	cursor: pointer;
+}
+.modal-header .close {
+	margin-top: -12px !important;
+}
+.grid-type-all {
+	width: 100%;
+	height: 100%;
+}
+.grid-type-all {
+	width: 100%;
+	height: 100%;
+}
+.modal-select {
+	width: 18%;
+    display: block;
+    float: left;
+    margin: 0.5% 1%;
+}
+.org-modal {
+	height: 10%;
+	width: 100%;
+}
+.modal-select > select {
+	width: 91px;
+}
+.grid-name {
+	width: 22%;
+    height: 90%;
+    text-align: center;
+    border: 1px solid #00e1fd;
+    display: block;
+	float: left;
+	overflow-y: auto;
+}
+.gridName {
+	width: 100%;
+	height: 10%;
+	border-bottom: 1px solid #00e1fd;
+	line-height: 34px;
+	font-size: 12px;
+}
+#gridName {
+	font-size: 14px !important;
+}
+.scale-table {
+	width: 96%;
+    height: 85%;
+    /* float: right; */
+    position: absolute;
+}
+.tr-shadow > td {
+	padding: 2px !important;
+	line-height: 30px !important;
+	font-size: 12px;
+	border: 1px solid #57597C !important;
+	text-align: center;
+}
+.twotype-grid {
+	width: 100%;
+    height: 100%;
+    padding-top: 13%;
+}
+.ui-jqgrid-hdiv {
+ 	height: 20px;
+    overflow: hidden;
+    border: none !important;
+ }
+ .ui-jqgrid-htable > thead > tr > th > div {
+ 	line-height: 17px !important;
+    font-size: 10px !important;
+ }
+ .ui-widget-content {
+ 	height: 26px !important;
+ }
+ .ui-jqgrid .ui-jqgrid-hdiv {
+ 	border-bottom: 1px solid #0086c9 !important;
+    border-top: 1px solid #0086c9 !important;
+    background: #0e103d !important;
+ }
+ .ui-jqgrid-labels {
+ 	background: #0e103d !important;
+ }
+ .ui-jqgrid .ui-pager-control {
+ 	height: 20px !important;
+ }
+ 
+#grid-pager1_center > .ui-pg-table > tbody > tr > .ui-pg-button > .ui-icon {
+    display: inline-block !important;
+    padding: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    line-height: 16px !important;
+    text-align: center !important;
+    position: static !important;
+    float: none !important;
+    margin: 0 2px !important !important;
+    border-radius: 100% !important;
+}
+#grid-pager1_center > table > tbody > tr > .ui-pg-button > .ui-separator{
+	height: 12px !important;
+}
+#grid-pager1_center > table > tbody > tr > td > input{
+	width: 18px !important;
+    height: 14px !important;
+}
+#grid-pager1_center > table > tbody > tr > td > select{
+	display: block;
+    height: 18px;
+    width: 49px;
+    margin: 0;
+    padding: 0px;
+    line-height: normal;
+}
+#grid-pager2_center > .ui-pg-table > tbody > tr > .ui-pg-button > .ui-icon {
+    display: inline-block !important;
+    padding: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    line-height: 16px !important;
+    text-align: center !important;
+    position: static !important;
+    float: none !important;
+    margin: 0 2px !important !important;
+    border-radius: 100% !important;
+}
+#grid-pager2_center > table > tbody > tr > .ui-pg-button > .ui-separator{
+	height: 12px !important;
+}
+#grid-pager2_center > table > tbody > tr > td > input{
+	width: 18px !important;
+    height: 14px !important;
+}
+#grid-pager2_center > table > tbody > tr > td > select{
+	display: block;
+    height: 18px;
+    width: 49px;
+    margin: 0;
+    padding: 0px;
+    line-height: normal;
+}
+#grid-pager3_center > .ui-pg-table > tbody > tr > .ui-pg-button > .ui-icon {
+    display: inline-block !important;
+    padding: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    line-height: 16px !important;
+    text-align: center !important;
+    position: static !important;
+    float: none !important;
+    margin: 0 2px !important !important;
+    border-radius: 100% !important;
+}
+#grid-pager3_center > table > tbody > tr > .ui-pg-button > .ui-separator{
+	height: 12px !important;
+}
+#grid-pager3_center > table > tbody > tr > td > input{
+	width: 18px !important;
+    height: 14px !important;
+}
+#grid-pager3_center > table > tbody > tr > td > select{
+	display: block;
+    height: 18px;
+    width: 49px;
+    margin: 0;
+    padding: 0px;
+    line-height: normal;
+}
+#grid-pager4_center > .ui-pg-table > tbody > tr > .ui-pg-button > .ui-icon {
+    display: inline-block !important;
+    padding: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    line-height: 16px !important;
+    text-align: center !important;
+    position: static !important;
+    float: none !important;
+    margin: 0 2px !important !important;
+    border-radius: 100% !important;
+}
+#grid-pager4_center > table > tbody > tr > .ui-pg-button > .ui-separator{
+	height: 12px !important;
+}
+#grid-pager4_center > table > tbody > tr > td > input{
+	width: 18px !important;
+    height: 14px !important;
+}
+#grid-pager4_center > table > tbody > tr > td > select{
+	display: block;
+    height: 18px;
+    width: 49px;
+    margin: 0;
+    padding: 0px;
+    line-height: normal;
+}
+.scaleNum {
+	cursor: pointer;
+}
+.scaleTypeName {
+	cursor: pointer;
+	margin-top: 3%;
+}
+.topPanel {
+	position: absolute;
+    top: 5px;
+    z-index: 10;
+    left: 5px;
+    height: auto;
+    min-height: 80px;
+    min-width: 115px;
+ }
+ .topPanelUp {
+ 	height: 18%;
+ 	border: 1px solid #008fa7;
+ 	border-radius: 5px;
+ 	text-align: center;
+ 	font-weight:bold;
+ 	color: #FFFF00;
+ 	background: #082a5a;
+    opacity: 0.8;
+ }
+ .topPanelDown {
+ 	height: 82%;
+ 	border: 1px solid #008fa7;
+ 	border-radius: 5px;
+ 	background: #082a5a;
+    opacity: 0.8;
+ }
+ .lastPanel {
+	position: absolute;
+    bottom: 5px;
+    z-index: 10;
+    right: 5px;
+    height:auto;
+    min-height: 80px;
+    min-width: 115px;
+ }
+ .lastPanelUp {
+ 	height: 18%;
+ 	border: 1px solid #008fa7;
+ 	border-radius: 5px;
+ 	text-align: center;
+ 	font-weight:bold;
+ 	color: #FFFF00;
+ 	background: #082a5a;
+    opacity: 0.8;
+ }
+ .lastPanelDown {
+ 	height: 82%;
+ 	border: 1px solid #008fa7;
+ 	border-radius: 5px;
+ 	background: #082a5a;
+    opacity: 0.8;
+ }
+ .topValue {
+    font-size: 12px;
+    padding: 1.5px 6px;
+ }
+ .TabelColumnName {
+ 	height: 77%;
+    margin-top: 1%;
+ }
+ .append-all {
+	width: 33%;
+    height: 94%;
+    position: absolute;
+    z-index: 10;
+    background: rgba(101, 101, 126, 0.8);
+    opacity: 1.0;
+    top: 5%;
+    right: 0.5%;
+    border-radius: 10px;
+}
+.org-map {
+	height: 8%;
+	margin-top: 2%;
+	width: 98%;
+	margin-left: 1%;
+}
+.map-select {
+	width: 33.33%;
+	display: block;
+	float: left;
+	margin-top: 1%;
+}
+.kpi-checkbox {
+	width: 100%;
+    height: 8%;
+}
+.map-select > select {
+	width: 70%;
+	height: 23px !important;
+	padding: 0px 4px !important;
+}
+.map-select > span {
+	font-size: 12px;
+}
+.kpiCheckbox {
+	width: 13%;
+    height: 100%;
+    display: block;
+    float: left;
+    padding: 1px 5px;
+}
+.mapGrid {
+	width: 100%;
+    height: 82%;
+    overflow: hidden;
+}
+.kpiCheckbox > input {
+	vertical-align: top;
+}
+#mapTable > tbody > tr > td {
+	color: #fff !important;
+}
+.BMap_stdMpCtrl {
+	left: 17px !important;
+	bottom: 50px !important;
+}
+.flow-all {
+	width: 82%;
+    height: 92%;
+    padding-top: 5%;
+    margin-left: 14%;
+}
+.flow-content1 {
+	height: 16.66%;
+	width: 86%;
+	color: #5bd6fe;	
+}
+#content1 {
+	width: 50%;
+    padding: 2.5% 0%;
+    text-align: center;
+    float: left;
+}
+#flow1 {
+	display: block;
+	float: left;
+	width: 30%;
+    float: left;
+    text-align: center;
+    margin: 2.5% 4%;
+}
+.image1 {
+    width: 8%;
+    height: 60%;
+    margin: 2.5% 2%;
+    background: url(../../images/gis/dataVisual/u338.png);
+    background-size: 100% 100%;
+    display: block;
+    float: left;
+}
+
+.flow-content2 {
+	height: 16.66%;
+	width: 86%;
+	color: #5bd6fe;	
+	margin-left: 6.5%;
+	position: relative;
+}
+#content2 {
+	float: left;
+    padding: 2% 5%;
+    text-align: center;
+    width: 60%;
+}
+#flow2 {
+	width: 35%;
+    text-align: center;
+    margin: 2% -2%;
+    display: block;
+    float: left;
+}
+.image2 {
+	width: 6%;
+    height: 60%;
+    margin: 2% 1%;
+    background: url(../../images/gis/dataVisual/u341.png);
+    background-size: 100% 100%;
+    position: absolute;
+}
+
+.flow-content3 {
+	height: 16.66%;
+    width: 86%;
+    color: #5bd6fe;
+    margin-left: 12%;
+    position: relative;	
+}
+#content3 {
+	display: block;
+    float: left;
+    padding: 2% 11%;
+    width: 60%;
+    text-align: center;
+}
+#flow3 {
+	width: 38%;
+    text-align: center;
+    margin: 2% 0%;
+    display: block;
+    float: left;
+}
+.image3 {
+	width: 7%;
+    height: 60%;
+    margin: 1.8% 3%;
+    background: url(../../images/gis/dataVisual/u369.png);
+    background-size: 100% 100%;
+    position: absolute;
+}
+
+.flow-content4 {
+	height: 16.66%;
+	width: 86%;
+	color: #5bd6fe;	
+	margin-left: 12%;
+    position: relative;	
+}
+#content4 {
+	display: block;
+    float: left;
+    padding: 2% 10%;
+    width: 60%;
+    text-align: center;
+}
+#flow4 {
+	width: 38%;
+    text-align: center;
+    margin: 2% -1%;
+    display: block;
+    float: left;
+}
+.image4 {
+	width: 7%;
+    height: 60%;
+    margin: 1.5% 2%;
+    background: url(../../images/gis/dataVisual/u1000.png);
+    background-size: 100% 100%;
+    position: absolute;
+}
+
+.flow-content5 {
+	height: 16.66%;
+	width: 86%;
+	color: #5bd6fe;	
+	margin-left: 6.5%;
+	position: relative;
+}
+#content5 {
+	display: block;
+    float: left;
+    padding: 2% 0%;
+    width: 50%;
+    text-align: center;
+    margin-left: 9%;
+}
+#flow5 {
+	width: 30%;
+    text-align: center;
+    margin: 2% 5%;
+   	display: block;
+	float: left;
+}
+.image5 {
+	width: 6%;
+    height: 60%;
+    margin: 1% 2%;
+    background: url(../../images/gis/dataVisual/u347.png);
+    background-size: 100% 100%;
+    position: absolute;
+}
+
+.flow-content6 {
+	height: 16.66%;
+	width: 86%;
+	color: #5bd6fe;	
+	position: relative;
+}
+#content6 {
+	display: block;
+    float: left;
+    padding: 2% 0%;
+    width: 50%;
+    text-align: center;
+    margin-left: 10%;
+}
+#flow6 {
+	display: block;
+	float: left;
+	width: 30%;
+    float: left;
+    text-align: center;
+    margin: 2% 4%;
+}
+.image6 {
+	width: 6%;
+    height: 60%;
+    margin: 2% 2%;
+    background: url(../../images/gis/dataVisual/u350.png);
+    background-size: 100% 100%;
+    position: absolute;
+}
+.topScale {
+	font-size: 12px;
+}
+#statG2 {
+	color: #e8ba13;
+}
+#statG3 {
+	color: #ff0000;
+}
+#statG4 {
+	color: #04f738;
+}
+/* .close {
+	position: absolute !important;
+    bottom: 0px !important;
+    left: 48% !important;
+    width: 4.5%;
+    height: 7%;
+} */

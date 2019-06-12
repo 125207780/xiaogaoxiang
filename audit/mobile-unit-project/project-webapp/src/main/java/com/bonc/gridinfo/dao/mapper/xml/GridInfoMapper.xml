@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.GridInfoMapper">
+
+	<!-- 网格统计信息-基本信息&&网格基本信息-网格基本信息/资源信息 -->
+	<select id="getGridInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.GridInfo">
+		SELECT GRID_CODE, GRID_NAME, GRID_TYPE, GRID_SCORE, GRID_MANAGER, 
+		PHONE_NUMBER, BRANCH_COMPANY, BRANCH_SUBSTATION, CREATER, CREATE_TIME, 
+		COMMUNITY_NUM, VILLAGE_NUM, USER_NUM, NEW_USER_NUM, OUTNET_NUM, GROUP_NUM, 
+		CHNL_NUM, KD_NUM, TOTAL_FEE, TOTAL_FEE_LAST, COMPARE, KD_FEE, YW_FEE, FEE_4G, 
+		FEE_2G3G, XHJT_FEE, TV_FEE, TERMINAL_FEE, KD_NEW_NUM, YW_NEW_NUM, NEW_4G_NUM, 
+		NEW_2G3G_NUM, NEW_XHJT_NUM, TV_NEW_NUM, TERMINAL_NEW_NUM, KD_PERCENT, VOICE_NUM, 
+		VOICE_PORT_NUM, VOICE_PER, VOICE_PORT_PER, DATA_NUM, DATA_PORT_NUM, DATA_PER, 
+		DATA_PORT_PER, PHYSICAL_NUM, GRID_AREA, CREATE_DATE, SALE_DEPT_NAME,END_FIBER_NUM,
+		END_FIBER_UNUSED,EQUIPROOM_FIBER_NUM,EQUIPROOM_FIBER_UNUSED
+		FROM GRID_INFO where 1 = 1 AND  GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		
+	</select>
+	
+	<!-- 网格基本信息-网格团队信息 -->
+	<select id="getGridTeamInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.GridTeam">
+		select staff_code,staff_name,role,phone_number,department,company
+		from grid_team_info where 1=1
+	</select>
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.system.dao.mapper.HelpManagerMapper">
+
+	<select id="selectList" parameterType="com.bonc.system.dao.entity.HelpDocToFtp" resultType="com.bonc.system.dao.entity.HelpDocToFtp">
+		SELECT
+			id,
+			helpName,
+			helpFileName,
+			textRoad,
+			helpCont,
+			timeId,
+			state
+		FROM 
+			help_mgr_func t 
+		WHERE 
+			state='1'
+		<if test="helpName != null and helpName != ''">
+			AND t.helpName like '%'||#{helpName}||'%'
+		</if>			
+		<if test="helpFileName != null and helpFileName != ''">
+			AND t.helpFileName like '%'||#{helpFileName}||'%'
+		</if>			
+		<if test="id != null and id != ''">
+			AND t.id = #{id}
+		</if>
+		<if test="textRoad != null and textRoad != ''">
+			AND t.textRoad = #{textRoad}
+		</if>
+		<!-- <if test="orgLevel != null and orgLevel != ''">
+			AND t.orglevel = #{orgLevel}
+		</if> -->
+	
+		<if test="helpCont != null and helpCont != ''">
+			AND t.helpCont like '%'||#{helpCont}||'%'
+		</if>
+	</select>
+	
+	<select id="selectSysHelpById" parameterType="java.lang.String" resultType="com.bonc.system.dao.entity.HelpDocToFtp">
+		SELECT
+			id,
+			helpName,
+			helpFileName,
+			textRoad,
+			helpCont,
+			state
+		FROM 
+			help_mgr_func t 
+		WHERE 
+			state='1' AND t.id = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="intertHelpDocInfo" parameterType="com.bonc.system.dao.entity.HelpDocToFtp">
+		INSERT INTO help_mgr_func (ID, helpName,helpFileName, helpCont, timeId, textRoad,state) VALUES
+		  (#{id, jdbcType = VARCHAR}, #{helpName, jdbcType = VARCHAR},#{helpFileName, jdbcType = VARCHAR}, #{helpCont, jdbcType = VARCHAR}, #{timeId, jdbcType = VARCHAR}, 
+		  #{textRoad, jdbcType = VARCHAR},'1')
+	</insert>
+	
+	<update id="updateHelpDocInfo" parameterType="com.bonc.system.dao.entity.HelpDocToFtp">
+		UPDATE
+			help_mgr_func
+		SET 
+			helpName= #{helpName},
+			helpFileName= #{helpFileName},
+			textRoad= #{textRoad},
+			helpCont= #{helpCont},
+			timeId= #{timeId},
+			state= #{state}
+		WHERE 
+			id = #{id}
+	</update>
+	
+	<update id="deletesyshelpbyId" parameterType="com.bonc.system.dao.entity.HelpDocToFtp">
+		UPDATE
+			help_mgr_func
+		SET 
+			state= '0'
+		WHERE 
+			id = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.exam.dao.mapper.GridRankMapper">
+	<resultMap id="gridRankMap" type="com.bonc.exam.dao.entity.GridRankDetail">
+		<result column="EVALUATE_CYCLE_TYPE" jdbcType="VARCHAR" property="evaluateCycleType" />
+		<result column="EVALUATE_CYCLE" jdbcType="VARCHAR" property="evaluateCycle" />
+		<result column="OBJECT_ID" jdbcType="VARCHAR" property="objectId" />
+		<result column="OBJECT_NAME" jdbcType="VARCHAR" property="objectName" />
+		<result column="GRID_TYPE" jdbcType="VARCHAR" property="gridType" />
+		<result column="KPI_ID" jdbcType="VARCHAR" property="kpiId" />
+		<result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
+		<result column="OBJECT_TYPE" jdbcType="VARCHAR" property="objectType" />
+		<result column="KPI_SCORE" jdbcType="VARCHAR" property="kpiScore" />
+		<result column="GRID_CODE" jdbcType="VARCHAR" property="gridCode" />
+	</resultMap>
+	
+	<!-- 总得分信息 -->
+	<select id="getGridRankInfo" parameterType="java.lang.String" resultType="com.bonc.exam.dao.entity.GridRank">
+		SELECT 
+			EVALUATE_CYCLE_TYPE, EVALUATE_CYCLE, OBJECT_ID, OBJECT_NAME, OBJECT_TYPE, SUM(NVL(KPI_SCORE,0)) KPI_SCORE
+		FROM 
+			GRID_RANK_DETAIL
+		WHERE 
+			1=1
+		<if test="girdRank.evaluateCycleType != null and girdRank.evaluateCycleType != ''">
+			AND EVALUATE_CYCLE_TYPE = #{girdRank.evaluateCycleType,jdbcType=VARCHAR}
+		</if>
+		<if test="girdRank.evaluateCycle  != null and girdRank.evaluateCycle != ''">
+			AND EVALUATE_CYCLE = #{girdRank.evaluateCycle,jdbcType=VARCHAR}
+		</if>
+		<if test="gridInfoList  != null and gridInfoList != ''">
+			AND GRID_RANK_DETAIL.GRID_CODE in
+			<foreach collection="gridInfoList" item="obj" index="index" open="(" separator="," close=")">
+				#{obj.gridCode}
+			</foreach>
+		</if>
+		AND 
+			status='3'
+		GROUP BY 
+			EVALUATE_CYCLE_TYPE, EVALUATE_CYCLE, OBJECT_ID, OBJECT_NAME, OBJECT_TYPE
+		ORDER BY 
+			EVALUATE_CYCLE DESC
+	</select>
+	
+	<!-- 总得分信息Modify -->
+	<select id="getGridRankInfoModify" parameterType="java.lang.String" resultMap="gridRankMap">
+
+		SELECT 
+			EVALUATE_CYCLE_TYPE, EVALUATE_CYCLE, OBJECT_ID, OBJECT_NAME,GRID_CODE, OBJECT_TYPE, SUM(NVL(KPI_SCORE,0)) KPI_SCORE
+		FROM 
+			GRID_RANK_DETAIL 
+		WHERE 
+			1=1
+		<if test="girdRankDetail.evaluateCycleType != null and girdRankDetail.evaluateCycleType != ''">
+			AND EVALUATE_CYCLE_TYPE = #{girdRankDetail.evaluateCycleType,jdbcType=VARCHAR}
+		</if>
+		<if
+			test="girdRankDetail.evaluateCycle  != null and girdRankDetail.evaluateCycle != ''">
+			AND EVALUATE_CYCLE = #{girdRankDetail.evaluateCycle,jdbcType=VARCHAR}
+		</if>
+		<if test="gridInfoList  != null and gridInfoList != ''">
+			AND GRID_RANK_DETAIL.OBJECT_ID in
+			<foreach collection="gridInfoList" item="obj" index="index" open="(" separator="," close=")">
+				#{obj.gridCode}
+			</foreach>
+		</if>
+		AND 
+			status='3' 
+		AND 
+			OBJECT_TYPE IN ('gridLevel1','gridLevel2','gridLevel3')
+		GROUP BY
+			EVALUATE_CYCLE_TYPE, EVALUATE_CYCLE, OBJECT_ID, OBJECT_NAME, OBJECT_TYPE,GRID_CODE
+		ORDER BY 
+			EVALUATE_CYCLE DESC
+	</select>
+
+	<select id="getResultReleaseInfo" parameterType="java.lang.String"
+		resultType="com.bonc.exam.dao.entity.GridRank">
+		SELECT
+			EVALUATE_CYCLE_TYPE, EVALUATE_CYCLE, GRID_CODE, GRID_NAME, GRID_TYPE, CHECK_SCORE, ID, STATUS
+		FROM
+			GRID_RANK
+		WHERE
+			1 = 1
+		AND
+			GRID_CODE in
+			<foreach collection="sql" index="index" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+			<if test="girdRank.evaluateCycleType != null and girdRank.evaluateCycleType != ''">
+				AND EVALUATE_CYCLE_TYPE =#{girdRank.evaluateCycleType,jdbcType=VARCHAR}
+			</if>
+			<if test="girdRank.evaluateCycle  != null and girdRank.evaluateCycle != ''">
+				AND EVALUATE_CYCLE = #{girdRank.evaluateCycle,jdbcType=VARCHAR}
+			</if>
+		ORDER BY 
+			EVALUATE_CYCLE DESC, CHECK_SCORE DESC
+	</select>
+
+	<update id="updateStauts" parameterType="java.lang.String">
+		UPDATE 
+			GRID_RANK 
+		SET 
+			status = 'A' 
+		WHERE 
+			id = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

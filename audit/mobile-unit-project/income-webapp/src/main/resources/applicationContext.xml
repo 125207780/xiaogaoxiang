@@ -1,0 +1,191 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop     
+						http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+						http://www.springframework.org/schema/beans 
+					    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+					    http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx.xsd 
+						http://www.springframework.org/schema/cache 
+                        http://www.springframework.org/schema/cache/spring-cache-3.2.xsd  
+					    http://www.springframework.org/schema/context 
+					    http://www.springframework.org/schema/context/spring-context.xsd 
+					    http://www.springframework.org/schema/mvc 
+					    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+					    http://www.springframework.org/schema/task  
+                        http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+   
+    <!-- 数据库配置文件 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:sysConfig.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 数据源配置 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClassName}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<!-- MySQL 配置参数 -->
+		<property name="maxTotal" value="100"/>
+		<property name="maxIdle" value="20"/>
+		<property name="defaultAutoCommit" value="true"/>
+		<property name="testOnBorrow" value="true"/>
+		<property name="testOnReturn" value="false"/>
+		<property name="testWhileIdle" value="true"/>
+		<property name="validationQuery" value="SELECT 1  FROM  SYSIBM.SYSDUMMY1"/>
+		<property name="removeAbandonedTimeout" value="600"/>
+		<property name="removeAbandonedOnBorrow" value="true"/>
+		<property name="timeBetweenEvictionRunsMillis" value="30000"/>
+		<property name="minEvictableIdleTimeMillis" value="30000"/>
+
+		<!-- Oracle 配置参数 -->
+		<!--<property name="initialSize" value="${jdbc.initialSize}"></property>-->
+		<!--<property name="minIdle" value="${jdbc.minIdle}"></property>-->
+		<!--<property name="maxIdle" value="${jdbc.maxIdle}"></property>-->
+		<!--<property name="maxWaitMillis" value="${jdbc.maxWaitMillis}"></property>-->
+		<!--<property name="defaultAutoCommit" value="true"></property>-->
+		<!--<property name="validationQuery" value="select 1 from dual"></property>-->
+		<!--<property name="testOnBorrow" value="true"></property>-->
+	</bean>
+
+	<!-- ftp地址属性 -->
+	<bean id="ftpConfig" class="com.bonc.common.tool.bean.FtpConfig">
+		<property name="ftpServerId" value="${ftp.serverId}"></property>
+		<property name="ftpServerPort" value="${ftp.serverPort}"></property>
+		<property name="ftpServerUser" value="${ftp.serverUser}"></property>
+		<property name="ftpServerPwd" value="${ftp.serverPwd}"></property>
+		<property name="ftpServerAddress" value="${ftp.serverAddress}"></property>
+		<property name="ftpAccessAddress" value="${ftp.accessAddress}"></property>
+		<property name="ftpNginxAddress" value="${ftp.nginxAddress}"></property>
+		<property name="ftpConnectType" value="${ftp.connectType}"></property>
+		<property name="connectTimeOut" value="${ftp.connectTimeOut}"/>
+		<property name="localCharSet" value="${ftp.localCharSet}"/>
+		<property name="serverCharSet" value="${ftp.serverCharSet}"/>
+    	<property name="bufferSize" value="${ftp.bufferSize}"/>
+     	<property name="fileType" value="${ftp.fileType}"/>
+      	<property name="dataTimeout" value="${ftp.dataTimeout}"/>
+     	<property name="useEPSVwithIPv4" value="${ftp.useEPSVwithIPv4}"/>
+       	<property name="passiveMode" value="${ftp.passiveMode}"/>
+       	<property name="blockWhenExhausted" value="${ftp.blockWhenExhausted}"/>
+      	<property name="maxWaitMillis" value="${ftp.maxWaitMillis}"/>
+      	<property name="maxTotal" value="${ftp.maxTotal}"/>
+       	<property name="maxIdle" value="${ftp.maxIdle}"/>
+      	<property name="testOnBorrow" value="${ftp.testOnBorrow}"/>
+       	<property name="testOnReturn" value="${ftp.testOnReturn}"/>
+      	<property name="testOnCreate" value="${ftp.testOnCreate}"/>
+      	<property name="testWhileIdle" value="${ftp.testWhileIdle}"/>
+	</bean>
+
+	<!-- 多租户引擎Mybatis -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation" value="classpath:/mybatis/configuration.xml"/>
+		<property name="mapperLocations">
+			<list>
+				<value>classpath*:com/bonc/**/*.xml</value>
+			</list>
+		</property>
+		<property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageHelper">
+                    <!-- 这里的几个配置主要演示如何使用，如果不理解，一定要去掉下面的配置
+                    <property name="properties">
+                        <value>
+                            dialect=db2
+                            reasonable=true
+                            supportMethodsArguments=true
+                            returnPageInfo=check
+                            params=count=countSql
+                        </value>
+                    </property> -->
+                </bean>
+            </array>
+        </property>
+		<property name="configurationProperties">
+			<props>
+				<!-- mapUnderscoreToCamelCase属性将表中列名的下划线映射为JavaBean属性的驼峰式命名，默认为false -->
+				<prop key="mapUnderscoreToCamelCase">true</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- Annotation扫描包 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>  
+		<property name="basePackage" value="com.bonc"></property>
+	</bean>
+
+
+	<!-- 配置事务管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 事务开启 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- 定时任务扫描注解 -->
+	<task:annotation-driven />
+		<context:component-scan base-package="com.schedule">
+	</context:component-scan>
+
+	<!-- 启动注解驱动的Spring MVC功能，注册请求url和注解POJO类方法的映射 -->
+	<mvc:annotation-driven />
+	<mvc:resources mapping="/resource/**" location="/,classpath:/resource/" />
+	<mvc:resources mapping="/frame/**" location="/,classpath:/frame/" />
+	<mvc:resources mapping="/process/**" location="/,classpath:/process/" />
+	<mvc:resources mapping="/pages/**" location="/,/pages/" />
+	
+	<mvc:resources mapping="/**" location="/" />
+	
+	<!-- 启动包扫描功能，以便注册带有Controller、Service、repository、Component等注解的类成为spring的bean -->
+	<context:component-scan base-package="com.bonc" />
+	
+	<!-- 激活自动代理功能 -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	
+	<!-- 缓存配置 -->
+	<cache:annotation-driven cache-manager="cacheManager" />
+	
+	<!-- Spring提供的基于的Ehcache实现的缓存管理器 -->
+    <bean id="cacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:ehcache.xml" />
+    </bean>
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="cacheManagerFactory" />
+    </bean>
+    
+ 
+    
+    <!-- 定义视图解析器 -->   
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- 注入日志类 -->
+	<bean id="opLog" class="com.bonc.common.log.OpLog"></bean>
+	
+	<aop:config>
+		<aop:aspect id="logAspect" ref="opLog">
+			<aop:pointcut id="logPointcut" expression="  execution(* com.bonc.login.action.LoginAction.*(..))
+									or execution(* com.bonc.system.action..*.*(..))"/>
+			<aop:before pointcut-ref="logPointcut" method="before"/>
+			<aop:after-returning pointcut-ref="logPointcut" method="afterReturning"/>
+		</aop:aspect>
+	</aop:config>
+</beans>

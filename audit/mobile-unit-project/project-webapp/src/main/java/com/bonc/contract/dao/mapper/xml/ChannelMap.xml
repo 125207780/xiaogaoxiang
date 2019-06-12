@@ -1,0 +1,115 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="com.bonc.contract.dao.mapper.ChannelMapper">
+ 
+    <select id="selectChannelList" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT 
+			c.CHNL_CODE, c.CHNL_NAME, c.CHNL_TYPE, c.CHNL_TYPE_LEVEL1,
+			c.CHNL_TYPE_LEVEL2, t.LIST_VALUE AS CHNL_STATUS, 0 OBJ_TYPE
+			FROM 
+				CHANNEL_INFO c
+			LEFT JOIN TB_LIST_VALUE t ON char(c.CHNL_STATUS) = t.LIST_TYPE AND t."TYPE" = 'CHNL_STATUS'
+			WHERE 
+				c.GRID_CODE =#{gridCode}
+		UNION ALL 
+		SELECT
+			LOGIN_ID AS CHNL_CODE, NAME AS CHNL_NAME, '直销人员' AS CHNL_TYPE, 
+			'' AS CHNL_TYPE_LEVEL1, '' AS CHNL_TYPE_LEVEL2, '正常' AS CHNL_STATUS, 1 AS OBJ_TYPE
+		FROM 
+			GRID_USER
+		WHERE 
+			ORG_ID = #{gridCode} 
+		AND 
+			USER_TYPE = 6
+	</select>
+	 
+	 <insert id="insertMsContractArea" parameterType="java.util.Map">
+		INSERT INTO
+			MS_CONTRACT_AREA(GRID_CODE,PHYSICAL_ID,CHNL_CODE,STATUS,CREATE_USER,CREATE_DATE)
+		VALUES (
+			#{gridCode,jdbcType=VARCHAR},
+			#{physical_id,jdbcType=VARCHAR},
+			#{chnl_code,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{userName,jdbcType=VARCHAR},
+			#{currentTime,jdbcType=VARCHAR})
+	 </insert>
+	 
+	 <update id="updateMsContractArea" parameterType="java.util.Map">
+	 	UPDATE 
+	 		MS_CONTRACT_AREA
+		SET
+			<!-- GRID_CODE, PHYSICAL_ID,-->
+			<!-- #{gridCode,jdbcType=VARCHAR}, -->
+			<!-- #{unitId,jdbcType=VARCHAR}, -->
+			CHNL_CODE = #{channelCode,jdbcType=VARCHAR},
+			STATUS = #{status,jdbcType=VARCHAR},
+			CREATE_USER = #{userName,jdbcType=VARCHAR},
+			CREATE_DATE = #{currentDate,jdbcType=VARCHAR}			
+		WHERE
+			PHYSICAL_ID = #{unitId,jdbcType=VARCHAR}
+		AND 
+			<![CDATA[ status != #{noEquals} ]]>
+	 </update>
+	 
+	 <select id="selectMsContractAreaById" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			GRID_CODE, PHYSICAL_ID, CHNL_CODE, STATUS, 
+			CREATE_USER, CREATE_DATE, MODIFY_USER, MODIFY_DATE
+		FROM 
+			MS_CONTRACT_AREA 
+		WHERE 
+			PHYSICAL_ID = #{unitId,jdbcType=VARCHAR}
+		AND 
+			status != 'P'
+	 </select>
+	 
+	 <insert id="insertMsContractAreaHis">
+ 		INSERT INTO 
+ 			MS_CONTRACT_AREA_HIS (
+ 				grid_code, physical_id, chnl_code, status, create_user, 
+				create_date, modify_user, modify_date, delete_user, delete_date)
+		VALUES (
+			#{GRID_CODE,jdbcType=VARCHAR}, 
+			#{PHYSICAL_ID,jdbcType=VARCHAR}, 
+			#{CHNL_CODE,jdbcType=VARCHAR}, 
+			#{STATUS,jdbcType=VARCHAR}, 
+			#{CREATE_USER,jdbcType=VARCHAR}, 
+			#{CREATE_DATE,jdbcType=VARCHAR}, 
+			#{MODIFY_USER,jdbcType=VARCHAR}, 
+			#{MODIFY_DATE,jdbcType=VARCHAR}, 
+			#{deleteUser,jdbcType=VARCHAR}, 
+			#{deleteDate,jdbcType=VARCHAR})
+	 </insert>
+	 
+	<update id="updateMsContractAreaById" parameterType="java.util.Map">
+		UPDATE 
+			MS_CONTRACT_AREA
+		SET
+			STATUS = #{status,jdbcType=VARCHAR}
+		WHERE
+			PHYSICAL_ID = #{unitId,jdbcType=VARCHAR}
+		AND 
+			<![CDATA[ status != #{status} ]]>
+	</update>
+
+	<select id="selectLngAndLat" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT  
+			LNG, LAT
+		FROM 
+			PHYSICAL_GRID_INFO 
+		WHERE 
+			PHYSICAL_ID = #{uid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectTbListValue" resultType="java.util.Map">
+		SELECT LIST_TYPE, LIST_VALUE FROM TB_LIST_VALUE WHERE "TYPE" = 'CHNL_STATUS'
+	</select>
+ 	 
+	<delete id="deleteMsContractAreaById">
+		DELETE FROM 
+			MS_CONTRACT_AREA 
+ 		WHERE 
+ 			PHYSICAL_ID = #{unitId,jdbcType=VARCHAR}
+	</delete>
+</mapper>

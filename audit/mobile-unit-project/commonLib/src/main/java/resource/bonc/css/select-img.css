@@ -1,0 +1,13 @@
+@charset "utf-8";
+
+body {
+	background: #d0d0d0;
+}
+select {
+	display: block;
+}
+div {
+	background: url(../images/spacer.gif);
+}
+
+png{ margin:10px 10px 10px 10px; }

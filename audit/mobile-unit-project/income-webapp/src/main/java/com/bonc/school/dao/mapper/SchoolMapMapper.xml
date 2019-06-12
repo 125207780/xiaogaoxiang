@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.school.dao.mapper.SchoolMapMapper">
+
+	<select id="getMapLeft" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		select
+		count(sch_id) sch_n,
+		sum(case when SCH_LEVEL_ID='1'
+		then 1 else 0 end) b_sch,
+		sum(case when SCH_LEVEL_ID='2' then 1 else 0
+		end) z_sch,
+		sum(case when SCH_LEVEL_ID IN ('3','4') then 1 else 0
+		end) zq_sch,
+		sum(SCH_USERS) SCH_USERS,
+		sum(CMCC_SCH_USERS)
+		CMCC_SCH_USERS,
+		cast( sum(CMCC_SCH_USERS) AS DOUBLE)/sum(SCH_USERS)
+		cmcc_p,
+		sum(UNI_SCH_USERS) UNI_SCH_USERS,
+		cast(sum(UNI_SCH_USERS) AS
+		DOUBLE)/sum(SCH_USERS) SCH_USERS_p ,
+		sum(TELE_SCH_USERS)
+		TELE_SCH_USERS,
+		cast(sum(TELE_SCH_USERS) AS DOUBLE)/sum(SCH_USERS)
+		TELE_SCH_USERS_p ,
+		sum(CMCC_SCH_KD_USERS) CMCC_SCH_KD_USERS,
+		cast(sum(CMCC_SCH_KD_USERS) AS DOUBLE)/sum(CMCC_SCH_USERS)
+		CMCC_SCH_KD_USERS_p,
+		sum(CMCC_SCH_UNLIM_USERS) CMCC_SCH_UNLIM_USERS,
+		cast(sum(CMCC_SCH_UNLIM_USERS) AS DOUBLE)/sum(CMCC_SCH_USERS)
+		CMCC_SCH_UNLIM_USERS_p,
+		sum(CMCC_SCH_ACTIV_USERS) CMCC_SCH_ACTIV_USERS,
+		cast(sum(CMCC_SCH_ACTIV_USERS) AS DOUBLE)/sum(CMCC_SCH_USERS)
+		CMCC_SCH_ACTIV_USERS_p,
+		sum(CMCC_SCH_VNET_USERS) CMCC_SCH_VNET_USERS,
+		cast(sum(CMCC_SCH_VNET_USERS) AS DOUBLE)/sum(CMCC_SCH_USERS)
+		CMCC_SCH_VNET_USERS_p ,
+		cast(sum(CMCC_SCH_FEE) AS
+		DOUBLE)/sum(CMCC_SCH_ACCT_USERS)
+		CMCC_SCH_FEE,
+		cast(sum(CMCC_SCH_GPRS)
+		AS DOUBLE)/sum(CMCC_SCH_GPRS_USERS) CMCC_SCH_GPRS,
+		cast(sum(CMCC_SCH_CALL_DURATION) AS DOUBLE)/sum(CMCC_SCH_CALL_USERS)
+		CMCC_SCH_CALL_DURATION,
+		sum(CMCC_SCH_DEV_USERS) CMCC_SCH_DEV_USERS,
+		sum(CMCC_SCH_UNLIM_DEV_USERS) CMCC_SCH_UNLIM_DEV_USERS,
+		sum(CMCC_SCH_KD_DEV_USERS) CMCC_SCH_KD_DEV_USERS,
+		sum(CMCC_SCH_ACTIV_DEV_USERS) CMCC_SCH_ACTIV_DEV_USERS
+		from
+		BONC03.RPT_SCH_PORT_M
+		where STATIS_MONTH=#{statisMonth} 
+	</select>
+	<select id="getMapCityLeft" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		select
+		AREA_CITY_ID,
+		AREA_NAME,
+		count(sch_id) sch_n,
+		sum(case
+		when SCH_LEVEL_ID='1' then 1 else 0 end) b_sch,
+		sum(case when
+		SCH_LEVEL_ID='2' then 1 else 0 end) z_sch,
+		sum(case when SCH_LEVEL_ID IN ('3','4') then 1 else 0
+		end) zq_sch,
+		sum(SCH_USERS) SCH_USERS,
+		sum(CMCC_SCH_USERS) CMCC_SCH_USERS,
+		cast(sum(CMCC_SCH_USERS) AS DOUBLE) / sum(SCH_USERS) cmcc_p,
+		sum(UNI_SCH_USERS) UNI_SCH_USERS,
+		cast(sum(UNI_SCH_USERS) AS
+		DOUBLE)/sum(SCH_USERS) SCH_USERS_p ,
+		sum(TELE_SCH_USERS)
+		TELE_SCH_USERS,
+		cast(sum(TELE_SCH_USERS) AS DOUBLE)/sum(SCH_USERS)
+		TELE_SCH_USERS_p ,
+		sum(CMCC_SCH_KD_USERS) CMCC_SCH_KD_USERS,
+		cast(sum(CMCC_SCH_KD_USERS) AS DOUBLE)/sum(CMCC_SCH_USERS)
+		CMCC_SCH_KD_USERS_p,
+		sum(CMCC_SCH_UNLIM_USERS) CMCC_SCH_UNLIM_USERS,
+		cast(sum(CMCC_SCH_UNLIM_USERS) AS DOUBLE)/sum(CMCC_SCH_USERS)
+		CMCC_SCH_UNLIM_USERS_p,
+		sum(CMCC_SCH_ACTIV_USERS) CMCC_SCH_ACTIV_USERS,
+		cast(sum(CMCC_SCH_ACTIV_USERS) AS DOUBLE)/sum(CMCC_SCH_USERS)
+		CMCC_SCH_ACTIV_USERS_p,
+		sum(CMCC_SCH_VNET_USERS) CMCC_SCH_VNET_USERS,
+		cast(sum(CMCC_SCH_VNET_USERS) AS DOUBLE)/sum(CMCC_SCH_USERS)
+		CMCC_SCH_VNET_USERS_p ,
+		cast(sum(CMCC_SCH_FEE) AS
+		DOUBLE)/sum(CMCC_SCH_ACCT_USERS)
+		CMCC_SCH_FEE,
+		cast(sum(CMCC_SCH_GPRS)
+		AS DOUBLE)/sum(CMCC_SCH_GPRS_USERS) CMCC_SCH_GPRS,
+		cast(sum(CMCC_SCH_CALL_DURATION) AS DOUBLE)/sum(CMCC_SCH_CALL_USERS)
+		CMCC_SCH_CALL_DURATION,
+		sum(CMCC_SCH_DEV_USERS) CMCC_SCH_DEV_USERS,
+		sum(CMCC_SCH_UNLIM_DEV_USERS) CMCC_SCH_UNLIM_DEV_USERS,
+		sum(CMCC_SCH_KD_DEV_USERS) CMCC_SCH_KD_DEV_USERS,
+		sum(CMCC_SCH_ACTIV_DEV_USERS) CMCC_SCH_ACTIV_DEV_USERS
+		from
+		BONC03.RPT_SCH_PORT_M
+		where STATIS_MONTH=#{statisMonth,jdbcType=VARCHAR}
+		and AREA_CITY_ID=#{mapOrgId,jdbcType=VARCHAR}
+		group by AREA_CITY_ID,
+		AREA_NAME
+	</select>
+	<select id="getMapRight" parameterType="java.lang.String"
+		resultType="java.util.Map">
+			SELECT
+				t.AREA_CITY_ID,
+				t.AREA_NAME AS AREA_NAME,
+				t.CMCC_SCH_USERS,
+				t.cmcc_p,
+				t.UNI_SCH_USERS,
+				t.SCH_USERS_p,
+				t.TELE_SCH_USERS,
+				t.TELE_SCH_USERS_p,
+				t.CMCC_SCH_KD_USERS,
+				t.CMCC_SCH_KD_USERS_p,
+				t.CMCC_SCH_UNLIM_USERS,
+				t.CMCC_SCH_UNLIM_USERS_p,
+				t.CMCC_SCH_ACTIV_USERS,
+				t.CMCC_SCH_ACTIV_USERS_p,
+				t.CMCC_SCH_VNET_USERS,
+				t.CMCC_SCH_VNET_USERS_p,
+				ROW_NUMBER() OVER(
+					PARTITION BY substr(
+						t.AREA_ID,
+						1,
+						1
+					)
+				ORDER BY
+					CMCC_SCH_USERS DESC
+				) RANK,
+				ROW_NUMBER() OVER(
+					PARTITION BY substr(
+						t.AREA_ID,
+						1,
+						1
+					)
+				ORDER BY
+					UNI_SCH_USERS DESC
+				) rank1,
+				ROW_NUMBER() OVER(
+					PARTITION BY substr(
+						t.AREA_ID,
+						1,
+						1
+					)
+				ORDER BY
+					TELE_SCH_USERS DESC
+				) rank2,
+				ROW_NUMBER() OVER(
+					PARTITION BY substr(
+						t.AREA_ID,
+						1,
+						1
+					)
+				ORDER BY
+					CMCC_SCH_KD_USERS DESC
+				) rank3,
+				ROW_NUMBER() OVER(
+					PARTITION BY substr(
+						t.AREA_ID,
+						1,
+						1
+					)
+				ORDER BY
+					CMCC_SCH_UNLIM_USERS DESC
+				) rank4,
+				ROW_NUMBER() OVER(
+					PARTITION BY substr(
+						t.AREA_ID,
+						1,
+						1
+					)
+				ORDER BY
+					CMCC_SCH_ACTIV_USERS DESC
+				) rank5,
+				ROW_NUMBER() OVER(
+					PARTITION BY substr(
+						t.AREA_ID,
+						1,
+						1
+					)
+				ORDER BY
+					CMCC_SCH_VNET_USERS DESC
+				) rank6
+			FROM
+				(
+					SELECT
+						AREA_CITY_ID,
+						AREA_ID,
+						AREA_NAME,
+						SUM( CMCC_SCH_USERS ) CMCC_SCH_USERS,
+						CAST(
+							SUM( CMCC_SCH_USERS ) AS DOUBLE
+						)/ SUM( SCH_USERS ) cmcc_p,
+						SUM( UNI_SCH_USERS ) UNI_SCH_USERS,
+						CAST(
+							SUM( UNI_SCH_USERS ) AS DOUBLE
+						)/ SUM( SCH_USERS ) SCH_USERS_p,
+						SUM( TELE_SCH_USERS ) TELE_SCH_USERS,
+						CAST(
+							SUM( TELE_SCH_USERS ) AS DOUBLE
+						)/ SUM( SCH_USERS ) TELE_SCH_USERS_p,
+						SUM( CMCC_SCH_KD_USERS ) CMCC_SCH_KD_USERS,
+						CAST(
+							SUM( CMCC_SCH_KD_USERS ) AS DOUBLE
+						)/ SUM( CMCC_SCH_USERS ) CMCC_SCH_KD_USERS_p,
+						SUM( CMCC_SCH_UNLIM_USERS ) CMCC_SCH_UNLIM_USERS,
+						CAST(
+							SUM( CMCC_SCH_UNLIM_USERS ) AS DOUBLE
+						)/ SUM( CMCC_SCH_USERS ) CMCC_SCH_UNLIM_USERS_p,
+						SUM( CMCC_SCH_ACTIV_USERS ) CMCC_SCH_ACTIV_USERS,
+						CAST(
+							SUM( CMCC_SCH_ACTIV_USERS ) AS DOUBLE
+						)/ SUM( CMCC_SCH_USERS ) CMCC_SCH_ACTIV_USERS_p,
+						SUM( CMCC_SCH_VNET_USERS ) CMCC_SCH_VNET_USERS,
+						CAST(
+							SUM( CMCC_SCH_VNET_USERS ) AS DOUBLE
+						)/ SUM( CMCC_SCH_USERS ) CMCC_SCH_VNET_USERS_p
+					FROM
+						BONC03.RPT_SCH_PORT_M
+					WHERE
+						STATIS_MONTH = #{statisMonth}
+					GROUP BY
+						AREA_CITY_ID,
+						AREA_ID,
+						AREA_NAME
+				) t
+			LEFT JOIN MAsASYS.dim_area d ON
+				t.AREA_ID = d.AREA_ID
+			ORDER BY
+				d.AREA_NAME
+	</select>
+	
+	<select id="getMapRightArea" parameterType="java.lang.String" resultType="java.util.Map">
+	SELECT t.CNTY_ID,
+	       d.CNTY_NAME ,
+	       NVL(t.CMCC_SCH_USERS,0) CMCC_SCH_USERS,
+	       NVL(t.cmcc_p,0) cmcc_p,
+	       NVL(t.UNI_SCH_USERS,0) UNI_SCH_USERS,
+	       NVL(t.SCH_USERS_p,0) SCH_USERS_p,
+	       NVL(t.TELE_SCH_USERS,0) TELE_SCH_USERS,
+	       NVL(t.TELE_SCH_USERS_p,0) TELE_SCH_USERS_p,
+	       NVL(t.CMCC_SCH_KD_USERS,0) CMCC_SCH_KD_USERS,
+	       NVL(t.CMCC_SCH_KD_USERS_p,0) CMCC_SCH_KD_USERS_p,
+	       NVL(t.CMCC_SCH_UNLIM_USERS,0) CMCC_SCH_UNLIM_USERS,
+	       NVL(t.CMCC_SCH_UNLIM_USERS_p,0) CMCC_SCH_UNLIM_USERS_p,
+	       NVL(t.CMCC_SCH_ACTIV_USERS,0) CMCC_SCH_ACTIV_USERS,
+	       NVL(t.CMCC_SCH_ACTIV_USERS_p,0) CMCC_SCH_ACTIV_USERS_p,
+	       NVL(t.CMCC_SCH_VNET_USERS,0) CMCC_SCH_VNET_USERS,
+	       NVL(t.CMCC_SCH_VNET_USERS_p,0) CMCC_SCH_VNET_USERS_p,
+	       ROW_NUMBER() OVER(PARTITION BY substr(D.CNTY_ID, 1, 1) ORDER BY NVL(CMCC_SCH_USERS,0) DESC) RANK,
+	       ROW_NUMBER() OVER(PARTITION BY substr(D.CNTY_ID, 1, 1) ORDER BY NVL(UNI_SCH_USERS,0) DESC) rank1,
+	       ROW_NUMBER() OVER(PARTITION BY substr(D.CNTY_ID, 1, 1) ORDER BY NVL(TELE_SCH_USERS,0) DESC) rank2,
+	       ROW_NUMBER() OVER(PARTITION BY substr(D.CNTY_ID, 1, 1) ORDER BY NVL(CMCC_SCH_KD_USERS,0) DESC) rank3,
+	       ROW_NUMBER() OVER(PARTITION BY substr(D.CNTY_ID, 1, 1) ORDER BY NVL(CMCC_SCH_UNLIM_USERS,0) DESC) rank4,
+	       ROW_NUMBER() OVER(PARTITION BY substr(D.CNTY_ID, 1, 1) ORDER BY NVL(CMCC_SCH_ACTIV_USERS,0) DESC) rank5,
+	       ROW_NUMBER() OVER(PARTITION BY substr(D.CNTY_ID, 1, 1) ORDER BY NVL(CMCC_SCH_VNET_USERS,0) DESC) rank6
+	  FROM 
+	  (
+			SELECT AREA_ID,CNTY_ID,CNTY_NAME FROM MASASYS.DIM_CNTY 
+			WHERE SUBSTR(CNTY_ID,1,1)<![CDATA[<> ]]>'9' 
+			AND CNTY_ID NOT IN ('-1','A310','A311','A312','A313','A314','A315','A31A','A31B','A31C',
+					'A31D','A31J','A31O','A31S','A31v',
+					'B330','B331','C320','C321','C32C','C32v','C32w','C32X',
+					'D340','D341','D34B','D34v','D34w','D34x','E390','E39B',
+					'F300','F308','F30C','G440','G445','H370','H371','H376',
+					'J36A','J360','K380','K386','K38v','L350','L35B',
+					'M460','M46C','M46D','M46E','N450','N45B','U430')
+	  )d
+	  LEFT JOIN
+	  (SELECT CNTY_ID,
+	               SUM(CMCC_SCH_USERS) CMCC_SCH_USERS,
+	               CAST(SUM(CMCC_SCH_USERS) AS DOUBLE) / SUM(SCH_USERS) cmcc_p,
+	               SUM(UNI_SCH_USERS) UNI_SCH_USERS,
+	               CAST(SUM(UNI_SCH_USERS) AS DOUBLE) / SUM(SCH_USERS) SCH_USERS_p,
+	               SUM(TELE_SCH_USERS) TELE_SCH_USERS,
+	               CAST(SUM(TELE_SCH_USERS) AS DOUBLE) / SUM(SCH_USERS) TELE_SCH_USERS_p,
+	               SUM(CMCC_SCH_KD_USERS) CMCC_SCH_KD_USERS,
+	               CAST(SUM(CMCC_SCH_KD_USERS) AS DOUBLE) / SUM(CMCC_SCH_USERS) CMCC_SCH_KD_USERS_p,
+	               SUM(CMCC_SCH_UNLIM_USERS) CMCC_SCH_UNLIM_USERS,
+	               CAST(SUM(CMCC_SCH_UNLIM_USERS) AS DOUBLE) /
+	               SUM(CMCC_SCH_USERS) CMCC_SCH_UNLIM_USERS_p,
+	               SUM(CMCC_SCH_ACTIV_USERS) CMCC_SCH_ACTIV_USERS,
+	               CAST(SUM(CMCC_SCH_ACTIV_USERS) AS DOUBLE) /
+	               SUM(CMCC_SCH_USERS) CMCC_SCH_ACTIV_USERS_p,
+	               SUM(CMCC_SCH_VNET_USERS) CMCC_SCH_VNET_USERS,
+	               CAST(SUM(CMCC_SCH_VNET_USERS) AS DOUBLE) /
+	               SUM(CMCC_SCH_USERS) CMCC_SCH_VNET_USERS_p
+	          FROM BONC03.RPT_SCH_PORT_M
+	         WHERE STATIS_MONTH = #{statisMonth}
+	           AND AREA_City_ID = #{orgId}
+	         GROUP BY CNTY_ID) t
+	    ON t.CNTY_ID = d.CNTY_ID
+	 LEFT JOIN BONC03.DIM_AREA_ORG B
+	 ON D.AREA_ID=B.AREA_ID
+	 WHERE B.AREA_CITY_ID= #{orgId}
+	 ORDER BY d.CNTY_NAME
+	</select>
+
+	<select id="getProvinceGaoxiaoLeft" parameterType="java.lang.String"
+		resultType="java.util.Map">
+	select t.AREA_CITY_ID, 
+       t.AREA_NAME, 
+       t.sch_n, 
+       t.b_sch, 
+       t.z_sch,
+	   t.zq_sch
+  from (select AREA_ID,
+               AREA_CITY_ID,
+               AREA_NAME,
+               count(sch_id) sch_n,
+               sum(case
+                     when SCH_LEVEL_ID = '1' then
+                      1
+                     else
+                      0
+                   end) b_sch,
+               sum(case
+                     when SCH_LEVEL_ID = '2' then
+                      1
+                     else
+                      0
+                   end) z_sch,
+				sum(case when SCH_LEVEL_ID IN ('3','4') then 1 else 0 end) zq_sch
+          from BONC03.RPT_SCH_PORT_M
+         where STATIS_MONTH =  #{statisMonth}
+         GROUP BY AREA_CITY_ID, AREA_ID, AREA_NAME) t
+  LEFT JOIN MAsASYS.dim_area d
+    ON t.AREA_ID = d.AREA_ID
+ ORDER BY d.AREA_NAME
+	</select>
+	
+	<select id="getCityGaoxiaoLeft" parameterType="java.lang.String"
+		resultType="java.util.Map">
+	select d.cnty_name, 
+       t.sch_n, 
+       t.b_sch, 
+       t.z_sch,
+	   t.zq_sch
+  from (select cnty_id,
+               count(sch_id) sch_n,
+               sum(case
+                     when SCH_LEVEL_ID = '1' then
+                      1
+                     else
+                      0
+                   end) b_sch,
+               sum(case
+                     when SCH_LEVEL_ID = '2' then
+                      1
+                     else
+                      0
+                   end) z_sch,
+				sum(case when SCH_LEVEL_ID IN ('3','4') then 1 else 0 end) zq_sch
+          from BONC03.RPT_SCH_PORT_M
+         where STATIS_MONTH = #{statisMonth,jdbcType=VARCHAR}
+           AND AREA_CITY_ID = #{mapOrgId,jdbcType=VARCHAR}
+         GROUP BY cnty_id) t
+  LEFT JOIN MAsASYS.DIM_CNTY d
+    ON t.cnty_id = d.cnty_id
+ ORDER BY d.cnty_name
+	
+	</select>
+
+	<select id="getCityGaoxiaoNum" parameterType="java.lang.String" resultType="java.util.Map">
+		select t.AREA_CITY_ID, 
+		       t.AREA_NAME, 
+		       t.sch_n, 
+		       t.b_sch, 
+		       t.z_sch,
+			   t.zq_sch
+		  from (select AREA_ID,
+		               AREA_CITY_ID,
+		               AREA_NAME,
+		               count(sch_id) sch_n,
+		               sum(case
+		                     when SCH_LEVEL_ID = '1' then
+		                      1
+		                     else
+		                      0
+		                   end) b_sch,
+		               sum(case
+		                     when SCH_LEVEL_ID = '2' then
+		                      1
+		                     else
+		                      0
+		                   end) z_sch,
+						sum(case when SCH_LEVEL_ID IN ('3','4') then 1 else 0 end) zq_sch						   
+		          from BONC03.RPT_SCH_PORT_M
+		         where STATIS_MONTH = #{statisMonth,jdbcType=VARCHAR}
+		         GROUP BY AREA_CITY_ID, AREA_ID, AREA_NAME) t
+		  LEFT JOIN MAsASYS.dim_area d
+		    ON t.AREA_ID = d.AREA_ID
+		 ORDER BY d.AREA_NAME
+	</select>
+	
+	<select id="getAreaGaoxiaoNum" parameterType="java.lang.String" resultType="java.util.Map">
+		 select d.cnty_name, 
+		 	   t.CNTY_ID,
+		       t.sch_n, 
+		       t.b_sch, 
+		       t.z_sch,
+			   t.zq_sch
+		  from (select cnty_id,
+		               count(sch_id) sch_n,
+		               sum(case
+		                     when SCH_LEVEL_ID = '1' then
+		                      1
+		                     else
+		                      0
+		                   end) b_sch,
+		               sum(case
+		                     when SCH_LEVEL_ID = '2' then
+		                      1
+		                     else
+		                      0
+		                   end) z_sch,
+						sum(case when SCH_LEVEL_ID IN ('3','4') then 1 else 0 end) zq_sch							   
+		          from BONC03.RPT_SCH_PORT_M
+		         where STATIS_MONTH = #{statisMonth,jdbcType=VARCHAR}
+		           AND AREA_CITY_ID = #{orgId,jdbcType=VARCHAR}
+		         GROUP BY cnty_id) t
+		  LEFT JOIN MAsASYS.DIM_CNTY d
+		    ON t.cnty_id = d.cnty_id
+		 ORDER BY d.cnty_name
+	</select>
+	
+	<select id="findByDate" resultType="java.lang.String">
+		SELECT MAX(STATIS_MONTH) AS STATIS_MONTH FROM BONC03.RPT_SCH_PORT_M
+	</select>
+</mapper>

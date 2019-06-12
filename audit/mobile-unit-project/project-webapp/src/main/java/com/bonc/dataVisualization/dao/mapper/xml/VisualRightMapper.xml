@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.dataVisualization.dao.mapper.VisualRightMapper">
+	<insert id="addTableInfo" parameterType="com.bonc.dataVisualization.dao.entity.TableInfo">
+		INSERT INTO 
+			TABLES_INFO(TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_SIZE, COLUMN_REMAKE, CREATE_TIME, OPR_USER, TABLE_REMAKE, TABSCHEMA)
+		VALUES(
+			#{tableName,jdbcType=VARCHAR}, 
+			#{columnName,jdbcType=VARCHAR}, 
+			#{columnType,jdbcType=VARCHAR},
+			#{columnSize,jdbcType=VARCHAR}, 
+			#{columnRemake,jdbcType=VARCHAR}, 
+			#{createTime,jdbcType=VARCHAR}, 
+			#{oprUser,jdbcType=VARCHAR}, 
+			#{tableRemake,jdbcType=VARCHAR},
+			#{tabschema,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="findTableInfo" parameterType="java.lang.String" resultType="com.bonc.dataVisualization.dao.entity.TableInfo">
+		SELECT 
+			TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_SIZE, COLUMN_REMAKE, CREATE_TIME, OPR_USER, TABLE_REMAKE, TABSCHEMA
+		FROM 
+			GRID.TABLES_INFO 
+		WHERE 1=1 
+		<if test="tableName != null and tableName != ''">
+		AND 
+			TABLE_NAME = #{tableName}
+		</if>
+	</select>
+	
+	<select id="checkTable" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT count(1) FROM SYSCAT.TABLES WHERE TABNAME = #{tableName} AND TABSCHEMA = #{tabschema}
+	</select>
+	
+	<select id="findTabschema" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT  distinct TABSCHEMA  FROM TABLES_INFO WHERE 1=1
+		<if test="tableName != null  and tableName !=''">
+			AND TABLE_NAME=#{tableName}
+		</if>
+	</select>
+	
+	<select id="findColumnName" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT COLNAME FROM SYSCAT.COLUMNS WHERE 1=1
+		<if test="tableName !=null and tableName !=''">
+			AND TABNAME = #{tableName} 
+		</if>
+		<if test="tabschema !=null and tabschema!=''">
+			AND TABSCHEMA = #{tabschema}
+		</if>
+	</select>
+	
+	<select id="findColumnContent" parameterType="java.lang.String" resultType="java.util.Map">
+		select ${field} from ${sql}
+	</select>
+	
+</mapper>

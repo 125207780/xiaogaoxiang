@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.GridReadInfoMapper">
+	<resultMap id="BaseResultMap" type="com.bonc.gridinfo.dao.entity.GridReadInfo" >
+	    <id column="USERID" property="userId" jdbcType="VARCHAR" />
+	    <result column="USERNAME" property="userName" jdbcType="VARCHAR" />
+	    <result column="CONTENTCODE" property="contentCode" jdbcType="VARCHAR" />
+	    <result column="CONTENTNAME" property="contentName" jdbcType="VARCHAR" />
+	    <result column="READSTATUS" property="readStatus" jdbcType="VARCHAR" />
+	    <result column="CONTENTDESC" property="contentDesc" jdbcType="VARCHAR" />
+	    <result column="READCONTENT" property="readContent" jdbcType="VARCHAR" />
+	    <result column="READER" property="reader" jdbcType="VARCHAR" />
+	    <result column="SENDER" property="sender" jdbcType="VARCHAR" />
+	    <result column="SENDERDATE" property="senderDate" jdbcType="VARCHAR" />
+	    <result column="READDATE" property="readDate" jdbcType="VARCHAR" />
+	    <result column="URL" property="url" jdbcType="VARCHAR" />
+  </resultMap>
+	<select id="selectList" parameterType="com.bonc.gridinfo.dao.entity.GridReadInfo"  resultMap="BaseResultMap">
+			select g.CONTENT_CODE,g.URL,CONTENT_NAME,list_value AS READ_STATUS,CONTENT_DESC,SENDER,SENDER_DATE from  GRID_READ_INFO as g 
+			left join TB_LIST_VALUE AS t 
+			on g.READ_STATUS=t.LIST_TYPE AND t.TYPE = 'READ_STATUS'
+			where g.USER_ID = #{userId,jdbcType=VARCHAR} AND g.READ_STATUS = '1' order by timestamp(trim(g.SENDER_DATE)) DESC
+			
+	</select>
+	<select id="selectListByReadStatus" parameterType="com.bonc.gridinfo.dao.entity.GridReadInfo"  resultMap="BaseResultMap">
+			select g.CONTENT_CODE,g.URL,CONTENT_NAME,list_value AS READ_STATUS,CONTENT_DESC,READER,READ_DATE from  GRID_READ_INFO as g 
+			left join TB_LIST_VALUE AS t 
+			on g.READ_STATUS=t.LIST_TYPE AND t.TYPE = 'READ_STATUS'
+			where g.USER_ID = #{userId,jdbcType=VARCHAR} AND g.READ_STATUS = '2' order by timestamp(trim(g.READ_DATE)) DESC
+			
+	</select>
+	<update id="updateByState" parameterType="com.bonc.gridinfo.dao.entity.GridReadInfo">
+		update GRID_READ_INFO  set READ_STATUS='2',READ_DATE=#{readDate,jdbcType=VARCHAR}, READER =(SELECT USER_NAME FROM SYS_USER WHERE USER_ID =  #{userId,jdbcType=VARCHAR}) where USER_ID = #{userId,jdbcType=VARCHAR} and CONTENT_CODE = #{contentCode,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

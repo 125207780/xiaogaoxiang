@@ -1,0 +1,134 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="com.bonc.income.dao.mapper.Page3Mapper">
+ 
+    <select id="selectTable" resultType="java.util.Map"
+		parameterType="java.util.Map">
+   SELECT PROD_ID,
+   		AREA_ID,
+   		STATIS_MONTH,
+       PACKAGE_ID, 
+       PACKAGE_NAME,
+       CAMPN_KIND,
+       CAMPN_TYP, 
+       ORDER_USR, 
+       INCOME_FEE_L3M_AG,    
+       INCOME_FEE_M, 
+       case when INCOME_FEE_L3M_AG = 0 AND INCOME_FEE_M = 0 then 0 when INCOME_FEE_L3M_AG = 0 AND INCOME_FEE_M > 0 then 0 else INCOME_FEE_M * 1.0000 / INCOME_FEE_L3M_AG end ARPU_RA,   
+       DOU_L3M_AG, 
+       DOU_M, 
+       case when DOU_L3M_AG = 0 AND DOU_M = 0 then 0 when DOU_L3M_AG = 0 AND DOU_M > 0 then 0 else DOU_M * 1.0000 / DOU_L3M_AG
+       end DOU_RA,  
+       MOU_L3M_AG,
+       MOU_M,
+       case when MOU_L3M_AG = 0 AND MOU_M = 0 then 0 when MOU_L3M_AG = 0 AND MOU_M > 0 then 0 else MOU_M * 1.0000 / MOU_L3M_AG end MOU_RA   
+  FROM BONC03.MK_ACTIVE_USD_01_PORTRAIT_M
+ WHERE STATIS_MONTH =  #{statisMonth }
+   and AREA_ID =#{areaId}  
+   
+	</select>
+	 <select id="echart1" resultType="java.util.Map" parameterType="java.util.Map">
+	 SELECT PROD_ID,
+       PACKAGE_ID, 
+       PACKAGE_NAME,
+       COMP_MONTH, 
+       INCOME_FEE_L3M_AG,
+       INCOME_FEE_M, 
+       case when INCOME_FEE_L3M_AG = 0 AND INCOME_FEE_M = 0 then  0 when INCOME_FEE_L3M_AG = 0 AND INCOME_FEE_M > 0 then 0 else INCOME_FEE_M * 1.0000 / INCOME_FEE_L3M_AG end ARPU_RA         
+  FROM BONC03.MK_ACTIVE_USD_02_PORTRAIT_M
+ WHERE STATIS_MONTH = #{statisMonth}
+   and PROD_ID =#{PROD_ID}
+   and PACKAGE_ID =#{PACKAGE_ID}
+   AND COMP_MONTH >= concat(TRIM(char(STATIS_MONTH/100)) , '01' )
+   and AREA_ID = #{areaId}  
+	   ORDER BY  STATIS_MONTH
+	 </select>
+	 
+	 	 <select id="echart3" resultType="java.util.Map" parameterType="java.util.Map">
+	SELECT PROD_ID,
+       PACKAGE_ID, 
+       PACKAGE_NAME, 
+       COMP_MONTH, 
+       DOU_L3M_AG, 
+       DOU_M, 
+       case when DOU_L3M_AG = 0 AND DOU_M = 0 then  0 when DOU_L3M_AG = 0 AND DOU_M > 0 then 0 else  DOU_M * 1.0000 / DOU_L3M_AG  end DOU_RA       
+  FROM BONC03.MK_ACTIVE_USD_02_PORTRAIT_M
+ WHERE STATIS_MONTH =#{statisMonth}
+   and PROD_ID = #{PROD_ID}
+   and PACKAGE_ID = #{PACKAGE_ID}
+   AND COMP_MONTH >= concat(TRIM(char(STATIS_MONTH/100)) , '01' )
+   and AREA_ID =  #{areaId}  
+     ORDER BY  STATIS_MONTH
+	 </select>
+	 
+	 <select id="echart2" resultType="java.util.Map" parameterType="java.util.Map">
+	 SELECT PROD_ID,
+       PACKAGE_ID, 
+       PACKAGE_NAME,
+       COMP_MONTH, 
+       MOU_L3M_AG, 
+       MOU_M, 
+       case when MOU_L3M_AG = 0 AND MOU_M = 0 then  0 when MOU_L3M_AG = 0 AND MOU_M > 0 then  0 else MOU_M * 1.0000 / MOU_L3M_AG end MOU_RA   
+  FROM BONC03.MK_ACTIVE_USD_02_PORTRAIT_M
+  WHERE STATIS_MONTH =#{statisMonth}
+   and PROD_ID = #{PROD_ID}
+   and PACKAGE_ID = #{PACKAGE_ID}
+   AND COMP_MONTH >= concat(TRIM(char(STATIS_MONTH/100)) , '01' )
+   and AREA_ID =  #{areaId}  
+     ORDER BY  STATIS_MONTH
+
+	 </select>
+	 
+	 <select id="echart4" resultType="java.util.Map" parameterType="java.util.Map">
+	   SELECT PROD_ID, 
+       PACKAGE_ID, 
+       PACKAGE_NAME, 
+       UP_FEE_USRS, 
+       NC_FEE_USRS, 
+       DW_FEE_USRS, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE UP_FEE_USRS * 1.0000 / ORDER_USR END UP_FEE_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE NC_FEE_USRS * 1.0000 / ORDER_USR END NC_FEE_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE DW_FEE_USRS * 1.0000 / ORDER_USR END DW_FEE_USRS_RA   
+  FROM BONC03.MK_ACTIVE_USD_01_PORTRAIT_M
+ WHERE STATIS_MONTH =#{statisMonth}
+   and PROD_ID =#{PROD_ID}
+   and PACKAGE_ID = #{PACKAGE_ID}
+   and AREA_ID =  #{areaId}  
+    ORDER BY  STATIS_MONTH
+	 
+	 </select>
+	 
+ 	<select id="echart5" resultType="java.util.Map" parameterType="java.util.Map">
+	 SELECT PROD_ID,
+       PACKAGE_ID, 
+       PACKAGE_NAME, 
+       UP_FEE_30_USRS, 
+       UP_FEE_20_30_USRS,
+       UP_FEE_10_20_USRS, 
+       UP_FEE_5_10_USRS,
+       UP_FEE_1_5_USRS, 
+       NC_FEE_0_0_USRS, 
+       DW_FEE_0_5_USRS, 
+       DW_FEE_5_10_USRS, 
+       DW_FEE_10_20_USRS, 
+       DW_FEE_20_30_USRS, 
+       DW_FEE_30_USRS,
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE UP_FEE_30_USRS * 1.0000 / ORDER_USR END UP_FEE_30_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE UP_FEE_20_30_USRS * 1.0000 / ORDER_USR END UP_FEE_20_30_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE UP_FEE_10_20_USRS * 1.0000 / ORDER_USR END UP_FEE_10_20_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE UP_FEE_5_10_USRS * 1.0000 / ORDER_USR END UP_FEE_5_10_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE UP_FEE_1_5_USRS * 1.0000 / ORDER_USR END UP_FEE_1_5_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE NC_FEE_0_0_USRS * 1.0000 / ORDER_USR END NC_FEE_0_0_USRS_RA,
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE DW_FEE_0_5_USRS * 1.0000 / ORDER_USR END DW_FEE_0_5_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE DW_FEE_5_10_USRS * 1.0000 / ORDER_USR END DW_FEE_5_10_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE DW_FEE_10_20_USRS * 1.0000 / ORDER_USR END DW_FEE_10_20_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE DW_FEE_20_30_USRS * 1.0000 / ORDER_USR END DW_FEE_20_30_USRS_RA, 
+       CASE WHEN ORDER_USR = 0 THEN 0 ELSE DW_FEE_30_USRS * 1.0000 / ORDER_USR END DW_FEE_30_USRS_RA 
+  FROM BONC03.MK_ACTIVE_USD_01_PORTRAIT_M
+ WHERE STATIS_MONTH =#{statisMonth}
+   and PROD_ID =#{PROD_ID}
+   and PACKAGE_ID = #{PACKAGE_ID}
+   and AREA_ID =  #{areaId}  
+     ORDER BY  STATIS_MONTH
+	 </select>
+	 
+ </mapper>

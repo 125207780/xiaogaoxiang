@@ -1,0 +1,42 @@
+@CHARSET "UTF-8";
+#topwindow101context > .modal-bottom > button {
+	display: none !important;
+}
+.rule-all {
+	width: 100%;
+	height: 100%;
+	color: #fff;
+}
+.rule-buttom {
+	width: 100%;
+}
+.select-top {
+	display: block;
+	float: left;
+	margin-bottom: 10px;
+}
+.select-top > button {
+	height: 28px;
+    line-height: 8px;
+    margin-left: 10px;
+}
+.select-top > span {
+	display: inline-block;
+	width: 85px;
+    height: 100%;  
+    float: left;
+    text-align: right;
+}
+.select-top > select {
+	width: 150px;
+    float: left;
+}
+.select-top > span > i {
+	color: red;
+    margin-right: 5px;
+    font-style: normal;
+    line-height: 28px;
+}
+.ui-jqgrid-view{
+	border:none !important;
+}

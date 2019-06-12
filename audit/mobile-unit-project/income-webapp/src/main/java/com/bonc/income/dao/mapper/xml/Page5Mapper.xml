@@ -1,0 +1,54 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="com.bonc.income.dao.mapper.Page5Mapper" >
+ 
+ <select id="selectTable" resultType="java.util.Map" parameterType="java.util.Map">
+ select PROD_ID, 
+		AREA_ID,
+		ACTIVE_MONTH,
+   		STATIS_MONTH,
+       PACKAGE_ID, 
+       PACKAGE_NAME, 
+       CAMPN_KIND, 
+       CAMPN_TYP, 
+	   BF_MLOST_USR,
+	   AF_ONNET_TX_USR, 
+	   CASE WHEN BF_MLOST_USR=0 THEN 0 ELSE AF_ONNET_TX_USR*1.0000/BF_MLOST_USR END LIVE_RA, 
+	   ORDER_USR as A,
+	   AF_MLOST_USR, 
+	   CASE WHEN ORDER_USR=0 THEN 0 ELSE AF_MLOST_USR*1.0000/ORDER_USR END MLOST_RA, 
+	    ORDER_USR AS B, 
+	   AF_LOST_USR, 
+	   CASE WHEN ORDER_USR=0 THEN 0 ELSE AF_LOST_USR*1.0000/ORDER_USR END LOST_RA  
+  from BONC03.MK_ACTIVE_LIVE_01_PORTRAIT_M  
+ WHERE STATIS_MONTH = #{statisMonth}
+   AND INTEGER(ACTIVE_MONTH) =STATIS_MONTH
+   and AREA_ID =#{areaId}
+
+ </select>
+	<select id="echart1"  resultType="java.util.Map" parameterType="java.util.Map">
+	select PROD_ID, 
+       PACKAGE_ID,
+       PACKAGE_NAME, 
+       CAMPN_KIND, 
+       CAMPN_TYP, 
+       ACTIVE_MONTH ,
+       ORDER_USR,
+       ONNET_TX_USR, 
+       BF_MLOST_USR, 
+       AF_ONNET_TX_USR, 
+       case when BF_MLOST_USR=0 then 0 else AF_ONNET_TX_USR*1.0000/BF_MLOST_USR end as BF_MLOST_RA, 
+       BF_GOOD_USR,
+       AF_GOOD_USR,
+       case when BF_GOOD_USR=0 then 0 else AF_GOOD_USR*1.0000/BF_GOOD_USR end as BF_GOOD_RA, 
+       AF_MLOST_USR, 
+       AF_LOST_USR,	
+       case when ORDER_USR=0 then 0 else AF_MLOST_USR*1.0000/ORDER_USR end as AF_MLOST_RA,  
+       case when ORDER_USR=0 then 0 else AF_LOST_USR*1.0000/ORDER_USR end as AF_LOST_RA  
+  from BONC03.MK_ACTIVE_LIVE_01_PORTRAIT_M
+ WHERE STATIS_MONTH = #{statisMonth}
+   and ACTIVE_MONTH >= concat(TRIM(char(STATIS_MONTH/100)) , '01' )
+   and PROD_ID = #{PROD_ID}
+   and PACKAGE_ID = #{PACKAGE_ID}
+   and AREA_ID =#{areaId}
+	</select>
+ </mapper>

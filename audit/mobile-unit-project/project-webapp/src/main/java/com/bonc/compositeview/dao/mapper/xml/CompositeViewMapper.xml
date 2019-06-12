@@ -1,0 +1,545 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.compositeview.dao.mapper.CompositeViewMapper">
+    
+	<select id="getGridInfo"  resultType="java.util.Map">
+		SELECT 
+			GRID_COUNT, grid_type1_count, grid_type2_count, grid_type3_count, directors_count, chnl_manager_count, 
+			cd_manager_count, sale_manager_count, direct_user_count, direct_user_count, repair_user_count  
+	 	FROM 
+	 		GRID_INFO_OVERVIEW 
+	 	WHERE 1=1             
+		<if test="orgId != null and orgId != ''">
+			AND ORG_ID = #{orgId}
+		</if>
+	</select>
+	
+	<select id="getGridType" resultType="java.util.Map">
+		SELECT 
+			income_scale, cdcustomer_scale, cell_scale, channel_scale, customer_scale
+		FROM 
+			GRID_INFO_OVERVIEW 
+		WHERE 1=1   
+		<if test="orgId !=null and orgId != ''">
+			AND ORG_ID = #{orgId}
+		</if>
+	</select>
+	
+	<select id="getChannelStation" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			chnl_num, wg_chnl_num, station_num, wg_station_num, cell_num, wg_cell_num, zdcell_num, 
+			wg_zdcell_num, ab_jt_num, wg_ab_num, cd_jt_num, wg_cd_num
+		FROM
+			GRID_INFO_OVERVIEW
+		WHERE
+			org_Id = #{orgId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getIndicators" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			income, BRO_COUNT, GOVER_CUS_SUM, BUSINESS_ADD, TELE_COUNT, USER_COUNT_4G 
+		FROM 
+			GRID_INFO_OVERVIEW
+		WHERE
+			org_Id = #{orgId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getScale" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			customers_call_count, customers_call_add, customers_call_net, customers_rate_23g, customers_rate_4g, broad_user_count
+		FROM 
+			GRID_INFO_OVERVIEW 
+		WHERE 
+			1=1                
+		<if test="orgId !=null and orgId != ''">
+			AND ORG_ID = #{orgId}
+		</if>
+	</select>
+	
+	<select id="getMonitoring" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			login_dir_sum, channel_sign_count, task_count, task_done, task_alarm, physical_sign_count, cell_count,
+			colleges_count, store_count, bro_cell_count, market_count, business_count
+		FROM 
+			GRID_INFO_OVERVIEW 
+		WHERE 
+			1=1                 
+		<if test="orgId !=null and orgId != ''">
+			AND ORG_ID = #{orgId}
+		</if>
+	</select>
+	
+	<select id="getTaskSituation" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			task_sum1, task_rate1, task_sum2, task_rate2, task_sum3, task_rate3
+		FROM 
+			GRID_INFO_OVERVIEW WHERE 1=1 
+		<if test="orgId !=null and orgId != '' ">
+			AND ORG_ID = #{orgId}
+		</if>
+	</select>
+	
+	<select id="getAssessmentScore" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			ORG_NAME, kpi_value
+    	FROM 
+    		GRID_INFO_OVERVIEW 
+    	WHERE 
+    		ORG_LEVEL = (
+    			(SELECT 
+    				ORG_LEVEL 
+    			FROM 
+    				GRID_INFO_OVERVIEW 
+    			WHERE 
+    				ORG_ID = #{orgId} 
+    			) + 1)
+		<if test="orgLevel !=null and orgLevel != '' and orgLevel=='2'.toString()">
+			AND AREA_ID=#{orgId}
+		</if> 
+	</select>
+	
+	<select id="getTopScale" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			<!-- 收入 -->
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'income'.toString()">
+				INCOME AS PUB_DATA,
+			</if>
+			<!-- 宽带 -->
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'bro_count'.toString()">
+				BRO_COUNT AS PUB_DATA,
+			</if>
+			<!-- 政企 -->
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'gover_cus_sum'.toString()">
+				GOVER_CUS_SUM AS PUB_DATA,
+			</if>
+			<!-- 新增 -->
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'business_add'.toString()">
+				BUSINESS_ADD AS PUB_DATA,
+			</if>
+			<!-- 放号量 -->
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'tele_count'.toString()">
+				TELE_COUNT AS PUB_DATA,
+			</if>
+			<!-- 4G -->
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'user_count_4g'.toString()">
+				USER_COUNT_4G AS PUB_DATA,
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '1'.toString()">
+				AREA_NAME AS ORG_NAME
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '2'.toString()">
+				CNTY_NAME AS ORG_NAME
+			</if>
+		FROM
+			GRID_INFO_OVERVIEW
+		WHERE
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '1'.toString()">
+				ORG_LEVEL = 2
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '2'.toString()">
+				ORG_LEVEL = 3
+			AND 
+				AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		GROUP BY
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'income'.toString()">
+				INCOME,
+			</if>
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'bro_count'.toString()">
+				BRO_COUNT,
+			</if>
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'gover_cus_sum'.toString()">
+				GOVER_CUS_SUM,
+			</if>
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'business_add'.toString()">
+				BUSINESS_ADD,
+			</if>
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'tele_count'.toString()">
+				TELE_COUNT,
+			</if>
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'user_count_4g'.toString()">
+				USER_COUNT_4G,
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '1'.toString()">
+				AREA_NAME
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '2'.toString()">
+				CNTY_NAME
+			</if>
+		ORDER BY 
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'income'.toString()">
+				INCOME
+			</if>
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'bro_count'.toString()">
+				BRO_COUNT
+			</if>
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'gover_cus_sum'.toString()">
+				GOVER_CUS_SUM
+			</if>
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'business_add'.toString()">
+				BUSINESS_ADD
+			</if>
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'tele_count'.toString()">
+				TELE_COUNT
+			</if>
+			<if test="hexagonType != null and hexagonType != '' and hexagonType == 'user_count_4g'.toString()">
+				USER_COUNT_4G
+			</if>
+		DESC
+	</select>
+	
+	<select id="getGridInfoMore" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+		 area_id,area_name,cnty_id,cnty_name,grid_id,grid_name,grid_type,directors,chnl_manager,cd_manager,sale_manager,repair_user
+		FROM GRID_INFO_DETAIL where 1=1 
+		<if test="cityId != null and cityId  != ''">
+ 		and area_id=#{cityId }
+		</if>
+		<if test="cntyId != null and cntyId  != ''">
+ 		and cnty_Id=#{cntyId }
+		</if>
+		<if test="gridId != null and gridId  != ''">
+ 		and grid_id=#{gridId }
+		</if>
+	</select>
+	
+	<select id="getDirectorInfofoMore" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT city_id,city_name,cnty_name,cnty_id,grid_name,grid_code,office_id,name,belong_chnl_name,belong_chnl_code,lng,lat,cust_id,sex,work_date,phone,status
+         FROM DIRECT_SALE_USER_INFO_REPAIR	where 1=1 
+         <if test="cityId != null and cityId  != ''">
+ 		and city_Id=#{cityId }
+		</if>
+		<if test="cntyId != null and cntyId  != ''">
+ 		and cnty_Id=#{cntyId }
+		</if>
+		<if test="gridId != null and gridId  != ''">
+ 		and grid_Code=#{gridId }
+		</if>
+	</select>
+	
+	<select id="getGridTypeMore" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+ 		<if test="type != null and type != '' and type == '1'.toString()">
+ 		area_name,cnty_name,grid_name,physic_code,physic_name 
+		</if>
+		<if test="type != null and type != '' and type == '2'.toString()">
+ 		area_name,cnty_name,grid_name,physic_name,physic_lon,physic_lat
+		</if>
+		<if test="type != null and type != '' and type == '4'.toString()">
+ 		area_name,cnty_name,grid_name,physic_code,physic_name,physic_rest 
+		</if>
+		<if test="type != null and type != '' and type =='0'.toString()">
+ 		area_name,cnty_name,grid_name,user_count,income	
+		</if>
+		<if test="type != null and type != '' and type == '9'.toString()">
+ 		area_name,cnty_name,grid_name,user_id,user_info,phone,user_type
+		</if>
+ 		FROM GRID_CLASS_SCALE	 where 1=1 
+ 		<if test="type != null and type != ''">
+ 		and v_type=#{type}	
+		</if>
+		 <if test="cityId != null and cityId  != ''">
+ 		and area_Id=#{cityId }
+		</if>
+		<if test="cntyId != null and cntyId  != ''">
+ 		and cnty_Id=#{cntyId }
+		</if>
+		<if test="gridId != null and gridId  != ''">
+ 		and grid_Id=#{gridId }
+		</if>
+	</select>
+	
+	
+	<select id="gridInfos" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			grid_name,
+			CASE
+				WHEN grid_type1_count = 1 THEN '一类网格'
+				WHEN grid_type2_count = 1 THEN '二类网格'
+				WHEN grid_type3_count = 1 THEN '三类网格'
+			END AS grid_type,
+			chnl_count,
+			station_count,
+			cell_count,
+			zdcell_count,
+			highvalue_cell_count,
+			ab_jt_count,
+			cd_jt_count,
+			port_count,
+			addr9_count,
+			income,
+			tele_count,
+			bro_add_count,
+			terminal_count,
+			homenet_add_count,
+			cellrate_add_sum,
+			add_value_count,
+			fuse_rate,
+			enclosure_count,
+			chnl_wg_count,
+			station_wg_count,
+			cell_wg_count,
+			zdcell_wg_count
+		FROM
+			grid_info_home_page_main
+		WHERE
+			ORG_LEVEL = 4
+		<if test="orgId != null and orgId != ''">
+		AND
+			ORG_ID = #{orgId}
+		</if> 
+		ORDER BY STATIS_DATE DESC
+	    fetch first 1 rows only
+	</select>
+	
+	
+	<select id="cityInfos" parameterType="java.lang.String" resultType="java.util.Map">
+	SELECT
+		*
+	FROM
+		GRID_ACCURATE_OPERATE_DETAIL 
+	WHERE
+		<if test="orgId != null and orgId != ''">
+				ORG_ID = #{orgId}
+		</if> 
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == '1' or  orgLevel == '2' ">
+		AND
+			ORG_LEVEL = 1
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == '3' ">
+		AND
+			ORG_LEVEL = 2
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == '4' ">
+		AND
+			ORG_LEVEL = 3
+		</if>
+	ORDER BY
+	STATIS_DATE DESC FETCH FIRST 1 ROWS ONLY
+	</select>
+	
+	<select id="getTaskSituationDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		select
+			sum(CUS_INCOME) CUS_INCOME, sum(CUS_ADD_INCOME) CUS_ADD_INCOME,   
+			<!-- sum(CUS_ADD_INCOME)/sum(CUS_INCOME*10000) INCOME_RATE, -->
+			sum(TELE_COUNT) TELE_COUNT, sum(BROAD_ADD) BROAD_ADD, sum(TERMINAL) TERMINAL, sum(HOME_ADD_NET) HOME_ADD_NET,
+			<!-- (sum(BROAD_ADD) + sum(TERMINAL) + sum(HOME_ADD_NET))/sum(TELE_COUNT*100) BUS_RATE, -->
+			sum(VALUE_DEP) VALUE_DEP, sum(ENCLOSURE_COUNT) ENCLOSURE_COUNT, sum(FUSION_RATE) FUSION_RATE
+			<!-- sum(ENCLOSURE_COUNT)/sum(VALUE_DEP) WORK_RATE -->
+			<if test="orgLevel == '1'.toString()">
+				, AREA_ID, AREA_NAME
+			</if>
+			<if test="areaId != null and areaId != '' and orgLevel == '2'.toString()">
+				, CNTY_ID AREA_ID, CNTY_NAME AREA_NAME
+			</if>
+			<if test="areaId != null and areaId != '' and orgLevel == '3'.toString()">
+				, GRID_CODE AREA_ID, GRID_NAME AREA_NAME
+			</if>
+			<if test="areaId != null and areaId != '' and orgLevel == '4'.toString()">
+				, CHNL_CODE AREA_ID, CHNL_NAME AREA_NAME
+			</if>
+			<if test="areaId != null and areaId != '' and orgLevel == '5'.toString()">
+				, CHNL_CODE AREA_ID, CHNL_NAME AREA_NAME
+			</if>
+		FROM
+			GRID_TASK_DETAIL
+		<where>
+			<if test="orgLevel == '1'.toString()">
+				and 1 = 1
+				group by AREA_ID, AREA_NAME
+			</if>
+			<if test="areaId != null and areaId != '' and orgLevel == '2'.toString()">
+				and AREA_ID = #{areaId}
+				group by CNTY_ID,CNTY_NAME
+			</if>
+			<if test="areaId != null and areaId != '' and orgLevel == '3'.toString()">
+				and CNTY_ID = #{areaId}
+				group by GRID_CODE, GRID_NAME
+			</if>
+			<if test="areaId != null and areaId != '' and orgLevel == '4'.toString()">
+				and GRID_CODE = #{areaId}
+				group by CHNL_CODE,CHNL_NAME
+			</if>
+			<if test="areaId != null and areaId != '' and orgLevel == '5'.toString()">
+				and CHNL_CODE = #{areaId}
+				group by CHNL_CODE,CHNL_NAME
+			</if>
+		</where>
+	</select>
+	
+	<select id="channelStationInfoMore" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+ 			area_id,area_name,cnty_id,cnty_name,grid_id,grid_name,physic_code,physic_name ,physic_lon,physic_lat,enter_grid,physic_type,physic_rest
+ 		FROM 
+ 			GRID_PHYSIC_DETAIL 
+ 		WHERE 
+ 			1=1 
+ 		<if test="type != null and type != ''">
+		AND v_type=#{type}	
+		</if>
+		<if test="cityId != null and cityId  != ''">
+ 		AND area_Id=#{cityId }
+		</if>
+		<if test="cntyId != null and cntyId  != ''">
+ 		AND cnty_Id=#{cntyId }
+		</if>
+		<if test="gridId != null and gridId  != ''">
+ 		AND grid_Id=#{gridId }
+		</if>
+	</select>
+	
+	<select id="customersMore" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+ 			area_id,area_name,cnty_id,cnty_name,grid_id,grid_name,physic_code,physic_name ,physic_lon,physic_lat,enter_grid,physic_type,physic_rest
+ 		FROM 
+ 			GRID_PHYSIC_DETAIL 
+ 		WHERE 
+ 			1=1 
+ 		<if test="type != null and type != ''">
+		AND v_type=#{type}	
+		</if>
+		<if test="cityId != null and cityId  != ''">
+ 		AND area_Id=#{cityId }
+		</if>
+		<if test="cntyId != null and cntyId  != ''">
+ 		AND cnty_Id=#{cntyId }
+		</if>
+		<if test="gridId != null and gridId  != ''">
+ 		AND grid_Id=#{gridId }
+		</if>
+	</select>
+
+	<select id="IndicatorsMore" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+ 			area_id,area_name,cnty_id,cnty_name,grid_id,grid_name,physic_code,physic_name ,physic_lon,physic_lat,enter_grid,physic_type,physic_rest
+ 		FROM 
+ 			GRID_PHYSIC_DETAIL 
+ 		WHERE 
+ 			1=1 
+ 		<if test="type != null and type != ''">
+		AND v_type=#{type}	
+		</if>
+		<if test="cityId != null and cityId  != ''">
+ 		AND area_Id=#{cityId }
+		</if>
+		<if test="cntyId != null and cntyId  != ''">
+ 		AND cnty_Id=#{cntyId }
+		</if>
+		<if test="gridId != null and gridId  != ''">
+ 		AND grid_Id=#{gridId }
+		</if>
+	</select>
+	<select id="monitoringMore" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+ 			area_id,area_name,cnty_id,cnty_name,grid_id,grid_name,physic_code,physic_name ,physic_lon,physic_lat,enter_grid,physic_type,physic_rest
+ 		FROM 
+ 			GRID_PHYSIC_DETAIL 
+ 		WHERE 
+ 			1=1 
+ 		<if test="type != null and type != ''">
+		AND v_type=#{type}	
+		</if>
+		<if test="cityId != null and cityId  != ''">
+ 		AND area_Id=#{cityId }
+		</if>
+		<if test="cntyId != null and cntyId  != ''">
+ 		AND cnty_Id=#{cntyId }
+		</if>
+		<if test="gridId != null and gridId  != ''">
+ 		AND grid_Id=#{gridId }
+		</if>
+	</select>
+	
+	
+		<select id="assessmentScoreMore" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+ 			area_id,area_name,cnty_id,cnty_name,grid_id,grid_name,physic_code,physic_name ,physic_lon,physic_lat,enter_grid,physic_type,physic_rest
+ 		FROM 
+ 			GRID_PHYSIC_DETAIL 
+ 		WHERE 
+ 			1=1 
+ 		<if test="type != null and type != ''">
+		AND v_type=#{type}	
+		</if>
+		<if test="cityId != null and cityId  != ''">
+ 		AND area_Id=#{cityId }
+		</if>
+		<if test="cntyId != null and cntyId  != ''">
+ 		AND cnty_Id=#{cntyId }
+		</if>
+		<if test="gridId != null and gridId  != ''">
+ 		AND grid_Id=#{gridId }
+		</if>
+	</select>
+	
+	<select id="getAreaInfoByPId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			org_id AREA_ID,
+			name AREA_NAME
+		FROM
+			sys_org 
+		<where>
+			<if test="orgId != null and orgId != ''">
+				AND PID = #{orgId}
+			</if>
+		</where> 
+	</select>
+	
+	<select id="getChnlInfoByGridCode" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			CHNL_CODE AREA_ID,
+			CHNL_NAME AREA_NAME
+		FROM
+			CHANNEL_INFO
+		<where>
+			<if test="gridCode != null and gridCode != ''">
+				GRID_CODE = #{gridCode}
+			</if>
+		</where> 
+	</select>
+	
+	<select id="getAreaInfoById" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			org_id AREA_ID,
+			name AREA_NAME
+		FROM
+			sys_org 
+		where org_id = #{orgId} 
+	</select>
+	
+	<select id="initAreaDataByOrgId" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT
+			cnty_name,grid_count,
+			grid_type1_count,grid_type2_count,grid_type3_count,
+			chnl_count,
+			station_count,
+			cell_count,
+			zdcell_count,
+			highvalue_cell_count,
+			ab_jt_count,
+			cd_jt_count,
+			port_count,
+			addr9_count,
+			income,
+			tele_count,
+			bro_add_count,
+			terminal_count,
+			homenet_add_count,
+			cellrate_add_sum,
+			add_value_count,
+			fuse_rate,
+			enclosure_count,
+			chnl_wg_count,
+			station_wg_count,
+			cell_wg_count,
+			zdcell_wg_count
+		FROM
+			grid_info_home_page_main
+		WHERE
+			ORG_LEVEL = 3 
+		AND 
+			CNTY_CODE = #{orgId}
+		ORDER BY 
+			STATIS_DATE DESC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+</mapper>

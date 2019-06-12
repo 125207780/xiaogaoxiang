@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.GroupInfoMapper">
+
+	<!-- 集团基础信息 -->
+	<select id="getGroupInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			* 
+		FROM 
+			group_info_detail	
+		WHERE 
+			GC_CODE = #{GCCode,jdbcType=VARCHAR}
+	</select>
+	
+	
+	
+</mapper>

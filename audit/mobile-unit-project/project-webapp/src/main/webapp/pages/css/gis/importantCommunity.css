@@ -1,0 +1,176 @@
+.carousel-control{
+	background:none !important;
+	background-image:none !important;
+	top:38px;
+	width:7%;
+}
+.carousel-control .glyphicon-chevron-left{
+	margin-left: -22px;
+}
+.carousel-control .glyphicon-chevron-right{
+	margin-right: -22px;
+}
+.item {
+	padding: 0px 30px;
+}
+.carousel-indicators {
+    bottom: -20px;
+}
+.carousel-indicators .active {
+    margin: 0;
+    width: 12px;
+    height: 12px;
+    background-color: #0074d6;
+}
+.carousel-indicators li{
+	border: 1px solid #0074d6;
+}
+.modal-body{
+	background: rgba(14,19,34,0.8);
+	padding: 0px;
+	border-radius: 6px 6px 5px 5px;
+}
+.channelBaseInfo, .channelBaseInfoList{
+	margin:0px;
+	list-style:none;
+}
+.channelBaseInfoDiv{
+	float:left;
+	width:45%;
+	height: 42px;
+	line-height: 43px;
+	margin-left: 5%;
+	
+	position: relative;
+    display: inline-block;
+    vertical-align: top;
+}
+.channelBaseInfoDiv1{
+	height: 50px;
+	line-height: 51px;
+}
+.channelBaseInfoDiv1 .channelBaseInfoL, .channelBaseInfoDiv1 .channelBaseInfoR{
+	float:left;
+}
+.channelBaseInfoDiv3{
+	float:left;
+	width:33.3333%;
+	tex-align:center;
+	height: 60px;
+}
+.channelBaseInfoL{
+	float:left;
+	text-align:left;
+	color:#fff;
+	width: 105px;
+}
+.channelBaseInfoLC{
+	float:left;
+	text-align:left;
+	color:#fff;
+	width: 300px;
+}
+.channelBaseInfoR{
+	float:left;
+	text-align:left;
+	color:#0ab8b6;
+	font-size:15px;
+	width:235px;
+	height: 42px;
+	word-break:keep-all;/* 不换行 */
+	white-space:nowrap;/* 不换行 */
+	overflow:hidden;/* 内容超出宽度时隐藏超出部分的内容 */
+	text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden一起使用。*/
+}
+.channelBaseInfoL3{
+	/* text-align: center; */
+    color: #fff;
+}
+.channelBaseInfoR3{
+	/* text-align: center; */
+	color:#0ab8b6;
+	font-size:15px;
+	margin-left: 28px;
+}
+.itemChart {
+	float:left;
+	width:38% !important;
+	height:300px;
+}
+.itemTable{
+	float:left;
+	width:60% !important;
+	height:300px;
+}
+#itemChart{
+	float:left;
+	width:60%;
+	height:300px;
+}
+.modal-headers{
+/* 	background: rgba(27,26,24,0.5) !important; */
+	padding:10px 5px;
+	border-radius: 5px 5px 0px 0px;
+	z-index:9999;
+	border-bottom:2px solid #0074d6;
+	text-align:center;
+}
+.modal-headers .close{
+	color:#fff;
+	opacity:0.8;
+	display: none;
+}
+.item{
+	padding: 0px 0px;
+}
+.channelBaseInfo{
+	padding:0 30px;
+}
+.carousel-control{
+	color:#0074d6;
+	opacity:1;
+}
+.carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right{
+	font-size:20px;
+}
+.ui-jqgrid tr.ui-row-ltr td{
+	color:#fff;
+}
+.modal-bottom{
+	display: none;
+}
+.carousel-inner{
+	border-bottom: 2px solid #0074d6;
+	height: 352px;
+}
+.ui-widget-content{
+	height: 35px !important;	
+}
+
+#grid-pager_center > .ui-pg-table > tbody > tr > .ui-pg-button > .ui-icon {
+    display: inline-block !important;
+    padding: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    line-height: 16px !important;
+    text-align: center !important;
+    position: static !important;
+    float: none !important;
+    margin: 0 2px !important !important;
+    border-radius: 100% !important;
+}
+#grid-pager_center > table > tbody > tr > .ui-pg-button > .ui-separator{
+	height: 12px !important;
+}
+#grid-pager_center > table > tbody > tr > td > input{
+	width: 18px !important;
+    height: 14px !important;
+}
+#grid-pager_center > table > tbody > tr > td > select{
+	display: block;
+    height: 18px;
+    width: 49px;
+    margin: 0;
+    padding: 0px;
+    line-height: normal;
+}

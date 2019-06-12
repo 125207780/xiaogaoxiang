@@ -1,0 +1,153 @@
+@CHARSET "UTF-8";
+html,body {
+	color:#FFF;
+	width: 100%;
+	height: 100%;
+}
+.firstPage-left {
+	width: 32%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.firstPage-middle {
+	width: 36%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.firstPage-right {
+	width: 32%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.portrait-top {
+	width: 100%;
+    height: 15%;
+}
+.doubleSelect {
+	height: 80%;
+}
+.leftSelect {
+	display: block;
+	float: left;
+	width: 50%;
+	margin-top: 2%;
+}
+.leftSelect > select {
+	width: 60%;
+}
+.leftSelect > span {
+	height: 28px;
+	line-height: 28px;
+	font-size: 15px;
+}
+.portrait-buttom {
+	/* border: 1px solid #00E1FD; */
+	width: 100%;
+	height: 84%;
+}
+hr {
+	border-top: 1px solid #007284;
+	margin-top: -8px;
+    width: 90%;
+    margin-bottom: 0px !important;
+}
+.account-top {
+	width: 100%;
+	height: 15%;
+}
+.middleButton {
+	display: block;
+    float: left;
+    width: 20%;
+    text-align: center;
+    margin-top: 5px;
+}
+.rightButton {
+	display: block;
+    float: left;
+    width: 20%;
+    text-align: center;
+    margin-top: 5px;
+}
+.middleButton > span {
+	cursor: pointer;
+}
+.middle-button {
+	height: 79%;
+}
+.right-button {
+	height: 79%;
+}
+#mainOrg {
+	height: 100%;
+	height: 96%;
+    width: 90%;
+    margin-left: 5%;
+}
+.middle-map {
+	height: 50%;
+}
+.middle-line {
+	height: 36.3%;
+}
+.echartsLine {
+	height: 100%;
+}
+.right-Pie {
+	height: 50%;
+}
+#rightPie {
+	height: 100%;
+	width: 100%;
+}
+.right-Bar {
+	height: 36.3%;
+}
+#rightBar {
+	height: 100%;
+	width: 100%;
+}
+.sex-portrait {
+	width: 100%;
+	height: 25%;
+}
+#sexPortrait {
+	width: 100%;
+	height: 100%;
+}
+.tow-portrait {
+	width: 100%;
+	height: 40%;
+}
+.nesting {
+	width: 50%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.tow-features {
+	width: 100%;
+	height: 35.1%;
+}
+.features {
+	width: 50%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+ .topPanel {
+	position: absolute;
+    bottom: 20px;
+    z-index: 10;
+    left: 0px;
+    height: 100px;
+    /* color: gold;
+    background-color: rgba(1,39,67,0.7);
+    border: 1px solid rgb(0,158,188); */
+ }
+ .msc_serchBtn,.msc_input {
+ 	top:10px !important;
+ } 

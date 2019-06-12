@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+        id="WebApp_ID" version="3.0">
+	
+	<!--Spring 监听器  -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
+	<!--系统初始化监听器  -->
+	<listener>
+		<listener-class>com.bonc.common.listener.ServerInitListener</listener-class>
+	</listener>
+	<!--Spring核心分发器  -->
+	<servlet>
+		<servlet-name>spring</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring-servlet.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>spring</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	<!-- SpringMvc Rest支持拦截器 -->
+	<filter>
+		<filter-name>HiddenHttpMethodFilter</filter-name>
+		<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>HiddenHttpMethodFilter</filter-name>
+		<servlet-name>spring</servlet-name>
+	</filter-mapping>
+	
+	<!--SpringMvc 转码器  -->
+	<filter>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+	    <filter-name>CharacterEncodingFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
+        <filter-name>CORS</filter-name>    
+        <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>    
+        <init-param>    
+            <param-name>cors.allowOrigin</param-name>    
+            <param-value>*</param-value>    
+        </init-param>    
+        <init-param>    
+            <param-name>cors.supportedMethods</param-name>    
+            <param-value>GET, POST, HEAD, PUT, DELETE</param-value>    
+        </init-param>    
+        <init-param>    
+            <param-name>cors.supportedHeaders</param-name>    
+            <param-value>Accept, Origin, X-Requested-With, Content-Type, Last-Modified</param-value>    
+        </init-param>    
+        <init-param>    
+            <param-name>cors.exposedHeaders</param-name>    
+            <param-value>Set-Cookie</param-value>    
+        </init-param>    
+        <init-param>    
+            <param-name>cors.supportsCredentials</param-name>    
+            <param-value>true</param-value>    
+        </init-param>    
+    </filter>      
+    <filter-mapping>    
+        <filter-name>CORS</filter-name>    
+        <url-pattern>/*</url-pattern>    
+    </filter-mapping>  
+	<!--单点start -->
+	<!-- <listener>
+		<description>单点登录,如果使用单点登出，须配置SingleSignOutHttpSessionListener监听器  </description>
+		<listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
+	</listener>
+	<filter>  
+	    <filter-name>singleSignOutFilter</filter-name>  
+	    <filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>  
+	</filter>  
+	<filter-mapping>  
+ 	   <filter-name>singleSignOutFilter</filter-name>  
+	   <url-pattern>/*</url-pattern>  
+	</filter-mapping>  
+	<filter>
+		<filter-name>SSO Filter</filter-name>
+		<filter-class>com.bonc.sso.client.SSOFilter</filter-class>
+		<init-param>
+			<description>本系统，CAS客户端地址，逗号分隔为本机的双ip地址 </description>
+			<param-name>serverName</param-name>
+			<param-value>localhost:8080</param-value>
+		</init-param>
+		<init-param>
+			<description>CAS服务器地址全路径</description>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>http://192.168.0.16:8766/cas</param-value>
+		</init-param>
+		<init-param>
+			<description>CAS服务器登录地址 全路径</description>
+			<param-name>casServerLoginUrl</param-name>
+			<param-value>http://192.168.0.16:8766/cas/login</param-value>
+		</init-param>
+		<init-param>
+			<description> 是否启用单点登出 </description>
+			<param-name>singleSignOut</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<description> 单点登录忽略校验URL </description>
+			<param-name>skipUrls</param-name>
+			<param-value>/rest/.*,/getAuth/.*,/getUserInfo/.*,.*\.(css|js|jpg|jpeg|bmp|png|gif|ico)$</param-value>
+		</init-param>
+		<init-param>
+			<description> 登录成功后的的用户信息准备 须实现com.bonc.pure.sso.client.ILoginUserHand 接口 </description>
+			<param-name>loginUserHandle</param-name>
+			<param-value>com.bonc.sso.AuthHandleImpl</param-value>
+		</init-param>
+		<init-param>
+			<description> 可选参数，客户端应用使用的字符集，如果已经有其他的地方设置过了，则会忽略这个配置。默认将使用UTF-8作为默认字符集 </description>
+			<param-name>characterEncoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<description> 解决读取CAS server端返用户扩展信息中文乱码问题 </description>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>SSO Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>  -->
+	<!-- 单点end -->
+	
+	<!-- 配置activiti的ExplorerRestApplication
+	<servlet>
+		<servlet-name>RestletServlet</servlet-name>
+		<servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
+		<init-param>
+			<param-name>org.restlet.application</param-name>
+			<param-value>com.bonc.activiti.ExplorerRestApplication</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RestletServlet</servlet-name>
+		<url-pattern>/service/*</url-pattern>
+	</servlet-mapping>
+	-->
+	<!-- 登陆验证拦截器 -->
+	<filter>
+		<filter-name>loginFilter</filter-name>
+		<filter-class>com.bonc.common.filter.LoginFilter</filter-class>
+		<init-param>
+			<param-name>excludedPages</param-name>
+			<param-value>
+				/pages/jsp/login/login.jsp,
+				/checkSession,
+				/login,
+				/tokenLogin,
+				/pages/gis/power/power.jsp
+			</param-value>
+		</init-param> 
+		<init-param>
+			<description> 是否启用单点登录 </description>
+			<param-name>singleSignOut</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param>
+			<description> 重定向页面 </description>
+			<param-name>redirectPage</param-name>
+			<param-value>/pages/jsp/login/login.jsp</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>loginFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- 登陆验证拦截器 -->
+	<!--<filter>-->
+		<!--<filter-name>jspFilter</filter-name>-->
+		<!--<filter-class>com.bonc.common.filter.JspFilter</filter-class>-->
+		<!--<init-param>-->
+			<!--<param-name>excludedPages</param-name>-->
+			<!--<param-value>-->
+				<!--login.jsp,timeout.jsp,frame.jsp,topMenuFrame.jsp,appDetailsDrillMap.jsp,workOrder.jsp,workOrderDetail.jsp,myWorkOrder.jsp,backlogWorkOrder.jsp,myWorkOrderDetail.jsp,activitiModel.jsp,flowManager.jsp-->
+			<!--</param-value>-->
+		<!--</init-param> -->
+	<!--</filter>-->
+	<!--<filter-mapping>-->
+		<!--<filter-name>jspFilter</filter-name>-->
+		<!--<url-pattern>*.jsp</url-pattern>-->
+	<!--</filter-mapping>-->
+	<!--Session过期监听器  -->
+	<listener>    
+	    <listener-class>    
+	        com.bonc.common.listener.SessionExpireListener
+	    </listener-class>    
+	</listener>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/resource/bonc/html/404.html</location>
+	</error-page>
+	
+	<!-- 获取request监听器 -->
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	
+	<!-- training下文件上传下载
+   <servlet>
+        <servlet-name>UploadHandleServlet</servlet-name>
+        <servlet-class>com.bonc.training.bailong.UploadHandleServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UploadHandleServlet</servlet-name>
+        <url-pattern>/servlet/UploadHandleServlet</url-pattern>
+    </servlet-mapping>
+	<servlet>
+        <servlet-name>ListFileServlet</servlet-name>
+        <servlet-class>com.bonc.training.bailong.ListFileServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ListFileServlet</servlet-name>
+        <url-pattern>/servlet/ListFileServlet</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>DownLoadServlet</servlet-name>
+        <servlet-class>com.bonc.training.bailong.DownLoadServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>DownLoadServlet</servlet-name>
+        <url-pattern>/servlet/DownLoadServlet</url-pattern>
+    </servlet-mapping>
+
+    -->
+</web-app>

@@ -1,0 +1,154 @@
+.nav-list {
+	margin: 0 !important;
+	padding: 0 !important;
+	list-style: none;
+	background:#2f4050;
+	color:#3f4e54;
+	height:100%;
+}
+body{
+	 overflow:hidden; 
+}
+.bd, .hd{
+	float: left;
+	margin:0;
+	padding:0;
+}
+.hd{
+	width:30px;
+	text-align: center;
+}
+.bd{
+	width:250px;
+}
+.bd ul li{
+	float:left;
+	text-align: center;
+	color:white;
+	cursor:pointer;
+}
+.bd ul li div{
+	font-size:11px;
+}
+.bd ul li div:hover{
+	font-weight:bolder;
+}
+.hd ul li {
+	cursor: pointer;
+	color:#b1bac1;
+}
+.hd ul .on{
+	color:#2795c8;	
+}
+.bd ul{
+	margin:0 !important;
+}
+.hd ul{
+	margin:0 !important;
+}
+.tab-content{
+	 background-color:#E4E6E9;
+}
+#sidebar{
+	background:#2f4050;
+}
+.submenu{
+	background:url(../images/wintab.png) no-repeat!important; border-radius:0px 8px 8px 0px;
+	width:80px !important;
+	
+}
+.submenu li{
+	border-bottom:0px;
+}
+.nav-list li a{
+	color:#b1bac1;
+	cursor: pointer;
+	text-align: center;
+	padding-left:0px !important;
+}
+.nav-list li a i{
+	font-size:14px;
+}
+.nav-list li a div{
+	font-size:12px;
+}
+.nav-list > li{
+	background:url(../images/leme-gx.png) center bottom no-repeat!important;
+}
+.nav-list li a:hover{
+	color:#ffffff;
+		 background:url(../images/lebghov.png) no-repeat !important;
+}
+.nav-list li .addbg:hover{
+	color:#ffffff;
+	 background:url(../images/lebghov.png) no-repeat !important;
+}
+.nav-list > li::before{
+	 background:url(../images/lebghov.png) no-repeat !important;
+}
+#sidebar-collapse{
+	background:#2f4050;
+	color:#b1bac1;
+}
+#tabs, .nav-tabs{
+	height:35px;
+}
+#tabs{
+	width: 100%;
+}
+.tab-content{
+	border:none;
+}
+.dropdown-toggle{
+	color:#b1bac1;
+}
+
+/*window*/
+.table-lm, .table-rm{
+	display:none;
+}
+.table-mm{
+	width:100%;
+}
+.table-mm-content{
+	padding: 0 !important;
+}
+.AeroWindow .table-mm-content{
+	border: none !important;
+}
+.AeroWindow .table-mm-container{
+	border:none;
+}
+table{
+	width:100%;
+}
+/*tab*/
+.nav-tabs {
+	border-bottom:2px solid #394f64;
+	z-index: 999;
+}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover{
+	background: #394f64;
+	color:white;
+	border-top:none;
+	height:34px;
+	border-bottom: none;
+	line-height: 15px;
+}
+.nav-tabs > li > a:hover{
+	background: #394f64;
+	color:white;
+	line-height: 15px;
+}
+.nav-tabs > li > a{
+	height:33px;
+	border-bottom: none;
+	line-height: 14px;
+}
+.win10mune{
+	width:260px !important;
+	padding-top:8px !important;
+	padding-bottom:8px !important;
+	padding-left:6px !important;
+}
+

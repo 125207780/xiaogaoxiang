@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE generatorConfiguration 
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" 
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<classPathEntry location="./lib/jdbc/ojdbc14.jar" />
+	<context id="sysGenerator" targetRuntime="MyBatis3Simple">
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+		<jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
+			connectionURL="jdbc:oracle:thin:@(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 10.161.4.74)(PORT = 1521))(LOAD_BALANCE = yes)(CONNECT_DATA =	(SERVER = DEDICATED)(SERVICE_NAME = db12c)))"
+			userId="monitor" password="monitor">
+		</jdbcConnection>
+		<!-- Model生成到什么位置 -->
+		<javaModelGenerator targetPackage="com.bonc.monitor.generator.entity"
+			targetProject="./src">
+			<property name="enableSubPackages" value="false" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		<!-- sqlMap*.xml生成的位置 -->
+		<sqlMapGenerator targetPackage="com.bonc.monitor.generator.dao.xml"
+			targetProject="./src">
+			<property name="enableSubPackages" value="false" />
+			<property name="mergeable" value="false"></property>
+		</sqlMapGenerator>
+		<!-- 客户端应用接口生成的位置(DAO Interface) -->
+		<javaClientGenerator type="XMLMAPPER"
+			targetPackage="com.bonc.monitor.generator.dao" targetProject="./src">
+			<property name="enableSubPackages" value="false" />
+		</javaClientGenerator>
+		<table schema="monitor" tableName="BS_SERVICE" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"  enableSelectByExample="false" selectByExampleQueryId="false" >
+			<property name="selectAllOrderByClause" value=""/>
+		</table>
+	</context>
+</generatorConfiguration>  

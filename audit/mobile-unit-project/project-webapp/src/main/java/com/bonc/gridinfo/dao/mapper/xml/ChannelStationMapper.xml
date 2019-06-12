@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.ChannelStationMapper">
+
+	<!-- 渠道信息 -->
+	<select id="getChannelManageInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.ChannelManage">
+		SELECT 
+			grid_code, market_type, channel_type, chnl_type_level1, chnl_type_level2, channel_count, sale_percent
+		FROM 
+			channel_manage_info
+		WHERE 
+			1=1 
+		AND 
+			grid_code = #{gridCode,jdbcType=VARCHAR}
+		<!-- <if test="physicalGridName != null and physicalGridName != ''">
+			and physical_grid_name like '%'||#{physicalGridName}||'%'
+		</if> -->
+	</select>
+	
+	<!-- 基站信息 -->
+	<select id="getBaseStationInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.BaseStation">
+		SELECT 
+			grid_code, physical_grid_code, physical_grid_name, station_type, station_num, cz_mobile_user, cz_call_user
+		FROM 
+			station_physical_grid_info
+		WHERE 
+			1=1 
+		AND 
+			grid_code = #{gridCode,jdbcType=VARCHAR}
+		<!-- <if test="physicalGridName != null and physicalGridName != ''">
+			and physical_grid_name like '%'||#{physicalGridName}||'%'
+		</if> -->
+	</select>
+	
+	<select id="selectChannelManageAll" resultType="com.bonc.gridinfo.dao.entity.ChannelManage">
+		SELECT 
+			grid_code, grid_name, market_type, channel_type, chnl_type_level1, chnl_type_level2, channel_count, sale_percent
+		FROM 
+			channel_manage_info 
+		WHERE 
+			grid_code = #{gridCode,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getOperator"  parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.ChannelManage">
+		SELECT MARKET_TYPE FROM CHANNEL_MANAGE_INFO WHERE GRID_CODE= #{gridCode,jdbcType=VARCHAR} GROUP BY MARKET_TYPE
+	</select>
+	
+	<select id="getChannelType"  parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.ChannelManage">
+		SELECT 
+			CHANNEL_TYPE 
+		FROM 
+			CHANNEL_MANAGE_INFO 
+		WHERE 
+			GRID_CODE = #{gridCode,jdbcType=VARCHAR} 
+		AND 
+			MARKET_TYPE = #{marketType,jdbcType=VARCHAR} 
+		GROUP BY 
+			CHANNEL_TYPE
+	</select>
+	
+	<select id="getChnlTypelevel2Ratio" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.ChannelManage">
+		SELECT 
+			CHNL_TYPE_LEVEL2,CAST (sum(SALE_PERCENT) AS decimal(5,2)) AS percent
+		FROM 
+			CHANNEL_MANAGE_INFO 
+		WHERE 
+			GRID_CODE = #{gridCode,jdbcType=VARCHAR} 
+		AND 
+			MARKET_TYPE =#{marketType,jdbcType=VARCHAR} 
+		AND 
+			CHANNEL_TYPE = #{channelType,jdbcType=VARCHAR}
+		GROUP BY 
+			CHNL_TYPE_LEVEL2 ORDER BY percent 
+	</select>
+	
+	<select id="selectBaseStationAll" resultType="com.bonc.gridinfo.dao.entity.BaseStation">
+		SELECT 
+			grid_code, physical_grid_code, physical_grid_name, station_type, station_num, cz_mobile_user, cz_call_user
+		FROM 
+			station_physical_grid_info 
+		WHERE 
+			grid_code = #{gridCode,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getBaseStationDetailsRatio"  parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.BaseStation">
+		SELECT 
+			STATION_TYPE,
+			CAST (double(sum(STATION_NUM_2G))*100/sum(station_num) AS DECIMAL(10,2)) AS per2G,
+			CAST (double(sum(STATION_NUM_3G))*100/sum(station_num) AS DECIMAL(10,2)) AS per3G,
+			CAST (double(sum(STATION_NUM_4G))*100/sum(station_num) AS DECIMAL(10,2)) AS per4G
+	 	FROM 
+	 		station_physical_grid_info 
+	 	WHERE 
+	 		GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		GROUP BY 
+			STATION_TYPE
+	</select>
+</mapper>

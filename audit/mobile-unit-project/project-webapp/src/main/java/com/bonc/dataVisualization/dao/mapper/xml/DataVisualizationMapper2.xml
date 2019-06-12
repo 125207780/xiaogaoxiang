@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.dataVisualization.dao.mapper.DataVisualizationMapper2">
+
+	<select id="getBigType" resultType="java.util.Map">
+		SELECT KPI_TYPE, KPI_TYPE_NAME FROM dim_kpi_type GROUP BY KPI_TYPE, KPI_TYPE_NAME
+	</select>
+	
+	<select id="getSmallType" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT KPI_CODE, KPI_NAME FROM dim_kpi WHERE 1=1 
+		<if test="kpiType !=null and kpiType != '' ">
+			AND KPI_TYPE = #{kpiType,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="getGridScale" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			NVL(SUM(CASE WHEN E.TYPE_ID = '1' THEN 1 ELSE 0 END),0) TYPE1,
+			NVL(SUM(CASE WHEN E.TYPE_ID = '2' THEN 1 ELSE 0 END),0) TYPE2,
+			NVL(SUM(CASE WHEN E.TYPE_ID = '3' THEN 1 ELSE 0 END),0) TYPE3
+		FROM 
+			SYS_ORG A 
+		LEFT JOIN SYS_ORG B ON A.ORG_ID = B.PID AND B.ORGLEVEL = 3
+		LEFT JOIN SYS_ORG C ON B.ORG_ID = C.PID AND C.ORGLEVEL = 4 
+		LEFT JOIN GRID_DETAIL E ON C.ORG_ID = E.ORG_ID 
+		WHERE 
+			A.ORGLEVEL = 2
+		<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+			AND A.ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId !=null and orgId != '' and orgLevel == '3'.toString()">
+			AND B.ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId !=null and orgId != '' and orgLevel == '4'.toString()">
+			AND C.ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="getChnlScale" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(CASE WHEN b.chnl_type = '实体渠道' THEN 1 ELSE 0 END ) SDATA,
+			SUM(CASE WHEN b.chnl_type = '直销渠道' THEN 1 ELSE 0 END) ZDATA,
+			SUM(CASE WHEN b.chnl_type = '分销渠道' THEN 1 ELSE 0 END) QDATA
+		FROM 
+			WG_HF_SCALE a, CHANNEL_INFO b 
+		WHERE 
+			a.PHYSICAL_ID = b.CHNL_CODE 
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getStationScale" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			STATION_TYPE,
+			COUNT(STATION_CODE) stat_scale
+		FROM 
+			STATION_INFO A, SYS_ORG B 
+		WHERE 
+			A.ORG_ID = B.ORG_ID 
+		AND 
+			B.ORGLEVEL = 3
+		<if test="orgLevel != null and orgLevel !='' and orgLevel == '2'.toString() ">
+			AND B.PID = #{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel !='' and orgLevel == '3'.toString() ">
+			AND B.ORG_ID = #{orgId}
+		</if>
+		GROUP BY 
+			STATION_TYPE
+	</select>
+	
+	<select id="getVoiceScale" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(INDEX_01) VOICE23,
+		   	SUM(INDEX_02) VOICENA,
+		   	SUM(INDEX_03) VOICENG
+		FROM 
+			rp_gsm_user
+		WHERE 
+			1=1
+		<if test="orgLevel != null and orgLevel !='' and orgLevel == '2'.toString() ">
+			AND area_id = #{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel !='' and orgLevel == '3'.toString() ">
+			AND cnty_id = #{orgId}
+		</if>
+	</select>
+	
+	<select id="getFlowScale" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(INDEX_01) FLOW2,
+		   	SUM(INDEX_02) FLOW3,
+		   	SUM(INDEX_03) FLOW4,
+		   	SUM(INDEX_04) FLOWW,
+		   	SUM(INDEX_05) FLOWB,
+		 	SUM(INDEX_06) FLOWC
+		FROM 
+			rp_gprs_user
+		WHERE 
+			1=1
+		<if test="orgLevel != null and orgLevel !='' and orgLevel == '2'.toString() ">
+			AND area_id = #{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel !='' and orgLevel == '3'.toString() ">
+			AND cnty_id = #{orgId}
+		</if>
+	</select>
+	
+	<select id="getKpiRatio" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			PARENT_NAME, KPI_VALUE, KPI_VALUE_HB, KPI_VALUE_TB
+		FROM 
+			RP_KPI_VALUES_FEE
+		WHERE 
+			1=1
+		<if test="kpiCode != null and kpiCode != ''">
+		AND	KPI_CODE = #{kpiCode, jdbcType=VARCHAR}
+		</if>
+		<if test="statisDate != null and statisDate != ''">
+		AND 
+			STATIS_DATE = #{statisDate, jdbcType=VARCHAR}
+		</if>
+		AND
+			PARENT_ID = #{orgId,jdbcType=VARCHAR}
+		<if test="rangeId=='A'.toString()">
+			<![CDATA[  AND KPI_VALUE_HB < 20 ]]>
+		</if>   
+		<if test="rangeId=='B'.toString()">
+			AND KPI_VALUE_HB BETWEEN 20 AND 25
+		</if> 
+		<if test="rangeId=='C'.toString()">
+			AND KPI_VALUE_HB BETWEEN 25 AND 30
+		</if> 
+		<if test="rangeId=='D'.toString()">
+			AND KPI_VALUE_HB BETWEEN 30 AND 35
+		</if> 
+		<if test="rangeId=='E'.toString()">
+			AND KPI_VALUE_HB BETWEEN 35 AND 40
+		</if>
+		<if test="rangeId=='F'.toString()">
+			<![CDATA[ AND KPI_VALUE_HB > 40 ]]>
+		</if> 
+	</select>
+	
+	<select id="getGridInfoByType" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			C.ORG_ID, C.NAME
+		FROM 
+			SYS_ORG A 
+		LEFT JOIN SYS_ORG B ON A.ORG_ID = B.PID AND B.ORGLEVEL = 3
+		LEFT JOIN SYS_ORG C ON B.ORG_ID = C.PID AND C.ORGLEVEL = 4 
+		LEFT JOIN GRID_DETAIL E ON C.ORG_ID = E.ORG_ID 
+		WHERE 
+			A.ORGLEVEL = 2 
+		AND 
+			E.ORG_ID IS NOT NULL 
+		AND 
+			E.TYPE_ID = #{gridTypeId,jdbcType=VARCHAR} 
+		<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+			AND A.ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId !=null and orgId != '' and orgLevel == '3'.toString()">
+			AND B.ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId !=null and orgId != '' and orgLevel == '4'.toString()">
+			AND C.ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="getGridTop" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			<if test="orgLevel == '1'.toString()">
+				A.ORG_ID ORG_ID,
+				A.NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				B.ORG_ID ORG_ID,
+				B.NAME ORG_NAME,
+			</if>
+			COUNT(c.ORG_ID) PUB_DATA
+		FROM 
+			SYS_ORG A 
+		LEFT JOIN SYS_ORG B ON A.ORG_ID = B.PID AND B.ORGLEVEL = 3
+		LEFT JOIN SYS_ORG C ON B.ORG_ID = C.PID AND C.ORGLEVEL = 4 
+		LEFT JOIN GRID_DETAIL D ON C.ORG_ID = D.ORG_ID 
+		WHERE 
+			A.ORGLEVEL = 2 AND D.TYPE_ID = #{gridType,jdbcType=VARCHAR}
+		<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+			AND A.ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			A.ORG_ID,
+			A.NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			B.ORG_ID,
+			B.NAME
+		</if>
+		ORDER BY 
+			PUB_DATA DESC
+	</select>
+	<select id="getChnlTop" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			<if test="orgLevel == '1'.toString()">
+				A.CITY_ID ORG_ID,
+				A.CITY_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				A.AREA_ID ORG_ID,
+				A.AREA_NAME ORG_NAME,
+			</if>
+			COUNT(B.CHNL_CODE) PUB_DATA
+		FROM 
+			WG_HF_SCALE A
+		LEFT JOIN  CHANNEL_INFO B ON A.PHYSICAL_ID = B.CHNL_CODE 
+		<if test="gridType !=null and gridType != '' and gridType == '1'.toString()">
+			AND B.CHNL_TYPE = '实体渠道'
+		</if>
+		<if test="gridType !=null and gridType != '' and gridType == '2'.toString()">
+			AND B.CHNL_TYPE = '直销渠道'
+		</if>
+		<if test="gridType !=null and gridType != '' and gridType == '3'.toString()">
+			AND B.CHNL_TYPE = '分销渠道'
+		</if>
+		<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+			WHERE A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			A.CITY_ID,
+			A.CITY_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			A.AREA_ID,
+			A.AREA_NAME
+		</if>
+		ORDER BY 
+			PUB_DATA DESC
+	</select>
+	<select id="getStatTop" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			<if test="orgLevel == '1'.toString()">
+				A.CITY_ID ORG_ID,
+				A.CITY_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				A.AREA_ID ORG_ID,
+				A.AREA_NAME ORG_NAME,
+			</if>
+			COUNT(1) PUB_DATA
+		FROM 
+			WG_HF_SCALE A, STATION_INFO B 
+		WHERE 
+			A.PHYSICAL_ID = B.STATION_CODE 
+		AND 
+			PHYSICAL_TYPE = '1'
+			<if test="gridType !=null and gridType != '' and gridType == '1'.toString()">
+				AND B.STATION_TYPE = '2G'
+			</if>
+			<if test="gridType !=null and gridType != '' and gridType == '2'.toString()">
+				AND B.STATION_TYPE = '3G'
+			</if>
+			<if test="gridType !=null and gridType != '' and gridType == '3'.toString()">
+				AND B.STATION_TYPE = '4G'
+			</if>
+			<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+				AND A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			A.CITY_ID
+			,A.CITY_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			A.AREA_ID,
+			A.AREA_NAME
+		</if>
+		ORDER BY 
+			PUB_DATA DESC
+	</select>
+	
+	<select id="getVoiceTop" parameterType="java.lang.String" resultType="java.util.Map" >
+		SELECT 
+			<if test="orgLevel == '1'.toString()">
+				AREA_ID ORG_ID,
+				AREA_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				CNTY_ID ORG_ID,
+				CNTY_NAME ORG_NAME,
+			</if>
+			<if test="gridType !=null and gridType != '' and gridType == '1'.toString()">
+				SUM(INDEX_01) PUB_DATA
+			</if>
+			<if test="gridType !=null and gridType != '' and gridType == '2'.toString()">
+				SUM(INDEX_02) PUB_DATA
+			</if>
+			<if test="gridType !=null and gridType != '' and gridType == '3'.toString()">
+				SUM(INDEX_03) PUB_DATA
+			</if>
+		FROM 
+			rp_gsm_user
+			<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+				WHERE AREA_ID = #{orgId,jdbcType=INTEGER}
+			</if>
+		GROUP BY 
+			<if test="orgLevel == '1'.toString()">
+				AREA_ID,
+				AREA_NAME
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				CNTY_ID,
+				CNTY_NAME
+			</if>
+		ORDER BY PUB_DATA DESC
+	</select>
+	<select id="getGridTableInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			GRID_CODE, GRID_NAME, GRID_TYPE, MOBILE_CHNL_NUM, 
+			UNICOM_CHNL_NUM, TELECOM_CHNL_NUM, STATION_NUM, 
+			TOWN_NUM, VILLAGE_NUM, CHNL_USER_NUM, STATION_23G_USER, 
+			STATION_4G_USER, GROUP_NUM, KD_USER_NUM, GRID_RESIDENT_USER,
+			FEE, COMPARE_LAST_MONTH, COMPARE__YSE, USER_PER, CHNL_SHAPE, 
+			USER_4G_PER, KD_PORT_USED_PER, VOICE_USER_NUM, BXL_BRAND_PER
+		 FROM 
+		 	WG_KSH_GRID_SCALE	
+		 WHERE 
+		 	1=1 
+		 AND 
+		 	GRID_TYPE = #{smallScaleType,jdbcType=VARCHAR}
+		<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+			AND CITY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+			AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+		</if> 
+		<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+			AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if> 
+		<if test="orgId != null and orgId != '' and orgLevel == '5'.toString()">
+			AND SALE_DEPT_ID = #{orgId,jdbcType=VARCHAR}
+		</if> 
+	</select>
+	<select id="getChnlTableInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			B.CHNL_CODE,B.CHNL_NAME,B.CHNL_TYPE_LEVEL1,B.CHNL_TYPE_LEVEL2,B.CHNL_STAR,
+			B.CHNL_ADDR,B.CHNL_MNGR_NAME,B.CHNL_MNGR_NAME,C.INDEX_01,C.INDEX_02,C.INDEX_03,
+			C.INDEX_04,C.INDEX_05
+		FROM 
+			WG_HF_SCALE A
+		LEFT JOIN CHANNEL_INFO B ON A.PHYSICAL_ID = B.CHNL_CODE 
+		LEFT JOIN CHANNEL_DAY_INDEX C ON A.PHYSICAL_ID = C.CHL_CODE
+		WHERE 
+			PHYSICAL_TYPE = '0' 
+		<if test="smallScaleType == '1'.toString() ">
+			AND B.CHNL_TYPE = '实体渠道'
+		</if>
+		<if test="smallScaleType == '2'.toString() ">
+			AND B.CHNL_TYPE = '直销渠道'
+		</if>
+		<if test="smallScaleType == '3'.toString() ">
+			AND B.CHNL_TYPE = '分销渠道'
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+			AND A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+			AND A.AREA_ID = #{orgId,jdbcType=VARCHAR}
+		</if> 
+		<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+			AND A.GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if> 
+		<if test="orgId != null and orgId != '' and orgLevel == '5'.toString()">
+			AND A.SALE_DEPT_CODE = #{orgId,jdbcType=VARCHAR}
+		</if> 
+	</select>
+	<select id="getStatTableInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			b.STATION_CODE, b.STATION_NAME, a.GRID_NAME, b.VOICE_USER_NUM, b.AVG_DOU, b.NEW_VOICE_USER,
+			b.AVG_MOU, b.COMPARE_LAST, b.COMPARE_YES, b.TOTAL_FEE, b.HOME_NUM, b.WORK_NUM
+		FROM 
+			WG_HF_SCALE a
+		LEFT JOIN station_info b ON a.PHYSICAL_ID =	b.STATION_CODE
+		WHERE 
+			a.PHYSICAL_TYPE = '1' 
+		<if test="smallScaleType == '1'.toString() ">
+			AND b.STATION_TYPE='2G'
+		</if>
+		<if test="smallScaleType == '2'.toString() ">
+			AND b.STATION_TYPE='3G'
+		</if>
+		<if test="smallScaleType == '3'.toString() ">
+			AND b.STATION_TYPE='4G'
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+			AND a.CITY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+			AND a.AREA_ID = #{orgId,jdbcType=VARCHAR}
+		</if> 
+		<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+			AND a.GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if> 
+		<if test="orgId != null and orgId != '' and orgLevel == '5'.toString()">
+			AND a.SALE_DEPT_CODE = #{orgId,jdbcType=VARCHAR}
+		</if> 
+	</select>
+	
+	<select id="getMapTableInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME, PHYSICAL_ID, PHYSICAL_NAME, INCOME,CUSTOMER
+		FROM 
+			WG_HF_SCALE 
+		WHERE 
+			1=1
+		<if test="incomeId == 'chnl'.toString() ">
+			AND PHYSICAL_TYPE = '0'
+		</if>
+		<if test="incomeId == 'stat'.toString() ">
+			AND PHYSICAL_TYPE = '1'
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+			AND CITY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+			AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+			AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="sidx == 'INCOME' and sord == 'desc' ">  
+		   ORDER BY INCOME desc
+		</if> 
+		<if test="sidx == 'INCOME' and sord == 'asc' ">  
+		   ORDER BY INCOME asc
+		</if> 
+		<if test="sidx == 'CUSTOMER' and sord == 'desc' ">  
+		   ORDER BY CUSTOMER desc
+		</if> 
+		<if test="sidx == 'CUSTOMER' and sord == 'asc' ">  
+		   ORDER BY CUSTOMER asc
+		</if>
+	</select>
+	<select id="getMapTableInfo01" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME, PHYSICAL_ID, PHYSICAL_NAME, INCOME, CUSTOMER
+		FROM 
+			WG_HF_SCALE 
+		WHERE 
+			1=1
+		<if test="incomeId == 'chnl'.toString() ">
+			AND PHYSICAL_TYPE = '0'
+		</if>
+		<if test="incomeId == 'stat'.toString() ">
+			AND PHYSICAL_TYPE = '1'
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+			AND CITY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+			AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+			AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="sidx == 'INCOME' and sord == 'desc' ">  
+		   ORDER BY INCOME desc
+		</if> 
+		<if test="sidx == 'INCOME' and sord == 'asc' ">  
+		   ORDER BY INCOME asc
+		</if> 
+		<if test="sidx == 'CUSTOMER' and sord == 'desc' ">  
+		   ORDER BY CUSTOMER desc
+		</if> 
+		<if test="sidx == 'CUSTOMER' and sord == 'asc' ">  
+		   ORDER BY CUSTOMER asc
+		</if>
+	</select>
+</mapper>

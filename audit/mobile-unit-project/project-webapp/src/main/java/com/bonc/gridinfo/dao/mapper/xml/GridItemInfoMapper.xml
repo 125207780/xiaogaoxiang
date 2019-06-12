@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.GridItemInfoMapper">
+	<resultMap id="BaseResultMap" type="com.bonc.gridinfo.dao.entity.GridItemInfo" >
+	    <id column="USERID" property="userId" jdbcType="VARCHAR" />
+	    <result column="USERNAME" property="userName" jdbcType="VARCHAR" />
+	    <result column="ITEMCODE" property="itemCode" jdbcType="VARCHAR" />
+	    <result column="ITEMNAME" property="itemName" jdbcType="VARCHAR" />
+	    <result column="ITEMSTATUS" property="itemStatus" jdbcType="VARCHAR" />
+	    <result column="ITEMDESC" property="itemDesc" jdbcType="VARCHAR" />
+	    <result column="ITEMCONTENT" property="itemContent" jdbcType="VARCHAR" />
+	    <result column="ITEMHANDLER" property="itemHandler" jdbcType="VARCHAR" />
+	    <result column="ITEMISSUEDER" property="itemIssueder" jdbcType="VARCHAR" />
+	    <result column="ISSUEDDATE" property="issuedDate" jdbcType="VARCHAR" />
+	    <result column="HANDLEDATE" property="handleDate" jdbcType="VARCHAR" />
+	    <result column="ITEMURL" property="itemUrl" jdbcType="VARCHAR" />
+  </resultMap>
+	<select id="selectList" parameterType="com.bonc.gridinfo.dao.entity.GridItemInfo"  resultMap="BaseResultMap">
+	select g.ITEM_CODE,g.ITEM_URL,ITEM_NAME,list_value AS ITEM_STATUS,ITEM_DESC,ITEM_CONTENT,ITEM_ISSUEDER,ISSUED_DATE from  GRID_ITEM_INFO as g 
+			left join TB_LIST_VALUE AS t 
+			on g.ITEM_STATUS=t.LIST_TYPE AND t.TYPE = 'ITEM_STATUS'
+			where g.USER_ID = #{userId,jdbcType=VARCHAR} AND g.ITEM_STATUS = '1' order by timestamp(trim(g.ISSUED_DATE)) DESC
+			
+	</select>
+	<select id="selectListByReadStatus" parameterType="com.bonc.gridinfo.dao.entity.GridItemInfo"  resultMap="BaseResultMap">
+	select g.ITEM_CODE,g.ITEM_URL,ITEM_NAME,list_value AS ITEM_STATUS,ITEM_CONTENT,ITEM_HANDLER,HANDLE_DATE from  GRID_ITEM_INFO as g 
+			left join TB_LIST_VALUE AS t 
+			on g.ITEM_STATUS=t.LIST_TYPE AND t.TYPE = 'ITEM_STATUS'
+			where g.USER_ID = #{userId,jdbcType=VARCHAR} AND g.ITEM_STATUS = '2' order by timestamp(trim(g.HANDLE_DATE)) DESC
+			
+	</select>
+	<update id="updateByStautes" parameterType="com.bonc.gridinfo.dao.entity.GridItemInfo">
+		update GRID_ITEM_INFO  set ITEM_STATUS='2',HANDLE_DATE=#{handleDate,jdbcType=VARCHAR},ITEM_HANDLER = (SELECT USER_NAME FROM SYS_USER WHERE USER_ID =  #{userId,jdbcType=VARCHAR})  where USER_ID = #{userId,jdbcType=VARCHAR} and ITEM_CODE = #{itemCode,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

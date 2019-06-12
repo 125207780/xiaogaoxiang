@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.CompetitorInfoMapper">
+
+	<!-- 竞争对手列表 -->
+	<select id="getCompetitorInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.Competitor">
+		SELECT 
+			grid_code, physical_grid_name, physical_grid_type, live_num, unicom_broadband_per,
+			telecom_broadband_per, no_broadband_num, unicom_user, telecom_user, collection_rate
+		FROM 
+			competition_info
+		WHERE 
+			1=1 
+		AND 
+			grid_code = #{gridCode,jdbcType=VARCHAR}
+			<if test="physicalGridName != null and physicalGridName != ''">
+				AND physical_grid_name like '%'||#{physicalGridName}||'%'
+			</if>
+	</select>
+	<select id="selectAll" resultType="com.bonc.gridinfo.dao.entity.Competitor">
+		SELECT 
+			grid_code, physical_grid_name, physical_grid_type, live_num, unicom_broadband_per,
+			telecom_broadband_per, no_broadband_num, unicom_user, telecom_user, collection_rate
+		FROM 
+			competition_info 
+		WHERE 
+			grid_code = #{gridCode,jdbcType=VARCHAR}
+			<if test="physicalGridName != null and physicalGridName != ''">
+				AND physical_grid_name like '%'||#{physicalGridName}||'%'
+			</if>
+	</select>
+	<select id="getOperator" resultType="com.bonc.gridinfo.dao.entity.Competitor">
+		SELECT LIST_TYPE,LIST_VALUE FROM TB_LIST_VALUE WHERE "TYPE" = 'ROAM_TYPE'
+	</select>
+	
+	<select id="getPhysicalGridName" resultType="com.bonc.gridinfo.dao.entity.Competitor">
+		SELECT PHYSICAL_GRID_NAME, PHYSICAL_GRID_CODE FROM COMPETITION_INFO WHERE GRID_CODE=#{gridCode, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getCompetitorRatio" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.Competitor">
+	select 
+		<if test="listType=='unicom'.toString()">
+			UNICOM_BROADBAND_PER, UNICOM_USER_PER
+		</if>
+		<if test="listType=='telecom'.toString()">
+			TELECOM_BROADBAND_PER, TELECOM_USER_PER
+		</if>
+		<if test="listType==''.toString()">
+			MOBILE_BROADBAND_PER, MOBILE_USER_PER
+		</if>
+	FROM 
+		COMPETITION_INFO 
+	WHERE 
+		GRID_CODE =#{gridCode,jdbcType=VARCHAR} 
+	AND 
+		PHYSICAL_GRID_CODE = #{physicalGridCode,jdbcType=VARCHAR}
+	</select>
+</mapper>

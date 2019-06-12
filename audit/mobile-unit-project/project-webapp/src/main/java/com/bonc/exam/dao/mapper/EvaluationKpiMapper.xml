@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.exam.dao.mapper.EvaluationKpilMapper">
+
+	<!-- 考核指标信息 -->
+	<select id="getEvaluationKpiInfo" resultType="com.bonc.exam.dao.entity.EvaluationKpi">
+		SELECT 
+			CYCLE_TYPE, KPI_ID, KPI_NAME 
+		FROM 
+			EVALUATION_KPI 
+		WHERE 
+			1=1  
+		GROUP BY 
+			CYCLE_TYPE, KPI_ID, KPI_NAME  
+	</select>
+</mapper>

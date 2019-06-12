@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.exam.dao.mapper.ExamModelMapper">
+	<resultMap id="ExamModel" type="com.bonc.exam.dao.entity.ExamModel">
+		<result column="uid" jdbcType="VARCHAR" property="id" />
+		<result column="cycletype" jdbcType="VARCHAR" property="cycleType" />
+		<result column="examcycle" jdbcType="VARCHAR" property="examCycle" />
+		<result column="createtime" jdbcType="VARCHAR" property="createTime" />
+		<result column="createperson" jdbcType="VARCHAR" property="createPerson" />
+		<result column="templatedescription" jdbcType="VARCHAR" property="templateDescription" />
+		<result column="createobject" jdbcType="VARCHAR" property="createObject" />
+		<result column="startdate" jdbcType="VARCHAR" property="startDate" />
+		<result column="enddate" jdbcType="VARCHAR" property="endDate" />
+		<result column="gridname" jdbcType="VARCHAR" property="gridName" />
+	</resultMap>
+
+	<resultMap id="ExamGird" type="com.bonc.exam.dao.entity.ExamGird">
+		<result column="org_id" jdbcType="VARCHAR" property="orgId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="type_id" jdbcType="VARCHAR" property="typeId" />
+	</resultMap>
+
+	<resultMap id="examModelObj" type="com.bonc.exam.dao.entity.ExamModelObj">
+		<result column="exam_id" jdbcType="VARCHAR" property="examId" />
+		<result column="object_id" jdbcType="VARCHAR" property="objectId" />
+		<result column="object_type" jdbcType="VARCHAR" property="objectType" />
+	</resultMap>
+
+	<select id="selectExamModel" parameterType="com.bonc.exam.dao.entity.ExamModel" resultType="com.bonc.exam.dao.entity.ExamModel">
+		SELECT 
+			id, cycletype, examcycle, createtime, createperson,
+			templatedescription, createobject 
+		FROM 
+			exam_model
+		ORDER BY 
+			createtime desc
+	</select>
+
+	<delete id="deleteExamModelById">
+		DELETE FROM 
+			exam_model 
+		WHERE 
+			id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="insertExamModel" useGeneratedKeys="true" keyProperty="id" parameterType="com.bonc.exam.dao.entity.ExamModel">
+		INSERT INTO
+			exam_model(
+				id,cycletype,examcycle,createtime, createperson, templatedescription, createobject)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, #{cycleType,jdbcType=VARCHAR}, #{examCycle,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR},
+			#{createPerson,jdbcType=VARCHAR}, #{templateDescription,jdbcType=VARCHAR}, #{createObject,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="updateExamModel" parameterType="com.bonc.exam.dao.entity.ExamModel">
+		UPDATE 
+			exam_model 
+		SET
+			cycletype = #{cycleType},
+			examcycle = #{examCycle},
+			createtime = #{createTime},
+			createperson = #{createPerson},
+			templatedescription = #{templateDescription},
+			createobject = #{createObject}
+		WHERE 
+			id = #{id}
+	</update>
+
+	<select id="checkBoxSearch" parameterType="com.bonc.exam.dao.entity.ExamModel" resultType="com.bonc.exam.dao.entity.ExamModel">
+		SELECT 
+			id, cycletype, examcycle, createtime, createperson, startdate, endDate, templatedescription, createobject, gridname
+		FROM 
+			exam_model 
+		WHERE 
+			1 = 1
+		AND 
+			ORG_ID = #{orgId,jdbcType=VARCHAR}
+		<if test="list != null">
+			AND createobject in
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="con != null and con != ''">
+			AND templatedescription like CONCAT('%', CONCAT(#{con}, '%'))
+		</if>
+		<if test="cycType != null and cycType != ''">
+			AND CYCLETYPE like CONCAT('%', CONCAT(#{cycType}, '%'))
+		</if>
+		ORDER BY 
+			createtime DESC
+	</select>
+	
+	<select id="checkBoxSearchByGridName" parameterType="com.bonc.exam.dao.entity.ExamModel" resultType="com.bonc.exam.dao.entity.ExamModel">
+		SELECT
+			ID,
+			CYCLETYPE,
+			EXAMCYCLE,
+			CREATETIME,
+			CREATEPERSON,
+			STARTDATE,
+			TEMPLATEDESCRIPTION,
+			CREATEOBJECT,
+			GRIDNAME
+		FROM
+			EXAM_MODEL
+		WHERE
+			1 = 1
+		AND 
+			ORG_ID = #{orgId,jdbcType=VARCHAR} 
+		AND
+		ID IN (
+			SELECT 
+				EXAM_ID 
+			FROM 
+				EVALUATION_MODEL_OBJ 
+			WHERE 
+				OBJECT_ID IN (
+					SELECT 
+						ORG_ID 
+					FROM 
+						SYS_ORG 
+					WHERE 
+						NAME LIKE CONCAT('%', CONCAT(#{gName}, '%'))))
+		<if test="con != null and con != ''">
+			AND templatedescription like CONCAT('%', CONCAT(#{con}, '%'))
+		</if>
+		<if test="cycType != null and cycType != ''">
+			AND CYCLETYPE like CONCAT('%', CONCAT(#{cycType}, '%'))
+		</if>
+		ORDER BY
+			CREATETIME DESC
+	</select>
+
+	<select id="checkBoxSearchByyGridCode" parameterType="com.bonc.exam.dao.entity.ExamModel" resultType="com.bonc.exam.dao.entity.ExamModel">
+		SELECT
+			ID,
+			CYCLETYPE,
+			EXAMCYCLE,
+			CREATETIME,
+			CREATEPERSON,
+			STARTDATE,
+			TEMPLATEDESCRIPTION,
+			CREATEOBJECT,
+			GRIDNAME
+		FROM
+			EXAM_MODEL
+		WHERE
+			1 = 1
+		AND 
+			ORG_ID = #{orgId,jdbcType=VARCHAR} 
+		AND
+			ID IN(
+				SELECT
+					EXAM_ID
+				FROM
+					EVALUATION_MODEL_OBJ
+				WHERE
+					OBJECT_ID = #{gridCode})
+		ORDER BY
+			CREATETIME DESC
+	</select>
+
+	<select id="checkBoxSearchByyGridCodeAndAndOrglevel" parameterType="com.bonc.exam.dao.entity.ExamModel" resultType="com.bonc.exam.dao.entity.ExamModel">
+		SELECT
+			ID,
+			CYCLETYPE,
+			EXAMCYCLE,
+			CREATETIME,
+			CREATEPERSON,
+			STARTDATE,
+			TEMPLATEDESCRIPTION,
+			CREATEOBJECT,
+			GRIDNAME
+		FROM
+			EXAM_MODEL
+		WHERE
+			1 = 1
+		AND 
+			ORG_ID = #{orgId,jdbcType=VARCHAR} 
+		AND
+			ID IN(
+				SELECT
+					EXAM_ID
+				FROM
+					EVALUATION_MODEL_OBJ
+				WHERE
+					OBJECT_ID IN (SELECT ORG_ID FROM SYS_ORG WHERE PID = #{gridCode}))
+		ORDER BY
+			CREATETIME DESC
+	</select>
+
+	<select id="selectOrgByPid" parameterType="com.bonc.exam.dao.entity.ExamGird" resultType="com.bonc.exam.dao.entity.ExamGird">
+		SELECT 
+			s.org_id,s.name,g.type_id
+		FROM 
+			SYS_ORG s, GRID_DETAIL g
+		WHERE 
+			s.ORG_ID = g.ORG_ID
+		<if test="org != null">
+			AND s.pid = #{org}
+		</if>
+		<if test="typeId != null">
+			AND g.type_id = #{typeId}
+		</if>
+		<if test="name != null">
+			AND s.name = #{name}
+		</if>
+	</select>
+
+	<select id="selectUserByLoginId" resultType="com.bonc.system.dao.entity.SysUser" parameterType="java.lang.String">
+		SELECT
+			USER_ID, CREATE_ID, LOGIN_ID, PASSWORD, ORG_ID, USER_NAME, USER_SEX, USER_MOBILE, USER_TELEPHONE, 
+			USER_MAIL, PWD_STATE, CREATE_TIME, UPDATE_TIME, USER_LEVEL, MEMO, EMP_NO, USER_STATE
+		FROM 
+			SYS_USER
+		WHERE 
+			LOGIN_ID = #{loginId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectObjNameByType" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT 
+			LOGIN_ID, OA_ID, NAME
+		FROM 
+			grid_user
+		WHERE 
+			ORG_ID = #{org,jdbcType=VARCHAR} 
+		AND 
+			USER_TYPE = #{typeId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectObjByExamId" parameterType="java.util.Map" resultMap="examModelObj">
+		SELECT 
+			EXAM_ID, OBJECT_ID, OBJECT_TYPE
+		FROM 
+			EVALUATION_MODEL_OBJ
+		WHERE 
+			EXAM_ID = #{examId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectNameByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT 
+			NAME 
+		FROM 
+			sys_org
+		WHERE
+			ORG_ID = #{orgId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectNameByOrgIdFromSysUser" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT 
+			USER_NAME 
+		FROM 
+			sys_user
+		WHERE
+			LOGIN_ID = #{orgId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectUserName" parameterType="java.util.Map" resultType="java.lang.String">
+		SELECT 
+			NAME
+		FROM 
+			GRID_USER
+		WHERE
+			ORG_ID = #{orgId,jdbcType=VARCHAR}
+		AND 
+			LOGIN_ID = #{loginId,jdbcType=VARCHAR}
+		AND 
+			USER_TYPE = #{userType,jdbcType=INTEGER}
+	</select>
+
+	<insert id="insertToGridRankDetail" parameterType="java.util.Map">
+		INSERT INTO
+			GRID_RANK_DETAIL(
+				EVALUATE_CYCLE_TYPE, EVALUATE_CYCLE, OBJECT_ID, OBJECT_NAME, KPI_ID, KPI_NAME,
+				RANK_ID, STATUS, EXAM_ID, KPI_TYPE, KPI_WEIGHT, KPI_DEFINE, TARGET_VALUE,
+				KPI_ROLEJSON, OBJECT_TYPE, GRID_CODE,ORG_ID)
+		VALUES(
+			#{cycleType}, #{startDate}, #{objectId},#{objectName,jdbcType=VARCHAR}, #{kpi_id}, #{kpi_name},
+			#{rankId},#{status}, #{examId}, #{kpi_type}, #{kpi_weight}, #{kpi_define}, #{target_value},
+			#{kpi_rolejson,jdbcType=VARCHAR}, #{objectType}, #{gridNameCode}, #{orgId})
+	</insert>
+
+	<delete id="deleteGridRankDetailById" parameterType="java.util.Map">
+		DELETE FROM 
+			GRID_RANK_DETAIL
+		WHERE
+			EXAM_ID = #{examId}
+		AND 
+			STATUS = #{status}
+	</delete>
+
+	<delete id="deleteObjByExamId" parameterType="java.lang.String">
+		DELETE FROM 
+			EVALUATION_MODEL_OBJ
+		WHERE 
+			exam_id = #{id}
+	</delete>
+
+	<insert id="insertNewObj" parameterType="java.util.Map">
+		INSERT INTO
+			EVALUATION_MODEL_OBJ(
+				EXAM_ID, OBJECT_ID, OBJECT_TYPE)
+		VALUES(
+			#{newExamId},#{objectId},#{objectType})
+	</insert>
+
+	<select id="selectKpiByExamId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			ID, KPI_ID, KPI_ROLEJSON, KPI_TYPE, KPI_NAME, KPI_WEIGHT, KPI_DEFINE, CYCLE_TYPE, KPI_ROLESTR, EXAM_ID, TARGET_VALUE
+		FROM 
+			EVALUATION_MODEL_KPI
+		WHERE
+			EXAM_ID = #{examId}
+	</select>
+
+	<insert id="insertKpiMap" parameterType="java.util.Map">
+		INSERT INTO 
+			EVALUATION_MODEL_KPI(
+				ID, KPI_ID, KPI_ROLEJSON, KPI_TYPE, KPI_NAME, KPI_WEIGHT, KPI_DEFINE, CYCLE_TYPE, KPI_ROLESTR, EXAM_ID,T ARGET_VALUE)
+		VALUES(
+			#{ID,jdbcType=VARCHAR}, #{KPI_ID,jdbcType=VARCHAR}, #{KPI_ROLEJSON,jdbcType=VARCHAR},
+			#{KPI_TYPE,jdbcType=VARCHAR}, #{KPI_NAME,jdbcType=VARCHAR}, #{KPI_WEIGHT,jdbcType=VARCHAR},
+			#{KPI_DEFINE,jdbcType=VARCHAR}, #{CYCLE_TYPE,jdbcType=VARCHAR}, #{KPI_ROLESTR,jdbcType=VARCHAR},
+			#{EXAM_ID,jdbcType=VARCHAR}, #{TARGET_VALUE,jdbcType=DOUBLE})
+	</insert>
+
+	<select id="selectExamByExamId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			id, cycletype, examcycle, createtime, createperson, templatedescription, createobject, startdate, enddate, gridname, org_id
+		FROM 
+			EXAM_MODEL 
+		WHERE 
+			id = #{examId}
+	</select>
+
+	<insert id="insertNewExamModel" parameterType="java.util.Map">
+		INSERT INTO
+			EXAM_MODEL(
+				ID, CYCLETYPE, CREATETIME, CREATEPERSON, TEMPLATEDESCRIPTION,
+				CREATEOBJECT, STARTDATE, ENDDATE, GRIDNAME, ORG_ID)
+		VALUES(
+			#{ID,jdbcType=VARCHAR}, #{CYCLETYPE,jdbcType=VARCHAR},
+			#{CREATETIME,jdbcType=VARCHAR}, #{CREATEPERSON,jdbcType=VARCHAR},
+			#{TEMPLATEDESCRIPTION,jdbcType=VARCHAR}, #{CREATEOBJECT,jdbcType=VARCHAR},
+			#{STARTDATE,jdbcType=VARCHAR}, #{ENDDATE,jdbcType=VARCHAR},
+			#{GRIDNAME,jdbcType=VARCHAR}, #{ORG_ID,jdbcType=VARCHAR})
+	</insert>
+
+	<insert id="insertNewGridRankDetail" parameterType="java.util.Map">
+		INSERT INTO
+			GRID_RANK_DETAIL(
+				EVALUATE_CYCLE_TYPE, EVALUATE_CYCLE, OBJECT_ID, OBJECT_NAME, KPI_ID, KPI_NAME,
+				RANK_ID, STATUS, EXAM_ID, KPI_TYPE, KPI_WEIGHT, KPI_DEFINE, TARGET_VALUE, KPI_ROLEJSON, OBJECT_TYPE, GRID_CODE, ORG_ID)
+		VALUES(
+			#{cycleType,jdbcType=VARCHAR}, #{startDate,jdbcType=VARCHAR}, #{objectId,jdbcType=VARCHAR}, #{objectName,jdbcType=VARCHAR},
+			#{kpi_id,jdbcType=VARCHAR}, #{kpi_name,jdbcType=VARCHAR}, #{rankId,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+			#{examId,jdbcType=VARCHAR}, #{kpi_type,jdbcType=VARCHAR}, #{kpi_weight,jdbcType=VARCHAR}, #{kpi_define,jdbcType=VARCHAR}, 
+			#{target_value,jdbcType=VARCHAR}, #{kpi_rolejson,jdbcType=VARCHAR}, #{objectType,jdbcType=VARCHAR}, 
+			#{gridNameCode,jdbcType=VARCHAR}, #{org_id,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="updateGridRankDetailStatusById" parameterType="java.util.Map">
+		UPDATE 
+			GRID_RANK_DETAIL 
+		SET
+			STATUS = #{newStatus} 
+		WHERE 
+			EXAM_ID = #{examId} 
+		AND 
+			STATUS = #{oldStatus}
+	</update>
+
+	<select id="selectExamResult" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			OBJECT_TYPE,OBJECT_NAME,EVALUATE_CYCLE_TYPE,EVALUATE_CYCLE,KPI_ID,KPI_TYPE,RANK_ID,KPI_SCORE,STATUS,KPI_NAME
+		FROM 
+			GRID_RANK_DETAIL
+		WHERE 
+			STATUS = #{status} 
+		AND 
+			ORG_ID = #{orgId}
+		<if test="cycleType != null and cycleType != ''">
+			AND EVALUATE_CYCLE_TYPE = #{cycleType}
+		</if>
+		<if test="start != null and start != ''">
+			AND EVALUATE_CYCLE = #{start}
+		</if>
+	</select>
+
+	<update id="updateGridRankByRankId" parameterType="java.util.Map">
+		UPDATE
+			GRID_RANK_DETAIL A 
+		SET 
+			A.STATUS = #{newStatus}
+		WHERE 
+			EXISTS (
+				SELECT 
+					KPI_SCORE
+				FROM 
+					GRID_RANK_DETAIL B
+				WHERE 
+					B.RANK_ID = #{RANK_ID}
+				AND 
+					A.EVALUATE_CYCLE_TYPE = B.EVALUATE_CYCLE_TYPE
+				AND 
+					A.EVALUATE_CYCLE = B.EVALUATE_CYCLE
+				AND 
+					A.OBJECT_ID = B.OBJECT_ID
+				AND 
+					A.KPI_ID = B.KPI_ID)
+		AND 
+			A.STATUS = #{oldStatus}
+	</update>
+
+	<update id="updateGridRankByRankNewId" parameterType="java.util.Map">
+		UPDATE
+			GRID_RANK_DETAIL A 
+		SET 
+			A.STATUS=#{oldStatus}
+		WHERE 
+			A.STATUS = #{status} 
+		AND 
+			A.RANK_ID = #{RANK_ID}
+	</update>
+
+	<select id="selectObjByNewExamId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			EXAM_ID, OBJECT_ID, OBJECT_TYPE
+		FROM 
+			EVALUATION_MODEL_OBJ
+		WHERE 
+			EXAM_ID = #{examId,jdbcType=VARCHAR}
+	</select>
+</mapper>

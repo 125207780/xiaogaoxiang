@@ -1,0 +1,189 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.map.dao.mapper.GridCommonMapper">
+
+ <resultMap id="MapInfoMap" type="com.bonc.map.dao.entity.MapInfo" >
+    <id     column="ORG_ID" property="orgId" jdbcType="VARCHAR" />
+    
+    <result column="SHAPE" property="shape" jdbcType="VARCHAR" />
+    <result column="COLOR" property="color" jdbcType="VARCHAR" />
+     <result column="MAXLNG" property="maxlng" jdbcType="DOUBLE" />
+    <result column="MINLNG" property="minlng" jdbcType="DOUBLE" />
+    <result column="MAXLAT" property="maxlat" jdbcType="DOUBLE" />
+    <result column="MINLAT" property="minlat" jdbcType="DOUBLE" />
+    <result column="CPLNG" property="cplng" jdbcType="DOUBLE" />
+     <result column="CPLAT" property="cplat" jdbcType="DOUBLE" />
+  </resultMap>
+      <resultMap id="MapPoi" type="com.bonc.map.dao.entity.MapPoi" >
+    <id     column="UID" property="uid" jdbcType="VARCHAR" />
+    <result column="ADDR" property="addr" jdbcType="VARCHAR" />
+    <result column="area_Id" property="areaId" jdbcType="VARCHAR" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  	<result column="INDEX_NUM" property="indexNum" jdbcType="INTEGER" />
+    <result column="IMAGEURL" property="imageUrl" jdbcType="VARCHAR" />
+     <result column="LNG" property="lng" jdbcType="DOUBLE" />
+    <result column="LAT" property="lat" jdbcType="DOUBLE" />
+    <result column="SHAPE" property="shape" jdbcType="CLOB" />
+     <result column="TYPE" property="type" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="getShapeByGriCode"  resultMap="MapInfoMap" parameterType="java.lang.String">
+   	 SELECT  SYS_ORG.ORG_ID,GRID_DETAIL.SHAPE AS SHAPE
+		FROM SYS_ORG, GRID_DETAIL
+	 where  SYS_ORG.ORG_ID = GRID_DETAIL.ORG_ID
+	 and SYS_ORG.PID = #{orgId,jdbcType=VARCHAR} 
+	 <if test="gridCode != '' ">
+	  and SYS_ORG.ORG_ID != #{gridCode}
+	 </if>
+	
+  </select>
+  
+ <select id="selectList" 
+		parameterType="com.bonc.system.dao.entity.SysOrg" 
+		resultType="com.bonc.system.dao.entity.SysOrg">
+		select 
+			t.org_id orgId, 
+			t.pid pid, 
+			t.name name, 
+			t.memo memo, 
+			t.display_order displayOrder, 
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		from 
+			SYS_ORG t 
+		where 1=1
+		<if test="name != null and name != ''">
+			and t.name like '%'||#{name}||'%'
+		</if>			
+		<if test="orgId != null and orgId != ''">
+			and t.org_id = #{orgId}
+		</if>
+		<if test="pid != null and pid != ''">
+			and t.pid = #{pid}
+		</if>
+		 
+		 
+			and t.orglevel !=  5 
+		 
+		<if test="treeCode != null and treeCode != ''">
+			and t.tree_code like  #{treeCode}||'%'
+		</if>
+		order by 
+			t.orglevel,t.display_order
+	</select>
+	
+	 
+	
+	 <select id="selectSysOrgPolygon" resultMap="MapInfoMap" parameterType="java.lang.String" >
+   SELECT ORG_ID,SHAPE,MAXLNG,MINLNG,MAXLAT,MINLAT,CPLNG,CPLAT,COLOR FROM sys_org_polygon
+	WHERE ORG_ID = #{orgId,jdbcType=VARCHAR}
+  </select>
+    
+ 
+  <select id="selectAllChannelByOrgId" resultMap="MapPoi"  parameterType="java.lang.String" >
+   SELECT CHNL_CODE AS UID,CHNL_NAME AS NAME,LON AS LNG , LAT   
+	FROM CHANNEL_INFO 
+    where ORG_ID = #{orgId,jdbcType=VARCHAR}
+    and    LON IS NOT NULL 
+AND LAT IS NOT NULL 
+  </select>
+  
+  
+    <select id="selectAllStationByOrgId" resultMap="MapPoi"  parameterType="java.lang.String" >
+   SELECT STATION_CODE AS UID,STATION_NAME AS NAME,STATION_LON AS LNG , STATION_LAT AS LAT   
+	FROM STATION_INFO 
+    where ORG_ID = #{orgId,jdbcType=VARCHAR}
+    and    STATION_LON IS NOT NULL 
+AND STATION_LAT IS NOT NULL 
+  </select>
+  
+  
+   <select id="selectAllPoiByOrgId" resultMap="MapPoi"  parameterType="java.lang.String" >
+   SELECT SHAPE,LNG,LAT,UID,NAME,(SELECT COUNT(1) FROM physical_base_index I WHERE I.UID = P.UID) AS INDEX_NUM
+	FROM MAP_BD_POI P
+    where ORG_ID = #{orgId,jdbcType=VARCHAR}
+    and shape_type = 1
+  </select>
+  
+    <select id="initSearchName" resultType="java.lang.String" parameterType="java.lang.String" >
+    SELECT distinct  NAME
+	FROM SEARCH_VIEW
+    WHERE ORG_ID = #{orgId}
+  </select>
+  
+    <select id="selectSearchList" resultMap="MapPoi" parameterType="java.util.Map" >
+    SELECT NAME, UID, IMAGEURL,LNG,LAT,ADDR,TAG,SHAPE,TYPE,CASE TYPE WHEN 'POI' THEN (SELECT COUNT(1) FROM physical_base_index I WHERE I.UID = V.UID) ELSE   1 END AS INDEX_NUM
+	FROM SEARCH_VIEW V
+    where 1=1
+    <if test="name != null and textLabel != ''">
+		AND NAME LIKE '%'||#{name,jdbcType=VARCHAR}||'%' 
+	</if>
+    AND ORG_ID = #{orgId,jdbcType=VARCHAR}
+    order by uid
+  </select>
+  
+      <select id="selectAreaShape" resultMap="MapPoi"  parameterType="java.lang.String" >
+    SELECT SHAPE
+	FROM SYS_ORG_DETAIL
+    WHERE ORG_ID = #{orgId,jdbcType=VARCHAR}
+  </select>
+
+	<select id="selectHouse" resultType="java.util.Map" 
+		parameterType="java.lang.String">
+		select city_name, city_code, area_type, cnty_id, county_name, vill_id, vill_name, cell_id, 
+			cell_name, bs_id, cell_type, cell_longitude, cell_latitude, cell_prc, cell_occupy_area, 
+			cell_build_area, cell_cnt, cell_user_cnt, cell_in_user_cnt, cell_addr, popu_scale, 
+			is_not_built_cell, build_mode, port_cnt, use_port_cnt, port_ratio, is_tele_cover, 
+			is_unicom_cover, is_broadcast_cover, tran_res_flag, difficulty_lvl, acess_type, 
+			is_sole, tele_user_cnt, unicom_user_cnt, broadcase_user_cnt, mobile_user_ratio, 
+			compet_prod, compet_prom, property_company, property_tel, property_addr, keyman, 
+			keyman_post, keyman_tel, property_cont_name, property_cont_post, property_cont_tel, 
+			builder_name, builder_cont_name, builder_cont_tel, builder_tel, sex, kd_user_cnt,
+			kd_exp_user_cnt, cell_value, cover_flag, kd_inc, cover_type, res_saturated_ratio, 
+			potential_cncl_ratio, potential_user_ratio, cncl_ratio, region_type, potential_user_cnt
+		FROM TA_DT_CELL_M where cell_id = #{physical_id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectSchool" resultType="java.util.Map"
+		parameterType="java.lang.String">
+			SELECT org_id, physical_id, school_name, campus, addr, education_level,
+				total_student_scale, student_scale, manager_dept
+			FROM TB_BB_SCHOOL where 
+				physical_id = #{physical_id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectSchoolOrHouse" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT BIG_TYPE 
+			FROM physical_grid_info 
+			WHERE PHYSICAL_ID = #{uid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectPoiByUid" parameterType="java.lang.String" resultMap="MapPoi"  >
+		select uid,lng,lat ,shape , name ,ADDR,TAG
+			FROM  MAP_BD_POI 
+			where uid =#{uid}
+	</select>
+  
+   <select id="selectSchoolPoi" resultMap="MapPoi"  parameterType="java.lang.String" >
+   SELECT NAME, UID, IMAGEURL,LNG,LAT,ADDR,TAG,SHAPE 
+	FROM MAP_BD_POI P
+    where uid in 
+    (select uid
+    from  BONC03.RPT_SCH_PORT_M m
+    WHERE m.area_city_id = #{orgId,jdbcType=VARCHAR}
+ 
+    AND M.STATIS_MONTH =  #{statisMonth,jdbcType=VARCHAR}
+    )
+    
+  <if test="name != null and textLabel != ''">
+		AND NAME LIKE '%'||#{name,jdbcType=VARCHAR}||'%' 
+	</if>
+     order by uid
+  </select>
+  
+   
+  
+  
+  
+</mapper>

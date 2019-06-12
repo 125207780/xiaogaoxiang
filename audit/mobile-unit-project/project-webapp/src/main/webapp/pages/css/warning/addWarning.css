@@ -1,0 +1,185 @@
+@CHARSET "UTF-8";
+#topwindow102context {
+	background: url(../../images/frameBg.png) center !important;
+}
+#topwindow102context > .modal-bottom {
+	background: none !important;
+}
+#topwindow102context > .modal-body {
+	height: 77% !important;
+	overflow: hidden !important;
+}
+#topwindow102context {
+	height: 360px !important;
+	top: 150px !important;
+}
+#topwindow102contextBtn0,#topwindow102contextBtn1 {
+	height: 28px;
+    line-height: 6px;
+    margin-right: 5%;
+}
+.rule-all {
+	width: 100%;
+	height: 100%;
+	color: #fff;
+}
+.rule-top {
+	width: 100%;
+	height: 30%;
+}
+.rule-buttom {
+	width: 100%;
+	height: 70%;
+}
+.select-top {
+	width: 33%;
+    display: block;
+    float: left;
+    margin-top: 2%;
+    height: 37%;
+    line-height: 26px;
+}
+.waring-object {
+	width: 100%;
+    display: block;
+    float: left;
+    margin-top: 2%;
+    height: 37%;
+    line-height: 26px;
+}
+.waring-memo {
+	width: 100%;
+    display: block;
+    float: left;
+    margin-top: 2%;
+    height: 37%;
+    line-height: 26px;
+}
+.waring-rule {
+	width: 100%;
+    display: block;
+    float: left;
+    margin-top: 2%;
+    height: 37%;
+    line-height: 26px;
+}
+.select-top > input {
+	width: 54%;
+	display:block;
+    float: left;
+    height: 28px;
+}
+.ruleSelect > input {
+	width: 15%;
+    display: block;
+    float: left;
+    margin-left: 5%;
+    height: 28px;
+}
+#addButton {
+    margin-left: 10% !important;
+}
+.select-top > button {
+	height: 28px;
+    line-height: 8px;
+    margin-left: 3%;
+    padding: 0px !important;
+}
+.select-top > span {
+	width: 45.5% !important;
+    height: 100%;
+    display: block;
+    float: left;
+    text-align: right;
+}
+.waring-object > span {
+	width: 15% !important;
+    height: 100%;
+    display: block;
+    float: left;
+    text-align: right;
+}
+.waring-rule > span {
+	width: 15% !important;
+    height: 100%;
+    display: block;
+    float: left;
+    text-align: right;
+}
+.waring-memo > span {
+	width: 15% !important;
+    height: 100%;
+    display: block;
+    float: left;
+    text-align: right;
+}
+.select-top > select {
+	width: 54%;
+	display:block;
+    float: left;
+}
+.waring-object > select {
+	width: 84%;
+	display:block;
+    float: left;
+}
+.select-top > span > i {
+	color: red;
+    margin-right: 5px;
+    font-style: normal;
+    line-height: 28px;
+}
+.waring-object > span > i {
+	color: red;
+    margin-right: 5px;
+    font-style: normal;
+    line-height: 28px;
+}
+.waring-rule > span > i {
+	color: red;
+    margin-right: 5px;
+    font-style: normal;
+    line-height: 28px;
+}
+#kpiSelect_add {
+	width: 50%;
+	display: block;
+	float: left;
+	margin-left: 5%; 
+}
+#compareSelect_add {
+	display: block;
+	float: left;
+	margin-left: 5%;
+}
+.ruleSelect {
+	width: 84%;
+    border: 1px solid #00E1FD;
+    display: block;
+    float: left;
+}
+.mome-input {
+	width: 85%;
+    display: block;
+    float: left;
+}
+.mome-input > input {
+	width: 99%;
+	display:block;
+    float: left;
+    height: 28px;
+}
+.chosen-container {
+	width: 84% !important;
+    display: block !important;
+    float: left !important;
+}
+.chosen-choices {
+	border: 1px solid #008fa7 !important;
+}
+.search-choice > span {
+	color: #00d4f0;
+}
+.search-choice-close {
+	color: red !important;
+}

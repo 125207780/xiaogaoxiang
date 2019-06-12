@@ -1,0 +1,585 @@
+@CHARSET "UTF-8";
+html,body {
+	color:#FFF;
+	width: 100%;
+	height: 100%;
+}
+.firstPage-left {
+	width: 32%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.firstPage-middle {
+	width: 36%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.firstPage-right {
+	width: 32%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.portrait-top {
+	width: 98%;
+    height: 12%;
+    margin-left:1%;
+    background: url(../../images/gis/pageOne/img_bg_guimotongji.png) no-repeat;
+    background-size: 100% 100%;
+}
+.doubleSelect {
+	height: 68%;
+}
+.leftSelect {
+	display: block;
+	float: left;
+	width: 50%;
+	margin-top: 2%;
+	text-align: center;
+}
+.leftSelect > select {
+	width: 43%;
+	font-size: 12px;
+	height: 25px !important;
+}
+.leftSelect > span {
+	height: 25px;
+    line-height: 25px;
+    font-size: 12px;
+}
+.portrait-buttom {
+	/* border: 1px solid #00E1FD; */
+	width: 100%;
+    height: 88%;
+    overflow: auto;
+}
+hr {
+	border-top: 1px solid #007284;
+	margin-top: -8px;
+    width: 90%;
+    margin-bottom: 0px !important;
+}
+.account-top {
+	width: 98%;
+	height: 12%;
+	margin-left:1%;
+	background: url(../../images/gis/pageOne/img_bg_guimotongji.png) no-repeat;
+    background-size: 100% 100%;
+}
+.middleButton {
+	display: block;
+    float: left;
+    width: 20%;
+    text-align: center;
+    margin-top: 5px;
+}
+.rightButton {
+	display: block;
+    float: left;
+    width: 20%;
+    text-align: center;
+    margin-top: 5px;
+}
+.rightButton > span,div {
+	font-size: 12px;
+}
+.middleButton > span {
+	cursor: pointer;
+	font-size: 12px;
+}
+.middleButton > div {
+	font-size: 12px;
+}
+.middle-button {
+	height: 67%;
+}
+.right-button {
+	height: 67%;
+}
+#mainOrg {
+	height: 99%;
+    width: 100%;
+    position: relative;
+}
+.middle-map {
+	height: 56%;
+    margin-top: 1%;
+    width: 98%;
+    margin-left: 1%;
+}
+.middle-line {
+	height: 31%;
+    width: 98%;
+    margin-left: 1%;
+}
+.echartsLineTop {
+	width: 100%;
+	height: 12%;
+	background: url(../../images/gis/pageOne/img_bg_xinyewuqushi.png) no-repeat;
+    background-size: 100% 100%;
+}
+.echartsLine {
+	height: 88%;
+	border: 1px solid #09416e;
+	border-top: none;
+}
+.right-Pie {
+	height: 56%;
+    width: 98%;
+    margin-top: 1%;
+    margin-left: 1%;
+}
+#rightPie {
+	height: 50%;
+	width: 100%;
+}
+.grid {
+	width: 100%;
+	height: 50%;
+	overflow: hidden;
+}
+.right-Bar {
+	height: 30.3%;
+    width: 98%;
+    margin-top: 1%;
+    margin-left: 1%;
+}
+.rightBarTop {
+	width: 100%;
+	height: 12%;
+	background: url(../../images/gis/pageOne/img_bg_geguishuyewuguimo.png) no-repeat;
+    background-size: 100% 100%;
+}
+#rightBar {
+	height: 88%;
+	width: 100%;
+	border: 1px solid #09416e;
+	border-top: none;
+}
+.sex-portrait {
+	width: 98%;
+    height: 30%;
+    margin-left: 1%;
+    margin-top: 1%;
+}
+.sexPortraitTop {
+	height:16%;
+	width:100%;
+	background: url(../../images/gis/pageOne/img_bg_yonghubili.png) no-repeat;
+    background-size: 100% 100%;
+}
+.sexPortraitTop > span {
+	margin-left: 4%;
+}
+#sexPortrait {
+	width: 100%;
+	height: 84%;
+	border: 1px solid #09416e;
+	border-top: none;
+}
+.tow-portrait {
+	width: 98%;
+    height: 36%;
+    margin-left: 1%;
+    margin-top: 1%;
+}
+.nestingL {
+	width: 49%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.nestingR {
+	width: 49%;
+	height: 100%;
+	display: block;
+	float: left;
+	margin-left: 2%;
+}
+.nestingPieTop {
+	width: 100%;
+	height: 12%;
+	background: url(../../images/gis/pageOne/img_bg_ninalingjiaoyu.png) no-repeat;
+    background-size: 100% 100%;
+}
+.nestingBarTop {
+	width: 100%;
+	height: 12%;
+	background: url(../../images/gis/pageOne/img_bg_xingqutezheng.png) no-repeat;
+    background-size: 100% 100%;
+}
+.nesting {
+	width: 100%;
+	height: 88%;
+	border: 1px solid #09416e;
+	border-top: none;
+}
+.tow-features {
+	width: 98%;
+	height: 36%;
+	margin-top: 1%;
+    margin-left: 1%;
+}
+.featuresL {
+	width: 49%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.featuresR {
+	width: 49%;
+	height: 100%;
+	display: block;
+	float: left;
+	margin-left: 2%;
+}
+.interestFeaturesTop,.consumeFeaturesTop {
+	width: 100%;
+	height: 12%;
+	background: url(../../images/gis/pageOne/img_bg_xingqutezheng.png) no-repeat;
+    background-size: 100% 100%;
+}
+.features {
+	width: 100%;
+	height: 88%;
+	border: 1px solid #09416e;
+	border-top: none;
+}
+ .topPanel {
+	position: absolute;
+    bottom: 20px;
+    z-index: 10;
+    left: 0px;
+    height: 100px;
+    /* color: gold;
+    background-color: rgba(1,39,67,0.7);
+    border: 1px solid rgb(0,158,188); */
+ }
+ .msc_serchBtn,.msc_input {
+ 	top:10px !important;
+ } 
+ .topTitle {
+ 	text-align: center;
+ 	font-size: 15px;
+ }
+ .rightPieTop {
+ 	width: 100%;
+ 	height: 7.2%;
+ 	background: url(../../images/gis/pageOne/img_bg_yewuguimozhanbi.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .rightPieComtent {
+ 	width: 100%;
+ 	height: 92.8%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+/*  .ui-jqgrid-bdiv {
+ 	overflow: auto !important;
+ } */
+ 
+ .nestingPieTop > span {
+ 	margin-left: 7%;
+ }
+ .nestingBarTop > span,.interestFeaturesTop > span,.consumeFeaturesTop > span {
+ 	margin-left: 7%;
+ }
+ .echartsLineTop > span {
+ 	margin-left: 3%;
+ }
+ .rightPieTop > span,.rightBarTop > span {
+ 	margin-left: 3%;
+ }
+ .ui-jqgrid-hdiv {
+ 	height: 20px;
+    overflow: hidden;
+    border: none !important;
+ }
+ .ui-jqgrid-htable > thead > tr > th > div {
+ 	line-height: 17px !important;
+    font-size: 10px !important;
+ }
+ .ui-widget-content {
+ 	height: 26px !important;
+ }
+ .ui-jqgrid .ui-jqgrid-hdiv {
+ 	border-bottom: 1px solid #0086c9 !important;
+    border-top: 1px solid #0086c9 !important;
+    background: #0e103d !important;
+ }
+ .ui-jqgrid-labels {
+ 	background: #0e103d !important;
+ }
+ .BMap_stdMpCtrl,#setRange {
+ 	display: none !important;
+ }
+ .areaAge-arpu {
+ 	width: 98%;
+ 	height: 32.4%;
+ 	margin-left: 1%;
+ 	margin-top: 1%; 
+ }
+ .area-age {
+ 	width: 49%;
+ 	height: 100%;
+ 	display: block;
+    float: left;
+ }
+ .areaAgeTop {
+ 	width: 100%;
+ 	height: 12%;
+ 	background: url(../../images/gis/pageOne/img_bg_ninalingjiaoyu.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .areaAgeTop > span {
+ 	margin-left: 4%;
+ }
+ #areaAge {
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+ .arpu-bar {
+ 	width: 49%;
+ 	height: 100%;
+ 	margin-left:1%;
+ 	float: left;
+ }
+ .arpuBarTop {
+ 	width: 100%;
+ 	height: 12%;
+ 	background: url(../../images/gis/pageOne/img_bg_ninalingjiaoyu.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .arpuBarTop > span {
+ 	margin-left: 4%;
+ }
+ #arpuBar {
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+ .dou-mou {
+ 	width: 98%;
+ 	height: 32.4%;
+ 	margin-left: 1%;
+ 	margin-top: 1%; 
+ }
+ .dou-echarts {
+ 	width: 49%;
+ 	height: 100%;
+ 	display: block;
+    float: left;
+ }
+ .mou-echarts {
+ 	width: 49%;
+ 	height: 100%;
+ 	margin-left:1%;
+ 	float: left;
+ }
+ .douEchartsTop {
+ 	width: 100%;
+ 	height: 12%;
+ 	background: url(../../images/gis/pageOne/img_bg_ninalingjiaoyu.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .douEchartsTop > span {
+ 	margin-left:3%;
+ }
+ .mouEchartsTop {
+ 	width: 100%;
+ 	height: 12%;
+ 	background: url(../../images/gis/pageOne/img_bg_ninalingjiaoyu.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .mouEchartsTop > span {
+ 	margin-left:3%;
+ }
+ #douEcharts {
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+ #mouEcharts{
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+ 
+ .preference-app {
+ 	width: 98%;
+ 	height: 32.4%;
+ 	margin-left: 1%;
+ 	margin-top: 1%; 
+ }
+ .preference-echarts {
+ 	width: 49%;
+ 	height: 100%;
+ 	display: block;
+ 	float: left;
+ }
+ .app-echarts {
+ 	width: 49%;
+ 	height: 100%;
+ 	margin-left:1%;
+ 	float: left;
+ }
+ .preferenceEchartsTop {
+ 	width: 100%;
+ 	height: 12%;
+ 	background: url(../../images/gis/pageOne/img_bg_ninalingjiaoyu.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .preferenceEchartsTop > span {
+ 	margin-left:3%;
+ }
+ .appEchartsTop {
+ 	width: 100%;
+ 	height: 12%;
+ 	background: url(../../images/gis/pageOne/img_bg_ninalingjiaoyu.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .appEchartsTop > span {
+ 	margin-left:3%;
+ }
+ #preferenceEcharts {
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+ #appEcharts{
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+ .lineDayMonth {
+ 	margin-left: 91%;
+    margin-top: -4%;
+ }
+ #lineDay {
+ 	cursor: pointer;
+ }
+ #lineMonth {
+ 	cursor: pointer;
+ }
+ 
+ .broadband-threearpu {
+ 	width: 98%;
+ 	height: 32.4%;
+ 	margin-left: 1%;
+ 	margin-top: 1%; 
+ }
+ .threearpu-echarts {
+ 	width: 49%;
+ 	height: 100%;
+ 	display: block;
+ 	float: left;
+ }
+ .broadband-echarts {
+ 	width: 50%;
+ 	height: 100%;
+ 	margin-left:1%;
+ 	float: left;
+ }
+ .pre-echarts {
+ 	width: 100%;
+ 	height: 100%;
+ }
+ .threearpuEchartsTop, .broadbandEchartsTop {
+ 	width: 100%;
+ 	height: 12%;
+ 	background: url(../../images/gis/pageOne/img_bg_xingqutezheng.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .preEchartsTop {
+ 	width: 100%;
+ 	height: 12%;
+ 	background: url(../../images/gis/pageOne/img_bg_xinyewuqushi.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .preEchartsTop > span {
+ 	margin-left: 2%;
+ }
+  .threearpuEchartsTop > span, .broadbandEchartsTop > span {
+ 	margin-left: 5%;
+ }
+ #threearpuEcharts, #broadbandEcharts, #chnlnumEcharts, #chnlstarEcharts {
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+  #magicboxEcharts, #warningEcharts, #accessEcharts {
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+ .network-flow {
+ 	width: 98%;
+ 	height: 32.4%;
+ 	margin-left: 1%;
+ 	margin-top: 1%;
+ }
+ .flow-echarts {
+ 	width: 100%;
+ 	height: 100%;
+ }
+ .flowEchartsTop {
+ 	width: 100%;
+    height: 12%;
+    background: url(../../images/gis/pageOne/img_bg_xinyewuqushi.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .flowEchartsTop > span {
+ 	margin-left: 1%;
+ }
+ #flowEcharts, #chnlNumFull, #chnlShare {
+ 	height: 88%;
+    width: 100%;
+    border: 1px solid #09416e;
+    border-top: none;
+ }
+ .magicEchartsTop {
+ 	width: 100%;
+ 	height: 12%;
+ 	text-align:center;
+ 	background: url(../../images/gis/pageOne/img_bg_mobaihe.png) no-repeat;
+    background-size: 100% 100%;
+ }
+ .magic-echarts {
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+    border-top: none;
+ }
+ .threearpu-echarts1 {
+ 	height: 100%;
+ 	width: 50%;
+ 	display: block;
+ 	float: left;
+ }
+ .broadband-echarts1 {
+ 	height: 100%;
+ 	width: 50%;
+ 	float: right;
+ }
+ #userScale, #inNet {
+ 	height: 100%;
+ 	width: 100%;
+ }
+ 
+ .ui-jqgrid .ui-pager-control {
+ 	height: 20px !important;
+ }
+ #poiImg,#poiInfo {
+ 	display: none !important;
+ }

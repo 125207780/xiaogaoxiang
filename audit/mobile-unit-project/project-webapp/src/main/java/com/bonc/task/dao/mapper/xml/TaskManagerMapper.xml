@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.task.dao.mapper.TaskManagerMapper">
+
+	<!-- 查询创建任务 -->
+	<select id="getTaskCreateInfo" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskBase">
+		SELECT 
+		<if test="orgLevel == 2">
+		CITY_ID, CITY_NAME,
+		</if>
+		<if test="orgLevel == 3">
+		 AREA_ID, AREA_NAME,
+		</if>
+		<if test="orgLevel == 4">
+		GRID_CODE, GRID_NAME,
+		</if>
+		<if test="orgLevel == 5">
+		 SALE_DEPT_CODE, SALE_DEPT_NAME,
+		</if>
+		ACTIVITYID, ACTIVITYNAME, CAMPAIGNID, CAMPAIGNNAME, ACTIVITYBEGINDATE,
+		ACTIVITYENDDATE, OFFERINGS, OFFERINGNAME, CAMPAIGNORDER, SUM(TASK_TOTAL) AS TASK_TOTAL, 
+		EXECUTE_NUM, SUM(HANDLE_NUM) AS HANDLE_NUM,  IS_MONITOR
+        FROM TASK_BASE_INFO
+        WHERE 
+        	1=1
+		<if test="orgLevel == 2">
+			AND city_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND area_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND grid_code = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 5">
+			AND sale_dept_code = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="activityBeginDate != null and activityBeginDate != ''">
+			<if test="activityEndDate != null and activityEndDate != ''">
+				AND to_date(ActivityBeginDate,'YYYYMMDD') between to_date(#{activityBeginDate},'yyyy-mm-dd') and to_date(#{activityEndDate},'yyyy-mm-dd')
+			</if>
+		</if>
+		<if test="activityName != null and activityName != ''">
+				and ActivityName like '%'||#{activityName}||'%'
+		</if>
+		GROUP BY 
+		<if test="orgLevel == 2">
+		CITY_ID, CITY_NAME,
+		</if>
+		<if test="orgLevel == 3">
+		 AREA_ID, AREA_NAME,
+		</if>
+		<if test="orgLevel == 4">
+		GRID_CODE, GRID_NAME,
+		</if>
+		<if test="orgLevel == 5">
+		 SALE_DEPT_CODE, SALE_DEPT_NAME,
+		</if>
+		 ACTIVITYID, ACTIVITYNAME, CAMPAIGNID, CAMPAIGNNAME, ACTIVITYBEGINDATE,
+		ACTIVITYENDDATE, OFFERINGS, OFFERINGNAME,  CAMPAIGNORDER,
+		EXECUTE_NUM,  IS_MONITOR
+	</select>
+	<!-- 查询执行任务 -->
+	<select id="getTaskHandleInfo" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskBase">
+		select user_id,task_code,task_name,task_type,task_bigtype,task_smallType,task_target_desc,task_creater,creater_owner,task_sender,
+		task_handler,task_owner,task_status,handle_date,create_date,finish_date,task_target,finish_state,problem_recode,is_monitor,off_monitor_date,evaluate_date,touch_way,marketing_plan
+		from task_base_info where task_type='1' and (is_monitor IS NULL OR IS_MONITOR = 'A' OR IS_MONITOR = '') and user_id=#{userId,jdbcType=VARCHAR}
+		<if test="taskName != null and taskName != ''">
+				and task_name like '%'||#{taskName}||'%'
+		</if>
+		<if test="startTime != null and startTime != ''">
+			<if test="endTime != null and endTime != ''">
+				and  timestamp(trim(create_date))  between to_date(#{startTime},'yyyy-mm-dd') and to_date(#{endTime},'yyyy-mm-dd')
+			</if>
+		</if>
+	</select>
+	<!-- 查询我取消的任务 -->
+	<select id="getTaskHistoryInfo" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskBase">
+		select user_id,task_code,task_name,task_type,task_bigtype,task_smallType,task_target_desc,task_creater,creater_owner,task_sender,
+		task_handler,task_owner,task_status,handle_date,create_date,finish_date,task_target,finish_state,problem_recode,is_monitor,off_monitor_date,evaluate_date,touch_way,marketing_plan
+		from task_base_info where is_monitor = 'P' and user_id=#{userId,jdbcType=VARCHAR}
+		<if test="taskName != null and taskName != ''">
+				and task_name like '%'||#{taskName}||'%'
+		</if>
+		<if test="startTime != null and startTime != ''">
+			<if test="endTime != null and endTime != ''">
+				and  timestamp(trim(create_date))  between to_date(#{startTime},'yyyy-mm-dd') and to_date(#{endTime},'yyyy-mm-dd')
+			</if>
+		</if>
+	</select>
+	
+	<!-- 监控任务 -->
+	<update id="updateListener" parameterType="com.bonc.task.dao.entity.TaskBase">
+		update task_base_info set is_monitor='A' where 1=1
+		<if test="orgLevel == 2">
+			AND city_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND area_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND grid_code = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 5">
+			AND sale_dept_code = #{orgId,jdbcType=VARCHAR}
+		</if>
+		 and
+		ActivityId=#{activityId,jdbcType=VARCHAR}
+	</update>
+	
+	<insert id="addTaskMonitorInfoByCityId" parameterType="java.lang.String">
+			INSERT INTO TASK_MONITOR_INFO
+		SELECT 
+			CITY_ID
+			,
+			CITY_ID
+		||'-'||ActivityId||'-'||CAMPAIGNID
+			,'1'||'-'||ActivityId
+			,	
+			CITY_NAME
+		||'[任务总量:'||TRIM(CHAR(task_total))||'; 办理量:'||TRIM(CHAR(handle_num))||']'
+			,'/1/'||'-'||ActivityId||'/'||
+			CITY_ID
+		||'-'||ActivityId
+			,ROW_NUMBER() OVER(PARTITION BY '1'||'-'||ActivityId ORDER BY ACTIVITYBEGINDATE DESC)
+			,2
+			,''
+			,''
+			,''
+			,''
+			,ACTIVITYNAME
+			,CAMPAIGNNAME
+			,ACTIVITYBEGINDATE
+			,ACTIVITYENDDATE
+			,OFFERINGNAME
+		FROM 
+		(SELECT 
+			CITY_ID
+			,CITY_NAME
+			,SUM(TASK_TOTAL) TASK_TOTAL
+			,SUM(HANDLE_NUM) HANDLE_NUM
+			,ACTIVITYID
+			,ACTIVITYNAME
+			,CAMPAIGNID
+			,CAMPAIGNNAME
+			,ACTIVITYBEGINDATE
+			,ACTIVITYENDDATE
+			,OFFERINGNAME
+		FROM 
+		TASK_BASE_INFO 
+		WHERE 1=1
+			<if test="orgLevel == 2">
+			AND city_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND area_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND grid_code = #{orgId,jdbcType=VARCHAR}
+		</if>
+		GROUP BY
+		CITY_ID
+		,CITY_NAME
+		,ACTIVITYID
+		,ACTIVITYNAME
+		,CAMPAIGNID
+		,CAMPAIGNNAME
+		,ACTIVITYBEGINDATE
+		,ACTIVITYENDDATE
+		,OFFERINGNAME)
+	</insert>
+	<insert id="addTaskMonitorInfoByAreaId" parameterType="java.lang.String">
+			INSERT INTO TASK_MONITOR_INFO
+		SELECT 
+			AREA_ID
+			,
+			AREA_ID
+		||'-'||ActivityId||'-'||CAMPAIGNID
+			,'1'||'-'||ActivityId
+			,	
+			AREA_NAME
+		||'[任务总量:'||TRIM(CHAR(task_total))||'; 办理量:'||TRIM(CHAR(handle_num))||']'
+			,'/1/'||'-'||ActivityId||'/'||
+			AREA_ID
+		||'-'||ActivityId
+			,ROW_NUMBER() OVER(PARTITION BY '1'||'-'||ActivityId ORDER BY ACTIVITYBEGINDATE DESC)
+			,2
+			,''
+			,''
+			,''
+			,''
+			,ACTIVITYNAME
+			,CAMPAIGNNAME
+			,ACTIVITYBEGINDATE
+			,ACTIVITYENDDATE
+			,OFFERINGNAME
+		FROM 
+		(SELECT 
+			AREA_ID
+			,AREA_NAME
+			,SUM(TASK_TOTAL) TASK_TOTAL
+			,SUM(HANDLE_NUM) HANDLE_NUM
+			,ACTIVITYID
+			,ACTIVITYNAME
+			,CAMPAIGNID
+			,CAMPAIGNNAME
+			,ACTIVITYBEGINDATE
+			,ACTIVITYENDDATE
+			,OFFERINGNAME
+		FROM 
+		TASK_BASE_INFO 
+		WHERE 1=1
+			<if test="orgLevel == 2">
+			AND city_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND area_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND grid_code = #{orgId,jdbcType=VARCHAR}
+		</if>
+		GROUP BY
+		AREA_ID
+		,AREA_NAME
+		,ACTIVITYID
+		,ACTIVITYNAME
+		,CAMPAIGNID
+		,CAMPAIGNNAME
+		,ACTIVITYBEGINDATE
+		,ACTIVITYENDDATE
+		,OFFERINGNAME)
+	</insert>
+	<insert id="addTaskMonitorInfoByGridCode" parameterType="java.lang.String">
+			INSERT INTO TASK_MONITOR_INFO
+		SELECT 
+			GRID_CODE
+			,
+			GRID_CODE
+		||'-'||ActivityId||'-'||CAMPAIGNID
+			,'1'||'-'||ActivityId
+			,	
+			GRID_NAME
+		||'[任务总量:'||TRIM(CHAR(task_total))||'; 办理量:'||TRIM(CHAR(handle_num))||']'
+			,'/1/'||'-'||ActivityId||'/'||
+			GRID_CODE
+		||'-'||ActivityId
+			,ROW_NUMBER() OVER(PARTITION BY '1'||'-'||ActivityId ORDER BY ACTIVITYBEGINDATE DESC)
+			,2
+			,''
+			,''
+			,''
+			,''
+			,ACTIVITYNAME
+			,CAMPAIGNNAME
+			,ACTIVITYBEGINDATE
+			,ACTIVITYENDDATE
+			,OFFERINGNAME
+		FROM 
+		(SELECT 
+			GRID_CODE
+			,GRID_NAME
+			,SUM(TASK_TOTAL) TASK_TOTAL
+			,SUM(HANDLE_NUM) HANDLE_NUM
+			,ACTIVITYID
+			,ACTIVITYNAME
+			,CAMPAIGNID
+			,CAMPAIGNNAME
+			,ACTIVITYBEGINDATE
+			,ACTIVITYENDDATE
+			,OFFERINGNAME
+		FROM 
+		TASK_BASE_INFO 
+		WHERE 1=1
+			<if test="orgLevel == 2">
+			AND city_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND area_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND grid_code = #{orgId,jdbcType=VARCHAR}
+		</if>
+		GROUP BY
+		GRID_CODE
+		,GRID_NAME
+		,ACTIVITYID
+		,ACTIVITYNAME
+		,CAMPAIGNID
+		,CAMPAIGNNAME
+		,ACTIVITYBEGINDATE
+		,ACTIVITYENDDATE
+		,OFFERINGNAME)
+	</insert>
+	<!-- 取消任务 -->
+	<update id="cancelTask" parameterType="com.bonc.task.dao.entity.TaskBase">
+		update task_base_info set is_monitor='P' where 1=1
+		<if test="orgLevel == 2">
+			AND city_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 3">
+			AND area_id = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 4">
+			AND grid_code = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="orgLevel == 5">
+			AND sale_dept_code = #{orgId,jdbcType=VARCHAR}
+		</if>
+		 and
+		ActivityId=#{activityId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="findTreeCodeByOrgIdAndMonitorCode" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskListener">
+		SELECT TREE_CODE FROM TASK_MONITOR_INFO WHERE 1=1 AND ORG_ID = #{orgId,jdbcType=VARCHAR}  AND MONITOR_CODE = #{monitorCode,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="deleteTaskMonitorInfoByTreeCode" parameterType="java.lang.String">
+		DELETE FROM TASK_MONITOR_INFO WHERE  TREE_CODE like '%'||#{treeCode}||'%'
+	</delete>
+	<!-- 恢复任务 -->
+	<update id="recoveryTask" parameterType="com.bonc.task.dao.entity.TaskBase">
+		update task_base_info set is_monitor='' where user_id=#{userId,jdbcType=VARCHAR} and
+		task_code=#{taskCode,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 查看问题列表 -->
+	<select id="getTaskProblem" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskProblem">
+		select task_code,task_name,problem_type,problem_desc,recode_date,recoder,is_solve
+		from task_problem_info where  task_code=#{taskCode,jdbcType=VARCHAR}
+	</select>
+</mapper>

@@ -1,0 +1,237 @@
+@CHARSET "UTF-8";
+html,body{
+	color:#FFF;
+	width: 100%;
+	height: 100%;
+}
+.map-all{
+	width: 100% !important;
+	height: 100%;
+}
+#mainMap{
+	width: 100% !important;
+	height: 100%;
+}
+.visual-left{
+	width: 30%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.visual-middle{
+	width: 40%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.visual-right{
+	width: 30%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.map-buttom{
+	width: 100%;
+	height: 30%;
+}
+.kpi-configure {
+	width: 100%;
+	height: 50%;
+	position: relative;
+}
+.visual-1 {
+	width: 100%;
+	height: 50%;
+	position: relative;
+}
+.modalTitles {
+    width: 25%;
+    height: 26px;
+    background: url(../../images/gis/titlebg1.png) no-repeat;
+    text-align: center;
+    line-height: 27px;
+    float: left;
+    color: #ffffff;
+    background-size: 100% 100%;
+}
+.modals {
+    width: 99%;
+    margin: 0 auto;
+    margin-bottom: 4px;
+    position: relative;
+}
+.orners1 {
+    background: url(../../images/gis/ornerR.png) no-repeat center;
+    background-size: 100% 100%;
+    top: 0px;
+    right: 0px;
+}
+.orners2 {
+    background: url(../../images/gis/ornerB.png) no-repeat center;
+    background-size: 100% 100%;
+    left: 0px;
+    bottom: 0px;
+}
+.modalTips {
+    width: 75%;
+    height: 26px;
+    background: url(../../images/gis/toptips1.png) no-repeat center left;
+    float: right;
+    color: #90b4bf;
+    background-size: 100% 100%;
+}
+.orners {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+}
+.kpi-checkbox {
+	width: 100%;
+	height: 10%;
+	font-size: 12px;
+}
+.kpiCheckbox {
+	display: block;
+	float: left;
+	padding: 2px;
+}
+.kpiCheckbox > span {
+	display: block;
+    float: left;
+    margin-left: 14px;
+}
+.kpiCheckbox > input {
+	position: absolute;
+}
+.kpiRadiobox {
+	display: block;
+	float: left;
+	padding: 2px;
+}
+.kpiRadiobox > span {
+	display: block;
+    float: left;
+    margin-left: 14px;
+}
+.kpiRadiobox > input {
+	position: absolute;
+}
+.gridRadiobox {
+	display: block;
+	float: left;
+	padding: 2px;
+}
+.gridRadiobox > span {
+	display: block;
+    float: left;
+    margin-left: 14px;
+}
+.gridRadiobox > input {
+	position: absolute;
+}
+.pieType {
+	width: 50%;
+	height: 80%;
+	display: block;
+	float: left;
+}
+.leftBar {
+	width: 99%;
+    height: 90%;
+}
+.rightBar {
+	width: 99%;
+    height: 90%;
+}
+.rightPie {
+	width: 99%;
+    height: 90%;
+}
+.append-all {
+	width: 30%;
+    height: 94%;
+    position: absolute;
+    z-index: 10;
+    background: rgba(14,19,34,0.6);
+    opacity: 1.0;
+    top: 5%;
+    right: 0.5%;
+}
+.glyphicon-remove {
+	position: absolute;
+	z-index: 10;
+	right:1%;
+	top: -1.4%;
+	cursor: pointer;
+}
+td ,td > a{
+	color: #fff !important;
+}
+.glyphicon-fullscreen {
+	color: black;
+    top: -1%;
+    right: 0.8%;
+    cursor: pointer;
+    position: absolute;
+    z-index: 10;
+}
+.tdDiv {
+	height: 16.66%;
+	width: 100%;
+	border-bottom: 1px solid #014e83;
+}
+.tdDiv-left {
+	height: 100%;
+	width: 50%;
+	display: block;
+	float: left;
+	border-right: 1px solid #014e83;
+}
+.tdDiv-right {
+	height: 100%;
+	width: 50%;
+	display: block;
+    float: right;
+}
+.removeTr > td{
+	text-align: center !important;
+}
+.otherTd {
+	/* display: none; */
+}
+.ui-jqgrid-bdiv {
+	overflow: auto !important;
+}
+ 
+.smallChart{
+  width: 300px;height: 300px;
+  transform:scale(0.3,0.3);/*  缩减比例 X缩小为 0.6倍 ,Y 0.5倍，也就是 width实际为 600*0.6=360，height:600*0.5=300*/
+  margin:-105px -105px;  /* 偏移量计算 ：上下偏移量依据height计算：(600-600*0.5)/2 =150 ,左右偏移量依据宽度计算  (600 - 600*0.6)/2 =120 */
+  border:none !important;
+}
+.grid {
+	height: 85%;
+	width: 100%;
+}
+#gridTable {
+	height: 100%;
+	width: 100%;
+}
+.BMap_stdMpCtrl { 
+	display: none !important;
+}
+.leftMapKpiType {
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	width: 25%;
+	height: 60%;
+}
+.mapkpiTypePie {
+	width: 100%;
+	height: 50%;
+}
+.mapKpiTypeBar {
+	width: 100%;
+	height: 50%;
+}

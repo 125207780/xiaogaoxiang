@@ -1,0 +1,157 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.contract.dao.mapper.contractPaneMapper">
+
+	<select id="selectGridName" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT
+			S.ORG_ID, S.NAME, D.TYPE_ID FROM SYS_ORG S, GRID_DETAIL D
+		WHERE 
+			S.PID = #{nowOrgId,jdbcType=VARCHAR} 
+		AND 
+			S.ORGLEVEL =4
+		AND 
+			S.ORG_ID = D.ORG_ID
+		AND 
+			S.ORG_ID IN (
+				SELECT 
+					GRID_CODE FROM PHYSICAL_GRID_INFO P
+				WHERE 
+					NOT EXISTS(
+						SELECT 
+							* 
+						FROM 
+							MS_CONTRACT_AREA M 
+						WHERE 
+							M.PHYSICAL_ID = P.PHYSICAL_ID AND M.STATUS!='P'))
+	</select>
+
+	<select id="selectTypeOne" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			CONDITION_CODE, CONDITION_NAME 
+		FROM 
+			CONDITION_SCREEN 
+		WHERE 
+			TYPE = 'JCDY' 
+		AND 
+			CONDITION_LEVEL = 1
+	</select>
+
+	<select id="selectTypeTwo" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			CONDITION_CODE, CONDITION_NAME 
+		FROM 
+			CONDITION_SCREEN 
+		WHERE 
+			TYPE = 'JCDY' 
+		AND 
+			CONDITION_LEVEL = 2 
+		AND 
+			PARENT_ID = #{code}
+	</select>
+
+	<select id="selectChannl" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			CHNL_CODE, LOGIN_ID 
+		FROM 
+			CHANNEL_MANAGER 
+		WHERE 
+			CHNL_CODE = #{chnl_code}
+	</select>
+
+	<select id="initGrid" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+			PHYSICAL_ID, PHYSICAL_NAME, SMALL_TYPE, BIG_TYPE, ADDRESS
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			GRID_CODE = #{gridCode} 
+		AND
+			BIG_TYPE = #{bigType} 
+		AND
+			SMALL_TYPE = #{smallType}
+		<if test="phsycialName != '' ">
+			AND PHYSICAL_NAME LIKE '%'||#{phsycialName}||'%'
+		</if>
+		AND 
+			PHYSICAL_ID NOT IN(
+				SELECT 
+					PHYSICAL_ID 
+				FROM 
+					MS_CONTRACT_AREA 
+				WHERE
+					STATUS != 'P')
+	</select>
+
+	<insert id="insertContract" parameterType="java.util.Map">
+		INSERT INTO
+			SIGN_CONTRACT(
+				SIGNING_ID, CREATE_USER, CREATE_DATE, STATUS, CHNL_CODE, SIGN_REQUIRE)
+		VALUES(
+			#{SIGNING_ID,jdbcType=VARCHAR}, #{CREATE_USER,jdbcType=VARCHAR}, 
+			#{CREATE_DATE,jdbcType=VARCHAR}, #{STATUS,jdbcType=VARCHAR},
+			#{CHNL_CODE,jdbcType=VARCHAR}, #{SIGING_REQUIRE,jdbcType=VARCHAR})
+	</insert>
+
+	<insert id="insertPhysical" parameterType="java.util.Map">
+		INSERT INTO 
+			SIGN_CONTRACT_PHYSICAL(
+				PHYSICAL_ID, SIGNING_ID, STATUS)
+		VALUES(
+			#{PHYSICAL_ID,jdbcType=VARCHAR},
+			#{SIGNING_ID,jdbcType=VARCHAR},
+			#{STATUS,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="initManagerType" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT CHNL_TYPE FROM CHANNEL_INFO WHERE CHNL_CODE = #{chnl_code,jdbcType=VARCHAR}
+	</select>
+
+	<select id="tableManager" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			NAME, PHONE, LOGIN_ID 
+		FROM 
+			GRID_USER 
+		WHERE 
+			USER_TYPE = #{USER_TYPE,jdbcType=INTEGER} 
+		AND
+			ORG_ID = #{ORG_ID,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insertChnlManager" parameterType="java.util.Map">
+		INSERT INTO
+			CHANNEL_MANAGER(
+				CHNL_CODE, LOGIN_ID)
+			VALUES(
+				#{chnl_code,jdbcType=VARCHAR}, #{newManager,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="selectGridUserByGridCode" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT LOGIN_ID, NAME FROM GRID_USER WHERE ORG_ID = #{gridCode} AND USER_TYPE = 3
+	</select>
+
+	<insert id="insertGridItemInfo" parameterType="java.util.Map">
+		INSERT INTO
+			GRID_ITEM_INFO(
+				USER_ID, USER_NAME, ITEM_CODE, ITEM_NAME, ITEM_STATUS, ITEM_DESC, ITEM_CONTENT, ITEM_HANDLER, ITEM_ISSUEDER, ISSUED_DATE)
+		VALUES(
+			#{userId,jdbcType=VARCHAR}, #{gridName,jdbcType=VARCHAR}, #{itemCode,jdbcType=VARCHAR}, #{itemName,jdbcType=VARCHAR}, 
+			#{itemStatus,jdbcType=VARCHAR}, #{itemContent,jdbcType=VARCHAR}, #{itemContent,jdbcType=VARCHAR}, #{itemHandler,jdbcType=VARCHAR}, 
+			#{itemIssueder,jdbcType=VARCHAR}, #{issuedDate,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="updateMsContractAreaById" parameterType="java.lang.String">
+		UPDATE 
+			MS_CONTRACT_AREA M
+		SET 
+			STATUS = 'F'
+		WHERE 
+			(M.STATUS = 'A' OR M.STATUS = 'R')
+		AND 
+			M.PHYSICAL_ID IN(
+				SELECT
+					PHYSICAL_ID
+				FROM
+					sign_contract_physical
+				WHERE
+					signing_id = #{id,jdbcType=VARCHAR})
+	</update>
+</mapper>

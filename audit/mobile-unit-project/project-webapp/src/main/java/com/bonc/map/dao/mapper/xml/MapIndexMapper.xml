@@ -1,0 +1,2282 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.map.dao.mapper.MapIndexMapper">
+	<resultMap id="MapPoi" type="com.bonc.map.dao.entity.MapPoi" >
+    	<id column="UID" property="uid" jdbcType="VARCHAR" />
+    	<result column="ADDR" property="addr" jdbcType="VARCHAR" />
+    	<result column="AREA_ID" property="areaId" jdbcType="VARCHAR" />
+    	<result column="AREA_NAME" property="areaName" jdbcType="VARCHAR" />
+    	<result column="NAME" property="name" jdbcType="VARCHAR" />
+    	<result column="city_id" property="cityId" jdbcType="VARCHAR" />
+    	<result column="IMAGEURL" property="imageUrl" jdbcType="VARCHAR" />
+     	<result column="LNG" property="lng" jdbcType="DOUBLE" />
+    	<result column="LAT" property="lat" jdbcType="DOUBLE" />
+    	<result column="AOI" property="aoi" jdbcType="CLOB" />
+  	</resultMap>
+  	<resultMap id="MapInfoMap" type="com.bonc.map.dao.entity.MapInfo" >
+    	<id column="ORG_ID" property="orgId" jdbcType="VARCHAR" />
+    	<result column="TYPE_ID" property="typeId" jdbcType="VARCHAR" />
+    	<result column="SHAPE" property="shape" jdbcType="VARCHAR" />
+    	<result column="COLOR" property="color" jdbcType="VARCHAR" />
+    	<result column="NAME" property="name" jdbcType="VARCHAR" />
+    	<result column="LOGIN_ID" property="loginId" jdbcType="VARCHAR" />
+  	</resultMap>
+	<resultMap id="OrgDetail" type="com.bonc.map.dao.entity.OrgDetail" >
+    	<result column="ORG_ID" property="orgId" jdbcType="VARCHAR" />
+    	<result column="SHAPE" property="shape" jdbcType="CLOB" />
+    	<result column="MAXLNG" property="maxlng" jdbcType="DOUBLE" />
+    	<result column="MINLNG" property="minlng" jdbcType="DOUBLE" />
+    	<result column="MAXLAT" property="maxlat" jdbcType="DOUBLE" />
+    	<result column="MINLAT" property="minlat" jdbcType="DOUBLE" />
+	</resultMap>
+
+	<select id="initPage" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATUS, DATE 
+		FROM 
+			WG_HF_AREA_LOCK 
+		WHERE
+			1 = 1
+		<if test="orgId != null and orgId != ''">
+		AND
+			ORG_ID = #{orgId}
+		</if> 
+			
+	</select>
+  
+  	<select id="selectByOrgId" resultMap="MapPoi" parameterType="java.lang.String" >
+    	SELECT 
+    		DISTINCT NAME
+		FROM 
+			MAP_BD_POI
+    	WHERE 
+    		ORG_ID = #{orgId}
+  	</select>
+  
+	<select id="selectByTextLabel" resultMap="MapPoi" parameterType="java.util.Map" >
+		SELECT 
+			NAME, AREA_NAME, UID, IMAGEURL, LNG, LAT, ADDR, TAG
+		FROM 
+			MAP_BD_POI
+    	WHERE 
+    		1=1
+	    <if test="name != null and textLabel != ''">
+			AND NAME LIKE '%'||#{name}||'%' 
+		</if>
+    	AND 
+    		ORG_ID = #{orgId,jdbcType=VARCHAR}
+    	ORDER BY 
+    		uid
+  	</select>
+  
+  	<select id="selectShapeByOrgId" resultMap="MapPoi" parameterType="java.util.Map" >
+    	SELECT 
+    		AOI, LNG, LAT, UID
+		FROM 
+			MAP_BD_POI
+    	WHERE 
+    		ORG_ID = #{orgId,jdbcType=VARCHAR}
+    	AND 
+    		<![CDATA[ LNG >= #{minlng,jdbcType=DOUBLE} ]]>
+    	AND 
+    		<![CDATA[ LNG <= #{maxlng,jdbcType=DOUBLE} ]]>
+    	AND
+    		<![CDATA[ LAT >= #{minlat,jdbcType=DOUBLE} ]]>
+    	AND
+    		<![CDATA[ LAT <= #{maxlat,jdbcType=DOUBLE} ]]>
+    	AND
+    		shape IS NOT NULL
+    	AND 
+    		shape !=''
+  	</select>
+  
+  	<select id="selectAllShapeByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+    	SELECT 
+    		AOI, LNG, LAT, UID
+		FROM 
+			MAP_BD_POI
+    	WHERE 
+    		ORG_ID = #{orgId,jdbcType=VARCHAR}
+    	AND 
+    		LENGTH(AOI) > 0
+  	</select>
+	
+	<!--网格经理 -->
+	<select id="selectUser" resultType="java.util.Map" parameterType="java.lang.String">
+    	SELECT 
+    		LOGIN_ID, USER_NAME, PASSWORD, USER_SEX, USER_MOBILE, ORG_ID, USER_TYPE, LOGIN_ID AS OA_ID
+		FROM 
+			GRID_USER_SELECT
+		WHERE 
+			ORG_ID = #{orgId,jdbcType=VARCHAR} 
+		<!-- AND USER_TYPE=#{userType,jdbcType=INTEGER} -->
+  	</select>
+  
+  	<!-- 直销人员 -->
+	<select id="initsale_user" resultType="java.util.Map" parameterType="java.lang.String" >
+    	SELECT 
+    		UID, USER_NAME, USER_NUMBER, AREA_ID
+		FROM 
+			DIRECT_SALE_USER_INFO
+		WHERE 
+			AREA_ID = #{orgId,jdbcType=VARCHAR} <!-- AND UID NOT IN (
+	SELECT LOGIN_ID FROM GRID_USER;/
+	) -->
+  	</select>
+  	
+  	<select id="selectGridUserLoginAndOA" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT LOGIN_ID FROM GRID_USER WHERE OA_ID = #{oaid} AND ORG_ID = #{orgid}
+  	</select>
+  	
+	<select id="selectUserOne" resultType="java.util.Map" parameterType="java.lang.String" >
+    	SELECT 
+    		LOGIN_ID, USER_NAME, USER_MOBILE, LOGIN_ID AS OA_ID, USER_TYPE, USER_MOBILE, PASSWORD
+		FROM 
+			GRID_USER_SELECT
+		WHERE 
+			LOGIN_ID = #{OA_ID,jdbcType=VARCHAR}
+  	</select>
+  
+  	<!--直销  -->
+	<select id="selectUserBYuid" resultType="java.util.Map" parameterType="java.lang.String" >
+    	SELECT 
+    		UID, USER_NAME, USER_NUMBER, AREA_ID
+		FROM 
+			DIRECT_SALE_USER_INFO
+		WHERE 
+			UID = #{UID,jdbcType=VARCHAR}
+  	</select>
+
+	<select id="selectUserOnes" resultType="java.util.Map" parameterType="java.lang.String" >
+   		SELECT 
+   			LOGIN_ID, USER_NAME, USER_MOBILE 
+   		FROM 
+   			SYS_USER 
+   	 	WHERE
+   	 		LOGIN_ID = #{LOGIN_ID,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectUserByOrgIdAndUserType" resultType="java.util.Map" parameterType="java.lang.String" >
+    	SELECT 
+    		OA_ID, NAME, LOGIN_ID
+		FROM 
+			GRID_USER
+		WHERE 
+			ORG_ID = #{orgId,jdbcType=VARCHAR} 
+		AND 
+			USER_TYPE = #{userType,jdbcType=VARCHAR}
+  	</select>
+  
+   	<select id="selectUserByOrgIdAndUserTypeS" resultType="java.util.Map" parameterType="java.lang.String" >
+    	SELECT 
+    		OA_ID, NAME, LOGIN_ID,PHONE
+		FROM 
+			GRID_USER
+		WHERE 
+			ORG_ID = #{orgId,jdbcType=VARCHAR} 
+		AND 
+			USER_TYPE = #{userType,jdbcType=VARCHAR}	
+  	</select>
+  
+   	<select id="selectUserOneSale" resultType="java.util.Map" parameterType="java.lang.String" >
+    	SELECT 
+    		UID, USER_NAME, USER_NUMBER, AREA_ID
+		FROM 
+			DIRECT_SALE_USER_INFO
+		WHERE 
+			AREA_ID = #{areaid} 
+		AND 
+			UID IN (
+				SELECT 
+					LOGIN_ID 
+				FROM 
+					GRID_USER 
+				WHERE 
+					ORG_ID = #{orgId} 
+				AND 
+					USER_TYPE = #{userType,jdbcType=VARCHAR})
+	</select>
+  
+  	<select id="selectType" resultType="java.util.Map" parameterType="java.lang.String" >
+    	SELECT TYPE_ID, TYPE_NAME, COLOR FROM GRID_TYPE
+  	</select>
+  
+  	<select id="selectOrg" resultType="java.util.Map" parameterType="java.lang.String" >
+    	SELECT 
+    		ORG_ID, PID, NAME, MEMO, TREE_CODE, DISPLAY_ORDER, ORGLEVEL
+		FROM 
+			SYS_ORG
+    	WHERE 
+    		ORG_ID = #{orgId,jdbcType=VARCHAR}
+ 	 </select>
+  
+  	<select id="selectOrgOrder" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    	SELECT 
+    		nvl(MAX(DISPLAY_ORDER),0)
+		FROM 
+			SYS_ORG
+    	WHERE 
+    		PID = #{pid,jdbcType=VARCHAR}
+  	</select>
+  
+  	<insert id="insertMapInfo" parameterType="java.util.Map">
+		INSERT INTO 
+			GRID_DETAIL(TYPE_ID, COLOR, ORG_ID, SHAPE, MAXLNG, MINLNG, MAXLAT, MINLAT, CPLNG, CPLAT) 
+		VALUES(#{typeId,jdbcType=VARCHAR}, #{color}, #{orgId}, #{shape}, #{maxlng}, #{minlng}, #{maxlat}, #{minlat}, #{cplng}, #{cplat})
+  	</insert>
+  
+	<insert id="insertMapOrg" parameterType="java.util.Map">
+		INSERT INTO 
+			SYS_ORG(ORG_ID, PID, NAME, DISPLAY_ORDER, ORGLEVEL, TREE_CODE) 
+		VALUES
+			(#{orgId,jdbcType=VARCHAR}, #{pid}, #{name,jdbcType=VARCHAR}, #{displayOrder,jdbcType=INTEGER}, #{orgLevel,jdbcType=INTEGER}, #{treeCode,jdbcType=VARCHAR})
+  	</insert>
+  
+  	<!-- 查询网格轮廓信息 -->
+	<select id="selectGridByPid" resultMap="MapInfoMap" parameterType="java.lang.String" >
+    	SELECT
+			SYS_ORG.ORG_ID,
+			SYS_ORG.NAME,
+			GRID_DETAIL.TYPE_ID,
+			GRID_DETAIL.SHAPE,
+			GRID_DETAIL.COLOR
+		FROM
+			GRID_DETAIL
+		LEFT JOIN SYS_ORG ON
+			SYS_ORG.ORG_ID = GRID_DETAIL.ORG_ID
+		WHERE
+			SYS_ORG.PID = #{pid,jdbcType=VARCHAR} 
+  	</select>
+  
+	<!-- 查询小区轮廓信息 -->
+	<select id="selectCommunityGridByPid" parameterType="java.lang.String" resultMap="MapInfoMap">
+		SELECT 
+			CELL_ID AS orgId,
+			CELL_NAME AS NAME,
+			SHAPE
+		FROM 
+			TA_DT_CELL_M_GXH
+		WHERE
+			1=1
+		<if test="pid != null and pid != ''">
+			AND CNTY_ID = #{pid,jdbcType=VARCHAR}
+		</if>
+	</select>
+  
+  	<update id="updateMapOrg" parameterType="java.util.Map">
+		UPDATE 
+			SYS_ORG 
+		SET 
+			NAME = #{name}
+		WHERE 
+			ORG_ID = #{orgId}
+  	</update>
+  
+  	<update id="updateMapInfo" parameterType="java.util.Map">
+		UPDATE 
+			GRID_DETAIL 
+		SET 
+			SHAPE = #{shape},
+			MINLNG = #{minlng}, 
+			MAXLNG = #{maxlng}, 
+			MINLAT = #{minlat}, 
+			MAXLAT = #{maxlat},
+			CPLNG = #{cplng}, 
+			CPLAT = #{cplat}
+		WHERE 
+			ORG_ID = #{orgId}
+  	</update>
+  
+  	<delete id="deleteUser" parameterType="java.lang.String">	
+		DELETE FROM 
+			GRID_USER 
+		WHERE 
+			ORG_ID = #{orgId,jdbcType=VARCHAR} 
+		AND 
+			USER_TYPE = #{usertype,jdbcType=INTEGER} 
+	 	<if test="OA_ID !=null">
+			AND OA_ID = #{OA_ID,jdbcType=VARCHAR}
+		</if>
+  	</delete>
+
+	<delete id="deleteMapSYS" parameterType="java.lang.String">	
+		DELETE FROM SYS_USER WHERE ORG_ID = #{orgId,jdbcType=VARCHAR} AND OA_ID = #{loginId, jdbcType=VARCHAR}
+  	</delete>
+  
+	<delete id="deleteMapRoleSys" parameterType="java.lang.String">	
+		DELETE FROM SYS_ROLE_USER WHERE USER_ID IN (
+			SELECT USER_ID FROM SYS_USER WHERE ORG_ID = #{orgId,jdbcType=VARCHAR} AND OA_ID = #{loginId,jdbcType=VARCHAR})
+  	</delete>
+  
+   	<delete id="deleteMapRoleSyss" parameterType="java.lang.String">	
+		DELETE FROM SYS_ROLE_USER WHERE USER_ID IN (
+			SELECT USER_ID FROM SYS_USER WHERE ORG_ID = #{orgId,jdbcType=VARCHAR})
+  	</delete>
+  
+    <delete id="deleteSysUser" parameterType="java.lang.String">	
+		DELETE FROM SYS_USER WHERE ORG_ID = #{orgId,jdbcType=VARCHAR} 
+  	</delete>
+    
+  	<delete id="deleteUserS" parameterType="java.lang.String">	
+		DELETE FROM GRID_USER WHERE ORG_ID = #{orgId,jdbcType=VARCHAR} AND USER_TYPE = #{usertype,jdbcType=INTEGER} AND OA_ID = #{login_id,jdbcType=VARCHAR}
+  	</delete>
+
+	<delete id="deleteUserOne" parameterType="java.lang.String">
+		DELETE FROM 
+			SYS_USER 
+		WHERE 
+			OA_ID = #{OA_ID,jdbcType=VARCHAR} 
+		AND 
+			ORG_ID = #{orgId,jdbcType=VARCHAR}
+	</delete>
+  
+	<delete id="deleteMapInfo" parameterType="java.lang.String">
+		DELETE FROM 
+			GRID_DETAIL 
+		WHERE 
+			ORG_ID = #{orgId}
+  	</delete>
+  
+	<delete id="deleteMapOrg" parameterType="java.lang.String">
+		DELETE FROM 
+			SYS_ORG 
+		WHERE 
+			ORG_ID = #{orgId}
+  	</delete>
+  
+  	<delete id="deleteMapUser" parameterType="java.lang.String">
+		DELETE FROM 
+			GRID_USER 
+		WHERE 
+			ORG_ID = #{orgId}
+  	</delete>
+  
+  	<!-- 根据小区编码删除小区轮廓信息 -->
+  	<delete id="deleteCommunity" parameterType="java.lang.String">
+  		DELETE FROM
+  			TA_DT_CELL_M_GXH
+  		WHERE
+  			CELL_ID = #{cellId}
+  	</delete>
+  
+  	<select id="getOrgDetail" parameterType="java.lang.String" resultMap="OrgDetail" >
+   		SELECT ORG_ID, SHAPE, MAXLNG, MINLNG, MAXLAT, MINLAT FROM SYS_ORG_DETAIL WHERE ORG_ID = #{orgId}
+  	</select>
+  
+	<select id="selectDayCost" parameterType="java.lang.String" resultType="java.lang.Double" >
+   		SELECT 
+   			NVL(SUM(NVL(INCOME, 0)), 0)
+   		FROM 
+   			Grid_income_detail T
+    	WHERE
+			T.physical_ID IN
+			<foreach collection="uids" item="obj" index="index" open="(" separator="," close=")">
+				#{obj}
+			</foreach> 
+  	</select>
+  	
+	<select id="selectCustomCost" parameterType="java.lang.String" resultType="java.lang.Integer" >
+   		SELECT 
+   			NVL(SUM(NVL(CUST_NUM,0)),0)
+   		FROM 
+   			grid_customer_detail T
+   		WHERE
+			T.physical_ID IN
+			<foreach collection="uids" item="obj" index="index" open="(" separator="," close=")">
+				#{obj}
+			</foreach> 
+	</select>
+  
+	<select id="selectVillageCost" parameterType="java.lang.String" resultType="java.lang.Integer" >	
+		SELECT 
+			COUNT(1) 
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			BIG_TYPE = '家居小区' 
+		AND 
+			physical_ID IN 
+		  	<foreach collection="uids" open="(" close=")" separator="," index="index" item="uid">
+     			#{uid}
+          	</foreach>  
+	</select>
+  
+	<select id="selectGroupCost" parameterType="java.lang.String" resultType="java.lang.Integer" >
+		SELECT 
+			NVL(SUM(NVL(group_num, 0)), 0)
+   		FROM 
+   			grid_vip_customer_detail T
+  <!--  WHERE
+		T.physical_ID IN
+		<foreach collection="uids" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		</foreach>  -->
+	</select>
+
+	<update id="updateMapBdPoi" parameterType="java.util.Map">
+		UPDATE 
+			MAP_BD_POI 
+		SET 
+			GRID_CODE = #{gridCode}
+		WHERE 
+			UID IN
+	 		<foreach collection="uid" open="(" close=")" separator="," index="index" item="uid">
+     			#{uid}
+          	</foreach>
+  	</update>
+  
+  	<update id="updateChannelInfo" parameterType="java.util.Map">
+		UPDATE 
+			CHANNEL_INFO 
+		SET 
+			GRID_CODE = #{gridCode}
+		WHERE 
+			CHNL_CODE IN
+			<foreach collection="uid" open="(" close=")" separator="," index="index" item="uid">
+     			#{uid}
+    		</foreach>
+  	</update>
+  
+	<update id="updateStationInfo" parameterType="java.util.Map">
+		UPDATE 
+			STATION_INFO 
+		SET 
+			GRID_CODE = #{gridCode}
+		WHERE 
+			STATION_CODE IN
+			<foreach collection="uid" open="(" close=")" separator="," index="index" item="uid">
+     			#{uid}
+    		</foreach>
+  	</update>
+
+	<update id="deleteUpdateMapBdPoi" parameterType="java.util.Map">
+		UPDATE 
+			MAP_BD_POI 
+		SET 
+			GRID_CODE = ''
+		WHERE 
+			GRID_CODE = #{gridCode}
+	</update>
+  
+  	<update id="deleteUpdateChannelInfo" parameterType="java.util.Map">
+		UPDATE 
+			CHANNEL_INFO 
+		SET 
+			GRID_CODE = ''
+		WHERE 
+			GRID_CODE = #{gridCode}
+  	</update>
+  
+	<update id="deleteUpdateStationInfo" parameterType="java.util.Map">
+		UPDATE 
+			STATION_INFO 
+		SET 
+			GRID_CODE = ''
+		WHERE 
+			GRID_CODE = #{gridCode}
+	</update>
+  
+	<update id="UpdateCompleteMap" parameterType="java.util.Map" >
+  		UPDATE 
+   			WG_HF_AREA_LOCK AS A 
+   		SET 
+   			A.DATE = #{date,jdbcType=DATE},
+   			A.STATUS = #{status,jdbcType=VARCHAR} 
+   		WHERE 
+   			A.ORG_ID = #{orgId,jdbcType=VARCHAR} 
+	</update>
+  
+	<select id="getChannelByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+		SELECT 
+			B.LON AS LNG, B.LAT AS LAT, B.CHNL_CODE AS UID
+		FROM 
+			CHANNEL_INFO B 
+		WHERE 
+			B.LON <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND 
+			B.LON <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			B.LAT <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE} 
+		AND 
+			B.LAT <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+		AND 
+			B.ORG_ID = #{orgId}
+	</select>
+	
+	
+	<select id="getDataByShapeList"  parameterType="java.util.Map"  resultType="java.util.Map">
+		SELECT 
+			*
+		FROM 
+			<if test = "flag != '' and flag != null and flag == 'channel'"> 
+			channel_info_detail    
+		WHERE 
+			LON <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND 
+			LON <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			LAT <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE} 
+		AND 
+			LAT <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+		AND 
+			CNTY_CODE = #{orgId}
+			</if>
+             
+			<if test = "flag != '' and flag != null and flag == 'importantCommunity'"> 
+			cell_info_detail
+  		WHERE
+  		    (GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+  		AND
+  			LON <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE}
+  		AND 
+  			LON <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+  		AND
+  		    LAT <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE} 
+  		AND
+  		    LAT <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+		AND 
+			CNTY_ID = #{orgId}  
+			</if>
+			<if test = "flag != '' and flag != null and flag == 'station'"> 
+			station_info_detail  
+		WHERE 
+      		STATION_LON <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+      	AND 
+      		STATION_LON <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+       	AND 
+       		STATION_LAT <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE} 
+       	AND 
+       		STATION_LAT <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+        AND 
+        	ORG_ID = #{orgId}
+			</if>
+			<if test = "flag != '' and flag != null and flag == 'community'"> 
+			cell_info_detail 
+		WHERE 
+			EXISTS 
+			(SELECT 1 FROM SYS_ORG b WHERE b.org_id = grid_code and b.ORGLEVEL = 4)
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			CELL_LONGITUDE <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			CELL_LONGITUDE <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			CELL_LATITUDE <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			CELL_LATITUDE <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}	
+		AND 
+			CNTY_ID = #{orgId}  
+			</if>
+			<if test = "flag != '' and flag != null and flag == 'nonCommunity'"> 
+			cell_info_detail
+	 	WHERE 
+			CELL_LONGITUDE <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			CELL_LONGITUDE <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			CELL_LATITUDE <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			CELL_LATITUDE <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}	
+		AND 
+			CNTY_CODE = #{orgId}  
+			</if>
+			<if test = "flag != '' and flag != null and flag == 'allABGroup'"> 
+			group_info_detail 
+		WHERE 
+			SUBSTR(CLASS_ID, 1, 1) IN ('A', 'B')
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			JING_DU <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			JING_DU <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			WEI_DU <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			WEI_DU <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}	
+		AND 
+			CNTY_ID = #{orgId}  
+			</if>
+			<if test = "flag != '' and flag != null and flag == 'allCDGroup'"> 
+			group_info_detail 
+		WHERE 
+			CLASS_ID in ('C', 'D')
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			JING_DU <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			JING_DU <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			WEI_DU <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			WEI_DU <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}	
+		AND 
+			CNTY_ID = #{orgId}  
+			</if>
+			
+			<if test = "flag != '' and flag != null and flag == 'nonABGroup'"> 
+			group_info_detail 
+		WHERE 
+			SUBSTR(CLASS_ID, 1, 1) IN ('A', 'B')
+		AND 
+			NOT EXISTS (SELECT 1 FROM SYS_ORG b WHERE b.ORG_ID = GRID_CODE AND b.ORGLEVEL = 4)
+		AND
+			(GRID_CODE IS NULL OR <![CDATA[ GRID_CODE = '']]>)
+		AND
+			JING_DU <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			JING_DU <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			WEI_DU <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			WEI_DU <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}	
+		AND
+		 	CNTY_ID = #{orgId}  
+			</if>
+			<if test = "flag != '' and flag != null and flag == 'nonCDGroup'"> 
+			group_info_detail 
+		WHERE 
+			CLASS_ID in ('C', 'D')
+		AND 
+			NOT EXISTS (SELECT 1 FROM SYS_ORG b WHERE b.ORG_ID = GRID_CODE AND b.ORGLEVEL = 4)
+		AND
+			(GRID_CODE IS NULL OR <![CDATA[ GRID_CODE = '']]>)
+		AND
+			JING_DU <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			JING_DU <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			WEI_DU <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			WEI_DU <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+		AND
+		 	CNTY_ID = #{orgId}  
+			</if>
+			<if test = "flag != '' and flag != null and flag == 'gridSchool'"> 
+			bonc02.DIM_SCH_INFO_M 
+		LEFT JOIN  grid.sys_org a ON grid_code = a.org_id AND a.orglevel = 4
+		LEFT JOIN  grid.sys_org b ON a.pid = b.org_id AND b.orglevel = 3
+        LEFT JOIN  grid.sys_org c ON b.pid = c.org_id AND c.orglevel = 2
+  		WHERE
+  			SCH_LONGTITUDE <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			SCH_LONGTITUDE <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			SCH_LATITUDE <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			SCH_LATITUDE <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+  		AND
+  			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND 
+			b.ORG_ID = #{orgId}  
+			</if>
+			<if test = "flag != '' and flag != null and flag == 'governmentUnit'"> 
+			 physical_bdmap_detail 
+  		WHERE 
+  			 PHYSIC_TYPE='政府单位'
+		  AND 
+			 GRID_CODE = #{orgId}
+		  AND
+			 physic_lon <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+	      AND
+			 physic_lon <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		  AND 
+			 physic_lat <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		  AND 
+			 physic_lat <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}  
+			</if>
+			<if test = "flag != '' and flag != null and flag == 'officeBuilding'"> 
+			physical_bdmap_detail 
+  	   WHERE 
+  	   		 PHYSIC_TYPE='写字楼'
+		 AND 
+			 GRID_CODE = #{orgId}
+		 AND	
+			 physic_lon <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		 AND
+			 physic_lon <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		 AND 
+			 physic_lat <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		 AND 
+			 physic_lat <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}  
+			</if>
+	</select>
+	
+  
+	<select id="getPoiByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+		SELECT 
+			B.LNG AS LNG, B.LAT AS LAT, B.UID AS UID
+		FROM 
+			MAP_BD_POI B 
+		WHERE 
+			B.LNG <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND 
+			B.LNG <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			B.LAT <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE} 
+		AND 
+			B.LAT <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+        AND 
+        	B.ORG_ID = #{orgId}
+	</select>
+     
+	<select id="getStationByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+		SELECT 
+			B.STATION_LON AS LNG, B.STATION_LAT AS LAT, B.STATION_CODE AS UID
+       FROM 
+       	STATION_INFO B 
+      	WHERE 
+      		B.STATION_LON <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+      	AND 
+      		B.STATION_LON <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+       	AND 
+       		B.STATION_LAT <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE} 
+       	AND 
+       		B.STATION_LAT <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+        AND 
+        	B.ORG_ID = #{orgId}
+  	</select>
+  
+  	<select id="getImportantCommunityByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+        SELECT
+  			CELL_ID AS UID,
+  			LON AS LNG,
+  			LAT
+  		FROM 
+  			RP_BB_CELL
+  		WHERE
+  		    (GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+  		AND
+  			LON <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE}
+  		AND 
+  			LON <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+  		AND
+  		    LAT <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE} 
+  		AND
+  		    LAT <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+		AND 
+			CNTY_ID = #{orgId}
+  	</select>
+  
+  <select id="getCommunityByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+        SELECT
+			a.CELL_ID AS UID,
+			a.CELL_LONGITUDE AS LNG,
+			a.CELL_LATITUDE AS LAT
+		FROM
+			WG_TA_DT_CELL a 
+		WHERE 
+			EXISTS 
+			(SELECT 1 FROM SYS_ORG b WHERE b.org_id = a.grid_code and b.ORGLEVEL = 4)
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			a.CELL_LONGITUDE <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			a.CELL_LONGITUDE <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			a.CELL_LATITUDE <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			a.CELL_LATITUDE <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}	
+		AND 
+			CNTY_ID = #{orgId}
+  	</select>
+  	
+  	 <select id="getNonCommunityByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+  	    SELECT 
+   	 		 CELL_ID AS UID,CELL_LONGITUDE AS LNG,CELL_LATITUDE AS LAT 
+		FROM 
+			WG_TA_DT_CELL_NO_GRID
+	 	WHERE 
+			CELL_LONGITUDE <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			CELL_LONGITUDE <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			CELL_LATITUDE <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			CELL_LATITUDE <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}	
+		AND 
+			CNTY_CODE = #{orgId}
+  	</select>
+  	
+  	 <select id="getAllABGroupByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+  	   SELECT 
+			a.GC_CODE AS UID,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			SUBSTR(a.CLASS_ID, 1, 1) IN ('A', 'B')
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			a.JING_DU <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			a.JING_DU <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			a.WEI_DU <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			a.WEI_DU <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}	
+		AND 
+			CNTY_ID = #{orgId}
+  	</select>
+  	
+  	 <select id="getAllCDGroupByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+  	   SELECT 
+			a.GC_CODE AS UID,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			a.CLASS_ID in ('C', 'D')
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			a.JING_DU <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			a.JING_DU <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			a.WEI_DU <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			a.WEI_DU <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}	
+		AND 
+			CNTY_ID = #{orgId}
+  	</select>
+  	
+  	
+  	 <select id="getNonABGroupByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+  	  SELECT 
+			a.GC_CODE AS UID,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			SUBSTR(a.CLASS_ID, 1, 1) IN ('A', 'B')
+		AND 
+			NOT EXISTS (SELECT 1 FROM SYS_ORG b WHERE b.ORG_ID = a.GRID_CODE AND b.ORGLEVEL = 4)
+		AND
+			(GRID_CODE IS NULL OR <![CDATA[ GRID_CODE = '']]>)
+		AND
+			a.JING_DU <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			a.JING_DU <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			a.WEI_DU <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			a.WEI_DU <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}	
+		AND
+		 	CNTY_ID = #{orgId}
+  	</select>
+  	
+  	 <select id="getNonCDGroupByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+  	    SELECT 
+			a.GC_CODE AS UID,
+			a.GC_NAME AS NAME,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			a.CLASS_ID in ('C', 'D')
+		AND 
+			NOT EXISTS (SELECT 1 FROM SYS_ORG b WHERE b.ORG_ID = a.GRID_CODE AND b.ORGLEVEL = 4)
+		AND
+			(GRID_CODE IS NULL OR <![CDATA[ GRID_CODE = '']]>)
+		AND
+			a.JING_DU <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			a.JING_DU <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			a.WEI_DU <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			a.WEI_DU <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+		AND
+		 	CNTY_ID = #{orgId}
+  	</select>
+  	
+  	<select id="getGridSchoolByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+  	   SELECT
+  			e.SCH_ID AS UID,
+  			e.SCH_LONGTITUDE AS LNG,
+  			e.SCH_LATITUDE AS LAT,
+  			b.org_id as cnty_code
+  		FROM 
+  			bonc02.DIM_SCH_INFO_M e
+		LEFT JOIN  grid.sys_org a ON e.grid_code = a.org_id AND a.orglevel = 4
+		LEFT JOIN  grid.sys_org b ON a.pid = b.org_id AND b.orglevel = 3
+        LEFT JOIN  grid.sys_org c ON b.pid = c.org_id AND c.orglevel = 2
+  		WHERE
+  			e.SCH_LONGTITUDE <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		AND
+			e.SCH_LONGTITUDE <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		AND 
+			e.SCH_LATITUDE <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		AND 
+			e.SCH_LATITUDE <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+  		AND
+  			(e.GRID_CODE IS NOT NULL OR <![CDATA[ e.GRID_CODE <> '']]>)
+		AND 
+			b.ORG_ID = #{orgId}
+  	</select>
+  	
+  	<select id="getOfficeBuildingByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+  	   SELECT
+  			 physic_code AS UID,
+  			 physic_lon AS LNG,
+  			 physic_lat AS LAT
+  		FROM 
+  			 physical_bdmap_detail 
+  	   WHERE 
+  	   		 PHYSIC_TYPE='写字楼'
+		 AND 
+			 GRID_CODE = #{orgId}
+		 AND	
+			 physic_lon <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+		 AND
+			 physic_lon <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		 AND 
+			 physic_lat <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		 AND 
+			 physic_lat <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+  	</select>
+  	
+  	<select id="getGovernmentUnitByShape"  parameterType="java.util.Map"  resultType="java.util.Map">
+  	   SELECT
+  			 physic_code AS UID,
+  			 physic_lon AS LNG,
+  			 physic_lat AS LAT
+  		 FROM 
+  			 physical_bdmap_detail 
+
+  		WHERE 
+  			 PHYSIC_TYPE='政府单位'
+		  AND 
+			 GRID_CODE = #{orgId}
+		  AND
+			 physic_lon <![CDATA[ >= ]]> #{minLng,jdbcType=DOUBLE} 
+	      AND
+			 physic_lon <![CDATA[ <= ]]> #{maxLng,jdbcType=DOUBLE} 
+		  AND 
+			 physic_lat <![CDATA[ >= ]]> #{minLat,jdbcType=DOUBLE}
+		  AND 
+			 physic_lat <![CDATA[ <= ]]> #{maxLat,jdbcType=DOUBLE}
+  	</select>
+  	
+	<select id="getChannel" resultType="java.util.Map" parameterType="java.lang.String" >
+		SELECT
+			CHNL_NAME,
+		 	CHNL_TYPE,
+		 	CHNL_TYPE_LEVEL1,
+		 	CHNL_TYPE_LEVEL2
+		FROM 
+			CHANNEL_INFO
+		WHERE 
+			CHNL_CODE IN 
+		 	<foreach collection="uids" open="(" close=")" separator="," index="index" item="uid">
+     			#{uid}
+          	</foreach>
+		ORDER BY 
+			chnl_id
+ 	</select>
+   
+   	<select id="getStation" resultType="java.util.Map" parameterType="java.lang.String" >
+		SELECT
+			STATION_TYPE,
+			COUNT(STATION_CODE) AS NUM
+		FROM 
+			STATION_INFO
+		WHERE 
+			1=1 
+		AND 
+			STATION_CODE IN 
+		 	<foreach collection="uids" open="(" close=")" separator="," index="index" item="uid">
+     			#{uid}
+      		</foreach>
+		GROUP BY 
+			STATION_TYPE
+ 	</select>
+	
+	<select id="getCountryGrid" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			GRID_CODE, NAME, LNG, LAT 
+		FROM 
+			MAP_BD_POI 
+		WHERE 
+			(TAG LIKE '%村庄%' OR TAG LIKE '%乡镇%') 
+		AND 
+			ORG_ID = #{orgid} 
+		AND 
+			(GRID_CODE = '' OR GRID_CODE IS NULL)
+		<if test = "countTryName != '' and countTryName != null "> 
+			AND NAME LIKE '%'||#{countTryName}||'%'
+		</if>
+ 	</select>
+ 	
+	<select id="getStationGrid" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			STATION_CODE, STATION_NAME, STATION_LON, STATION_LAT, GRID_CODE
+		FROM 
+			STATION_INFO WHERE ORG_ID = #{orgid} 
+		<if test = "stationName != '' and stationName != null"> 
+		AND 
+			STATION_NAME LIKE '%'||#{stationName}||'%'
+		</if>
+	</select>
+
+	<select id="getIncome" resultType="java.util.Map" parameterType="java.lang.String" >
+		SELECT 
+			B.LIST_VALUE busi_type,
+			sum(income) as income
+		FROM 
+			Grid_income_detail A, TB_LIST_VALUE B
+		WHERE 
+			B."TYPE" = 'BUSI_TYPE' 
+		AND 
+			CHAR(A.busi_type) = B.LIST_TYPE 
+		AND 
+			physical_id IN 
+		  	<foreach collection="uids" open="(" close=")" separator="," index="index" item="uid">
+     			#{uid}
+          	</foreach>
+		GROUP BY 
+			B.LIST_VALUE
+	</select>
+
+	<select id="getCustomer" resultType="java.util.Map" parameterType="java.lang.String" >
+		SELECT 
+			B.LIST_VALUE cust_belong,
+			SUM(CUST_NUM) AS CUST_NUM 
+		FROM 
+			grid_customer_detail A, TB_LIST_VALUE B
+		WHERE 
+			B."TYPE" = 'CUST_BELONG' 
+		AND 
+			CHAR(A.cust_belong) = B.LIST_TYPE 
+		AND 
+			physical_ID IN 
+		  	<foreach collection="uids" open="(" close=")" separator="," index="index" item="uid">
+     			#{uid}
+          	</foreach>
+		GROUP BY 
+			B.LIST_VALUE
+	</select>
+	  
+	<select id="getVillage" resultType="java.util.Map" parameterType="java.lang.String" >
+		SELECT 
+			SMALL_TYPE,
+			COUNT(1) XIAOQU_NUM
+		FROM  
+			PHYSICAL_GRID_INFO
+		WHERE 
+			BIG_TYPE = '家居小区' 
+		AND 
+			physical_ID IN 
+		  	<foreach collection="uids" open="(" close=")" separator="," index="index" item="uid">
+     			#{uid}
+          	</foreach> 
+		GROUP BY SMALL_TYPE   
+	</select>
+
+	<select id="initName" resultType="java.util.Map" parameterType="java.lang.String" >
+		SELECT 
+			CONCAT(NAME, 
+				(SELECT 
+					NAME 
+				FROM 
+					SYS_ORG 
+				WHERE	 
+		 			SYS_ORG.ORG_ID = #{orgId})) AS MYNAME
+   		 FROM 
+   		 	SYS_ORG 
+   		 WHERE
+      		SYS_ORG.ORG_ID = 
+      			(SELECT 
+      				PID 
+      			FROM 
+      				SYS_ORG 
+      			WHERE 
+		 			SYS_ORG.ORG_ID = #{orgId}) 
+	</select>
+	
+	<select id="getVipCustomer" resultType="java.util.Map" parameterType="java.lang.String" >
+		SELECt 
+			B.LIST_VALUE group_type,
+			SUM(group_num) AS GROUP_NUM
+		FROM 
+			grid_vip_customer_detail A, TB_LIST_VALUE B
+		WHERE 
+			B."TYPE" = 'VIP_CUST_TYPE' 
+		AND 
+			CHAR(A.group_type) = B.LIST_TYPE 
+	<!-- 	AND grid_code IN 
+		  <foreach collection="uids" open="(" close=")" separator="," index="index" item="uid">
+     			 #{uid}
+          </foreach>   --> 
+		GROUP BY 
+			B.LIST_VALUE    
+	</select>
+
+	<select id="getErr" resultType="java.util.Map" parameterType="java.lang.String" >
+		SELECT 
+			CHNL_NAME,
+		 	CHNL_TYPE,
+		 	CHNL_TYPE_LEVEL1,
+		 	CHNL_TYPE_LEVEL2
+		 FROM 
+		 	CHANNEL_INFO AS c
+		 WHERE 
+		 	(c.lon IS NULL OR c.lat IS NULL OR <![CDATA[ c.lon < 100 OR c.lat > 74 ]]>)  
+		 <if test="orgId !=null">
+			 AND c.ORG_ID = #{orgId} 
+		 </if>
+		 ORDER BY 
+		 	c.chnl_id     
+	</select>
+
+	<select id="insertSYS" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    	INSERT INTO 
+    		SYS_USER 
+    	SELECT 
+    		* 
+    	FROM 
+    		GRID_USER_SELECT 
+    	WHERE 
+    		OA_ID = #{OA_ID}
+	</select>
+
+	<insert id="insertMapSYS" parameterType="java.util.Map">
+		INSERT INTO 
+			SYS_USER(USER_ID, OA_ID, LOGIN_ID, ORG_ID, USER_NAME, USER_MOBILE, MEMO, password) 
+		VALUES(
+			#{userId,jdbcType=VARCHAR},
+			#{oaid,jdbcType=VARCHAR},
+			#{loginId,jdbcType=VARCHAR},
+			#{orgId,jdbcType=VARCHAR},
+			#{userName,jdbcType=VARCHAR},
+			#{userMobile,jdbcType=VARCHAR},
+			#{memo,jdbcType=VARCHAR},
+			#{password})
+  	</insert>
+  
+ 	<select id="CallDb2" parameterType="java.util.Map" statementType="CALLABLE">
+    	<![CDATA[  
+    	{call GRID.SP_RP_WG_HF_SCORE(#{nowDate,jdbcType=VARCHAR}, #{orgId,mode=IN,jdbcType=VARCHAR}, #{OUTPARA,mode=OUT,jdbcType=VARCHAR})}
+  		]]>  
+  	</select>
+
+	<select id="selectCountSYS" resultType="java.util.Map" parameterType="java.lang.String" >
+    	SELECT 
+    		NVL(max(MEMO),'0') AS M 
+    	FROM 
+    		SYS_USER 
+    	WHERE 
+    		OA_ID = #{OA_ID,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insertMapUser" parameterType="java.util.Map">
+		INSERT INTO 
+			GRID_USER(OA_ID, LOGIN_ID, ORG_ID, USER_TYPE, NAME, PHONE) 
+		VALUES(
+			#{oaid,jdbcType=VARCHAR},
+			#{loginId},#{orgId},
+			#{usertype},
+			#{userName},
+			#{userMobile})
+  	</insert>
+  
+	<select id="selectUsers" resultType="java.util.Map" parameterType="java.lang.String" >
+		SELECT 
+			u.LOGIN_ID, u.USER_NAME, o.SALE_DEPT_NAME AS NAME, o.ORG_ID
+		FROM 
+			SYS_USER u, SALE_DEPT_INFO o
+		WHERE 
+			u.OA_ID = o.MANAGER_OA
+ 		AND 
+ 			U.USER_LEVEL = #{userType,jdbcType=VARCHAR}
+		AND 
+			u.ORG_ID = #{orgId,jdbcType=VARCHAR}
+	</select>
+  
+	<insert id="insertCost" parameterType="java.util.Map">
+   		INSERT INTO 
+   			WG_HF_SCALE(AREA_ID, GRID_CODE, INCOME, CUSTOMER, CELL_NUM, GROUP_NUM, CHNL_NUM, STATION_NUM)
+		VALUES(
+			#{areaId,jdbcType=VARCHAR},
+			#{gridcode,jdbcType=VARCHAR},
+			#{dayCost,jdbcType=VARCHAR},
+			#{customCost,jdbcType=VARCHAR},
+			#{villageCost,jdbcType=VARCHAR},
+			#{groupCost,jdbcType=VARCHAR},
+			#{channelCost,jdbcType=VARCHAR},
+			#{stationCost,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="updataCost" parameterType="java.util.Map">
+  		UPDATE 
+  			WG_HF_SCALE 
+  		SET 
+  			INCOME = #{dayCost,jdbcType=VARCHAR},
+  			CUSTOMER = #{customCost,jdbcType=VARCHAR},
+  			CELL_NUM = #{villageCost,jdbcType=VARCHAR},
+  			GROUP_NUM = #{groupCost,jdbcType=VARCHAR},
+  			CHNL_NUM = #{channelCost,jdbcType=VARCHAR},
+  			STATION_NUM = #{stationCost,jdbcType=VARCHAR}
+		WHERE 
+			AREA_ID = #{areaId,jdbcType=VARCHAR} 
+		AND 
+			GRID_CODE = #{gridcode,jdbcType=VARCHAR}
+	</update>
+
+	<delete id="deleteCost" parameterType="java.lang.String">
+ 		DELETE FROM WG_HF_SCALE WHERE GRID_CODE = #{orgId,jdbcType=VARCHAR}
+ 	</delete>
+ 	
+ 	<!-- 根据工号编码查询网格直销经理信息 -->
+ 	<select id="selectDirectSaleByOfficeId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+ 			OFFICE_ID officeId
+ 		FROM
+ 			DIRECT_SALE_USER_INFO_REPAIR
+ 		WHERE
+ 			OFFICE_ID = #{officeId}
+ 	</select>
+ 	
+ 	<!-- 根据工号编码，修改网格直销经理信息 -->
+ 	<update id="updateDirectSaleByOfficeId" parameterType="java.util.Map">
+ 		UPDATE 
+ 			DIRECT_SALE_USER_INFO_REPAIR
+ 		SET
+ 			CITY_ID = #{city_id,jdbcType=VARCHAR},
+ 			CITY_NAME = #{city_name,jdbcType=VARCHAR},
+			CNTY_NAME = #{cnty_name,jdbcType=VARCHAR},
+			CNTY_ID = #{cnty_id,jdbcType=VARCHAR},
+			GRID_NAME = #{grid_name,jdbcType=VARCHAR},
+			GRID_CODE = #{grid_code,jdbcType=VARCHAR},
+			NAME = #{name,jdbcType=VARCHAR},
+			BELONG_CHNL_NAME = #{belong_chnl_name,jdbcType=VARCHAR},
+			BELONG_CHNL_CODE = #{belong_chnl_code,jdbcType=VARCHAR},
+			LNG = #{lng},
+			LAT = #{lat},
+			CUST_ID = #{cust_id,jdbcType=VARCHAR},
+			SEX = #{sex,jdbcType=VARCHAR},
+			WORK_DATE = #{work_date,jdbcType=VARCHAR},
+			PHONE = #{phone,jdbcType=VARCHAR},
+			STATUS = #{status,jdbcType=VARCHAR}
+		WHERE
+			OFFICE_ID = #{office_id,jdbcType=VARCHAR}
+ 	</update>
+ 	
+ 	<!-- 新增网格直销经理信息 -->
+ 	<insert id="insertDirectSale" parameterType="java.util.Map">
+ 		INSERT INTO 
+ 			DIRECT_SALE_USER_INFO_REPAIR(
+ 				CITY_ID,
+ 				CITY_NAME,
+				CNTY_NAME,
+				CNTY_ID,
+				GRID_NAME,
+				GRID_CODE,
+				OFFICE_ID,
+				NAME,
+				BELONG_CHNL_NAME,
+				BELONG_CHNL_CODE,
+				LNG,
+				LAT,
+				CUST_ID,
+				SEX,
+				WORK_DATE,
+				PHONE,
+				STATUS)
+ 		VALUES(
+ 			#{city_id,jdbcType=VARCHAR},
+ 			#{city_name,jdbcType=VARCHAR},
+			#{cnty_name,jdbcType=VARCHAR},
+			#{cnty_id,jdbcType=VARCHAR},
+			#{grid_name,jdbcType=VARCHAR},
+			#{grid_code,jdbcType=VARCHAR},
+			#{office_id,jdbcType=VARCHAR},
+			#{name,jdbcType=VARCHAR},
+			#{belong_chnl_name,jdbcType=VARCHAR},
+			#{belong_chnl_code,jdbcType=VARCHAR},
+			#{lng},
+			#{lat},
+			#{cust_id,jdbcType=VARCHAR},
+			#{sex,jdbcType=VARCHAR},
+			#{work_date,jdbcType=VARCHAR},
+			#{phone,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR}
+ 		)
+ 	</insert>
+ 	
+ 	<!-- 查询网格直销经理信息 -->
+ 	<select id="getDirectSaleInfo" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+ 			CITY_NAME, CNTY_NAME, CNTY_ID, GRID_NAME, GRID_CODE, OFFICE_ID, NAME, BELONG_CHNL_NAME, 
+ 			BELONG_CHNL_CODE, LNG, LAT, CUST_ID, SEX, WORK_DATE, PHONE, STATUS
+ 		FROM 
+ 			DIRECT_SALE_USER_INFO_REPAIR 
+ 		WHERE 
+ 			CNTY_ID IN
+ 			<foreach collection="list" item="item" open="(" separator="," close=")">
+ 				#{item}
+ 			</foreach>
+ 	</select>
+ 	
+ 	<!-- 更改直销经理状态 -->
+ 	<update id="updateDirectSaleStatus" parameterType="java.lang.String">
+ 		UPDATE
+ 			DIRECT_SALE_USER_INFO_REPAIR
+ 		SET
+ 			STATUS = #{statusType}
+ 		WHERE
+ 			OFFICE_ID = #{officeId}
+ 	</update>
+ 	
+ 	<!-- 根据CD类政企客户编码查询客户信息 -->
+ 	<select id="selectGovBusByOfficeId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+ 			GC_CODE gcCode
+ 		FROM
+ 		WG_CD_GC_GROUP
+ 		WHERE
+ 			GC_CODE = #{gcCode}
+ 	</select>
+ 	
+ 	<!-- 根据CD类政企客户编码，修改客户信息 -->
+ 	<update id="updateGovBusByOfficeId" parameterType="java.util.Map">
+ 		UPDATE 
+ 			WG_CD_GC_GROUP
+ 		SET
+ 			CITY_NAME = #{city_name,jdbcType=VARCHAR},
+			CNTY_NAME = #{cnty_name,jdbcType=VARCHAR},
+			CNTY_ID = #{cnty_id,jdbcType=VARCHAR},
+			GRID_NAME = #{grid_name,jdbcType=VARCHAR},
+			GRID_CODE = #{grid_code,jdbcType=VARCHAR},
+			GC_NAME = #{gc_name,jdbcType=VARCHAR},
+			GC_CODE = #{gc_code,jdbcType=VARCHAR},
+			ADDR = #{addr,jdbcType=VARCHAR},
+			MANAGER = #{manager,jdbcType=VARCHAR},
+			PHONE = #{phone,jdbcType=VARCHAR},
+			LON = #{lon},
+			LAT = #{lat}
+		WHERE
+			GC_CODE = #{gc_code,jdbcType=VARCHAR}
+ 	</update>
+ 	
+ 	<!-- 新增CD类客户信息 -->
+ 	<insert id="insertGovBus" parameterType="java.util.Map">
+ 		INSERT INTO 
+ 			WG_CD_GC_GROUP(CITY_NAME,
+				CNTY_NAME,
+				CNTY_ID,
+				GRID_NAME,
+				GRID_CODE,
+				GC_NAME,
+				GC_CODE,
+				ADDR,
+				MANAGER,
+				PHONE,
+				LON,
+				LAT
+			   )
+ 		VALUES(
+ 			#{city_name,jdbcType=VARCHAR},
+			#{cnty_name,jdbcType=VARCHAR},
+			#{cnty_id,jdbcType=VARCHAR},
+			#{grid_name,jdbcType=VARCHAR},
+			#{grid_code,jdbcType=VARCHAR},
+			#{gc_name,jdbcType=VARCHAR},
+			#{gc_code,jdbcType=VARCHAR},
+			#{addr,jdbcType=VARCHAR},
+			#{manager,jdbcType=VARCHAR},
+			#{phone,jdbcType=VARCHAR},
+			#{lon},
+			#{lat}
+ 		)
+ 	</insert>
+ 	
+ 	 	<!-- 查询CD类政企客户信息 -->
+ 	<select id="getGovBusInfo" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+ 			CITY_NAME, CNTY_NAME, CNTY_ID, GRID_NAME, GRID_CODE, GC_NAME, GC_CODE, ADDR, 
+ 			MANAGER, PHONE, LON, LAT
+ 		FROM 
+ 			WG_CD_GC_GROUP 
+ 		WHERE 
+ 			CNTY_ID = #{orgId}
+ 	</select>
+ 	
+ 	<!-- 根据是否入网格编码查询网格直销经理所有信息 -->
+ 	<select id="selectDirectSaleInfoByParams" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+ 			* 
+ 		FROM 
+ 			DIRECT_SALE_USER_INFO_REPAIR
+ 		WHERE 1=1
+			<if test = "orgLevel != '' and orgLevel != null and orgLevel == '2'.toString()"> 
+		AND CITY_ID = #{orgId} 
+			</if>
+			<if test = "orgLevel != '' and orgLevel != null and orgLevel == '3'.toString()"> 
+		AND	1!=1
+			</if>
+			<if test = "orgLevel != '' and orgLevel != null and orgLevel == '4'.toString()"> 
+		AND	1!=1
+			</if>
+	 		<if test = "ingrid != '' and ingrid != null and ingrid != '0'.toString()"> 
+		AND (GRID_CODE IS NOT NULL AND <![CDATA[ GRID_CODE <> '']]>)
+			</if>
+			<if test = "ingrid == '' or ingrid == null or ingrid == '0'.toString()" > 
+		AND (GRID_CODE IS NULL OR GRID_CODE = '') 
+			</if>
+ 	</select>
+ 	
+ 	<!-- 移出选定officeid的直销人员的网格 -->
+ 	<update id="removeDirectSaleGrid" parameterType="java.util.List">
+ 		UPDATE
+ 			DIRECT_SALE_USER_INFO_REPAIR 
+ 		SET
+ 			GRID_NAME = NULL,
+ 			GRID_CODE = NULL
+ 		WHERE
+ 			OFFICE_ID IN 
+ 			<foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+				#{obj}
+			</foreach> 
+ 	</update>
+ 	
+ 	<!-- 根据orgid查询网格 -->
+ 	<select id="selectGridByOrgid" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+  			ORG_ID AS orgId, NAME AS name
+  		FROM 
+  			SYS_ORG
+  		WHERE
+  			PID = #{orgid,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<!-- 更新选定officeid的直销人员设置网格渠道 -->
+ 	<update id="updateDirectSaleChannel" parameterType="java.lang.String">
+ 		UPDATE
+ 			DIRECT_SALE_USER_INFO_REPAIR 
+ 		SET
+ 			GRID_NAME = #{gridname},
+ 			GRID_CODE = #{gridcode},
+ 			BELONG_CHNL_NAME = #{chnlName},
+ 			BELONG_CHNL_CODE = #{chnlCode},
+ 			LNG = #{lon},
+ 			LAT = #{lat}
+ 		WHERE
+ 			OFFICE_ID IN 
+ 			<foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+				#{obj}
+			</foreach> 
+ 	</update>
+ 	
+ 	<!-- 根据是否入网格编码查询CD类政企客户所有信息 -->
+ 	<select id="selectGovBusInfoByParams" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+ 			CITY_NAME, CNTY_NAME, CNTY_ID, GRID_NAME, GRID_CODE, GC_NAME, GC_CODE, ADDR, MANAGER, PHONE, LON, LAT 
+ 		FROM 
+ 			WG_CD_GC_GROUP
+ 		WHERE 
+ 			CNTY_ID = #{orgId,jdbcType=VARCHAR} 
+	 		<if test = "ingrid != '' and ingrid != null and ingrid != '0'.toString()"> 
+				AND GRID_CODE IS NOT NULL 
+			</if>
+			<if test = "ingrid == '' or ingrid == null or ingrid == '0'.toString()" > 
+				AND GRID_CODE IS NULL 
+			</if>
+ 	</select>
+ 	
+ 	 	<!-- 查找选定gcCode的CD政企人员设置网格 -->
+ 	<update id="addGovBusGrid" parameterType="java.lang.String">
+ 		UPDATE
+ 			WG_CD_GC_GROUP 
+ 		SET
+ 			GRID_NAME = #{gridname},
+ 			GRID_CODE = #{gridcode}
+ 		WHERE
+ 			GC_CODE IN 
+ 			<foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+				#{obj}
+			</foreach> 
+ 	</update>
+ 	
+ 		<!-- 移出选定gc_code的直销人员的网格 -->
+ 	<update id="removeGovBusGrid" parameterType="java.util.List">
+ 		UPDATE
+ 			WG_CD_GC_GROUP 
+ 		SET
+ 			GRID_NAME = NULL,
+ 			GRID_CODE = NULL
+ 		WHERE
+ 			GC_CODE IN 
+ 			<foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+				#{obj}
+			</foreach> 
+ 	</update>
+ 	
+ 	<!-- 根据渠道编码查询网格名称编码和渠道经纬度 -->
+ 	<select id="queryGridNameCodeAndLonLatByCnlCode" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+ 			A.CHNL_NAME,A.LON,A.LAT,B.ORG_ID,B.NAME
+ 		FROM
+ 			CHANNEL_INFO A,SYS_ORG B
+ 		WHERE
+ 			A.GRID_CODE = B.ORG_ID 
+ 		AND 
+ 			B.ORGLEVEL = 4
+ 		AND
+ 			A.CHNL_CODE = #{channelCode}
+ 	</select>
+ 	
+ 	<!-- 根据orgid查询渠道 -->
+ 	<select id="selectChannelByOrgid" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+  			CHNL_NAME , CHNL_CODE
+  		FROM 
+  			CHANNEL_INFO
+  		WHERE
+  			1=1
+  			<if test = "orgids != '' or orgids != null" > 
+  		AND ORG_ID IN
+				<foreach collection="orgids" item="orgId" index="index" open="(" separator="," close=")">
+					#{orgId}
+			    </foreach> 	
+			</if>
+ 	</select>
+ 	
+ 	<select id="selectStationByOrgId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+ 			STATION_NAME AS NAME, STATION_NAME AS ID
+ 		FROM
+ 			STATION_INFO
+ 		WHERE 
+ 			ORG_ID = #{orgId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<select id="selectCommunityByOrgId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT
+			a.CELL_ID AS ID,
+			a.CELL_NAME AS NAME
+		FROM
+			WG_TA_DT_CELL a 
+		WHERE 
+			CNTY_ID = #{orgId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<select id="selectAbGroupByOrgId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+			a.GC_CODE AS ID,
+			a.GC_NAME AS NAME
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			SUBSTR(a.CLASS_ID, 1, 1) IN ('A', 'B')
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			a.JING_DU IS NOT NULL
+		AND 
+			a.WEI_DU IS NOT NULL
+		AND 
+			CNTY_ID = #{orgId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<select id="selectCdGroupByOrgId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+			a.GC_CODE AS ID,
+			a.GC_NAME AS NAME,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			a.CLASS_ID in ('C', 'D')
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			a.JING_DU IS NOT NULL
+		AND 
+			a.WEI_DU IS NOT NULL
+		AND 
+			CNTY_ID = #{orgId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<select id="selectChannelByOrgIdNew" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+  			CHNL_NAME AS NAME, CHNL_CODE AS ID
+  		FROM 
+  			CHANNEL_INFO
+  		WHERE
+  			ORG_ID = #{orgId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<select id="selectChannelByChannelCode" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT
+ 			CHNL_NAME AS NAME, CHNL_CODE AS ID, LON AS LNG, LAT AS LAT
+ 		FROM 
+  			CHANNEL_INFO
+  		WHERE
+  			CHNL_CODE = #{chnlCode,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<select id="selectChannelByStationName" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT
+ 			STATION_NAME AS NAME, STATION_NAME AS ID, STATION_LON AS LNG, STATION_LAT AS LAT
+ 		FROM 
+ 			STATION_INFO
+ 		WHERE
+ 			STATION_NAME = #{stationName,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<select id="selectCommunityByCellId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT
+			a.CELL_ID AS ID,
+			a.CELL_NAME AS NAME,
+			a.CELL_LONGITUDE AS LNG,
+			a.CELL_LATITUDE AS LAT
+		FROM
+			WG_TA_DT_CELL a 
+		WHERE 
+			CELL_ID = #{cellId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<select id="selectAbGroupByAbId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+			a.GC_CODE AS ID,
+			a.GC_NAME AS NAME,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			SUBSTR(a.CLASS_ID, 1, 1) IN ('A', 'B')
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			a.JING_DU IS NOT NULL
+		AND 
+			a.WEI_DU IS NOT NULL
+		AND 
+			GC_CODE = #{abId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<select id="selectCdGroupByCdId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+			a.GC_CODE AS ID,
+			a.GC_NAME AS NAME,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			a.CLASS_ID in ('C', 'D')
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			a.JING_DU IS NOT NULL
+		AND 
+			a.WEI_DU IS NOT NULL
+		AND 
+			GC_CODE = #{cdId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<!-- 根据小区cellId查询小区详细信息（新增） -->
+ 	<select id="selectCommunityCreateByCellId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+	 		STATIS_MONTH statisMonth,
+			CITY_NAME cityName,
+			CITY_CODE cityCode,
+			AREA_TYPE areaType,
+			CNTY_ID cntyId,
+			COUNTY_NAME countyName,
+			VILL_ID villId,
+			VILL_NAME villName,
+			CELL_ID cellId,
+			CELL_NAME cellName,
+			BS_ID bsId,
+			CELL_TYPE cellType,
+			CELL_LONGITUDE cellLongitude,
+			CELL_LATITUDE cellLatitude,
+			CELL_PRC cellPrc,
+			CELL_OCCUPY_AREA cellOccupyArea,
+			CELL_BUILD_AREA cellBuildArea,
+			CELL_CNT cellCnt,
+			CELL_USER_CNT cellUserCnt,
+			CELL_IN_USER_CNT cellInUserCnt,
+			CELL_ADDR cellAddr,
+			POPU_SCALE popuScale,
+			IS_NOT_BUILT_CELL isNotBuiltCell,
+			BUILD_MODE buildMode,
+			PORT_CNT portCnt,
+			USE_PORT_CNT usePortCnt,
+			PORT_RATIO portRatio,
+			IS_TELE_COVER isTeleCover,
+			IS_UNICOM_COVER isUnicomCover,
+			IS_BROADCAST_COVER isBroAdCastCover,
+			TRAN_RES_FLAG tranResFlag,
+			DIFFICULTY_LVL difficultyLvl,
+			ACESS_TYPE accessType,
+			IS_SOLE isSole,
+			TELE_USER_CNT teleUserCnt,
+			UNICOM_USER_CNT unicomUserCnt,
+			BROADCASE_USER_CNT broAdCaseUserCnt,
+			MOBILE_USER_RATIO mobileUserRatio,
+			COMPET_PROD competProd,
+			COMPET_PROM competProm,
+			PROPERTY_COMPANY propertyCompany,
+			PROPERTY_TEL propertyTel,
+			PROPERTY_ADDR propertyAddr,
+			KEYMAN keyMan,
+			KEYMAN_POST keyManPost,
+			KEYMAN_TEL keyManTel,
+			PROPERTY_CONT_NAME propertyContName,
+			PROPERTY_CONT_POST propertyContPost,
+			PROPERTY_CONT_TEL propertyContTel,
+			BUILDER_NAME builderName,
+			BUILDER_CONT_NAME builderContName,
+			BUILDER_CONT_TEL builderContTel,
+			BUILDER_TEL builderTel,
+			SEX sex,
+			KD_USER_CNT kdUserCnt,
+			KD_EXP_USER_CNT kdExpUserCnt,
+			CELL_VALUE cellValue,
+			COVER_FLAG coverFlag,
+			KD_INC kdInc,
+			COVER_TYPE coverType,
+			RES_SATURATED_RATIO resSaturatedRatio,
+			POTENTIAL_CNCL_RATIO potentialCnclRatio,
+			POTENTIAL_USER_RATIO potentialUserRatio,
+			CNCL_RATIO cnclRatio,
+			REGION_TYPE regionType,
+			POTENTIAL_USER_CNT potentialUserCnt,
+			UID uid,
+			GIS_ID gisId,
+			GIS_NAME gisName,
+			REL_NAME relName
+ 		FROM 
+ 			ZTEUSER.TA_DT_CELL_M
+ 		WHERE
+ 			CELL_ID = #{cellId,jdbcType=VARCHAR}
+ 		AND
+ 			STATIS_MONTH = #{statisMonth,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<!-- 根据cellId查询小区信息（修改） -->
+ 	<select id="selectCommunityEditByCellId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+	 		CITY_NAME cityName,
+			CITY_CODE cityCode,
+			AREA_TYPE areaType,
+			CNTY_ID cntyId,
+			COUNTY_NAME countyName,
+			VILL_ID villId,
+			VILL_ID_GXH villIdGxh,
+			VILL_NAME villName,
+			VILL_NAME_GXH villNameGxh,
+			CELL_ID cellId,
+			CELL_ID_GXH cellIdGxh,
+			CELL_NAME cellName,
+			CELL_NAME_GXH cellNameGxh,
+			BS_ID bsId,
+			BS_ID_GXH bsIdGxh,
+			CELL_TYPE cellType,
+			CELL_TYPE_GXH cellTypeGxh,
+			CELL_LONGITUDE cellLongitude,
+			CELL_LONGITUDE_GXH cellLongitudeGxh,
+			CELL_LATITUDE cellLatitude,
+			CELL_LATITUDE_GXH cellLatitudeGxh,
+			CELL_PRC cellPrc,
+			CELL_PRC_GXH cellPrcGxh,
+			CELL_OCCUPY_AREA cellOccupyArea,
+			CELL_OCCUPY_AREA_GXH cellOccupyAreaGxh,
+			CELL_BUILD_AREA cellBuildArea,
+			CELL_BUILD_AREA_GXH cellBuildAreaGxh,
+			CELL_CNT cellCnt,
+			CELL_CNT_GXH cellCntGxh,
+			CELL_USER_CNT cellUserCnt,
+			CELL_USER_CNT_GXH cellUserCntGxh,
+			CELL_IN_USER_CNT cellInUserCnt,
+			CELL_IN_USER_CNT_GXH cellInUserCntGxh,
+			CELL_ADDR cellAddr,
+			CELL_ADDR_GXH cellAddrGxh,
+			POPU_SCALE popuScale,
+			POPU_SCALE_GXH popuScaleGxh,
+			IS_NOT_BUILT_CELL isNotBuiltCell,
+			IS_NOT_BUILT_CELL_GXH isNotBuiltCellGxh,
+			BUILD_MODE buildMode,
+			BUILD_MODE_GXH buildModeGxh,
+			PORT_CNT portCnt,
+			PORT_CNT_GXH portCntGxh,
+			USE_PORT_CNT usePortCnt,
+			USE_PORT_CNT_GXH usePortCntGxh,
+			PORT_RATIO portRatio,
+			PORT_RATIO_GXH portRatioGxh,
+			IS_TELE_COVER isTeleCover,
+			IS_TELE_COVER_GXH isTeleCoverGxh,
+			IS_UNICOM_COVER isUnicomCover,
+			IS_UNICOM_COVER_GXH isUnicomCoverGxh,
+			IS_BROADCAST_COVER isBroAdCastCover,
+			IS_BROADCAST_COVER_GXH isBroAdCastCoverGxh,
+			TRAN_RES_FLAG tranResFlag,
+			TRAN_RES_FLAG_GXH tranResFlagGxh,
+			DIFFICULTY_LVL difficultyLvl,
+			DIFFICULTY_LVL_GXH difficultyLvlGxh,
+			ACESS_TYPE acessType,
+			ACESS_TYPE_GXH acessTypeGxh,
+			IS_SOLE isSole,
+			IS_SOLE_GXH isSoleGxh,
+			TELE_USER_CNT teleUserCnt,
+			TELE_USER_CNT_GXH teleUserCntGxh,
+			UNICOM_USER_CNT unicomUserCnt,
+			UNICOM_USER_CNT_GXH unicomUserCntGxh,
+			BROADCASE_USER_CNT broAdCaseUserCnt,
+			BROADCASE_USER_CNT_GXH broAdCaseUserCntGxh,
+			MOBILE_USER_RATIO mobileUserRatio,
+			MOBILE_USER_RATIO_GXH mobileUserRatioGxh,
+			COMPET_PROD competProd,
+			COMPET_PROD_GXH competProdGxh,
+			COMPET_PROM competProm,
+			COMPET_PROM_GXH competPromGxh,
+			PROPERTY_COMPANY propertyCompany,
+			PROPERTY_COMPANY_GXH propertyCompanyGxh,
+			PROPERTY_TEL propertyTel,
+			PROPERTY_TEL_GXH propertyTelGxh,
+			PROPERTY_ADDR propertyAddr,
+			PROPERTY_ADDR_GXH propertyAddrGxh,
+			KEYMAN keyMan,
+			KEYMAN_GXH keyManGxh,
+			KEYMAN_POST keyManPost,
+			KEYMAN_POST_GXH keyManPostGxh,
+			KEYMAN_TEL keyManTel,
+			KEYMAN_TEL_GXH keyManTelGxh,
+			PROPERTY_CONT_NAME propertyContName,
+			PROPERTY_CONT_NAME_GXH propertyContNameGxh,
+			PROPERTY_CONT_POST propertyContPost,
+			PROPERTY_CONT_POST_GXH propertyContPostGxh,
+			PROPERTY_CONT_TEL propertyContTel,
+			PROPERTY_CONT_TEL_GXH propertyContTelGxh,
+			BUILDER_NAME builderName,
+			BUILDER_NAME_GXH builderNameGxh,
+			BUILDER_CONT_NAME builderContName,
+			BUILDER_CONT_NAME_GXH builderContNameGxh,
+			BUILDER_CONT_TEL builderContTel,
+			BUILDER_CONT_TEL_GXH builderContTelGxh,
+			BUILDER_TEL builderTel,
+			BUILDER_TEL_GXH builderTelGxh,
+			SEX sex,
+			SEX_GXH sexGxh,
+			KD_USER_CNT kdUserCnt,
+			KD_USER_CNT_GXH kdUserCntGxh,
+			KD_EXP_USER_CNT kdExpUserCnt,
+			KD_EXP_USER_CNT_GXH kdExpUserCntGxh,
+			CELL_VALUE cellValue,
+			CELL_VALUE_GXH cellValueGxh,
+			COVER_FLAG coverFlag,
+			COVER_FLAG_GXH coverFlagGxh,
+			KD_INC kdInc,
+			KD_INC_GXH kdIncGxh,
+			COVER_TYPE coverType,
+			COVER_TYPE_GXH covedrTypeGxh,
+			RES_SATURATED_RATIO resSaturatedRatio,
+			RES_SATURATED_RATIO_GXH resSaturatedRatioGxh,
+			POTENTIAL_CNCL_RATIO potentialCnclRatio,
+			POTENTIAL_CNCL_RATIO_GXH potentialCnclRatio,
+			POTENTIAL_USER_RATIO potentialUserRatio,
+			POTENTIAL_USER_RATIO_GXH potentialUserRatioGxh,
+			CNCL_RATIO cnclRatio,
+			CNCL_RATIO_GXH cncRatioGxh,
+			REGION_TYPE regionType,
+			REGION_TYPE_GXH regionTypeGxh,
+			POTENTIAL_USER_CNT potentialUserCnt,
+			POTENTIAL_USER_CNT_GXH potentialUserCntGxh,
+			SHAPE shape,
+			SHAPE_GXH shapeGxh
+ 		FROM 
+ 			TA_DT_CELL_M_GXH
+ 		WHERE
+ 			CELL_ID = #{cellId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<!-- 根据cellId查询小区shape -->
+ 	<select id="selectCommunityShapeByCellId" parameterType="java.lang.String" resultType="java.lang.String">
+ 		SELECT
+ 			SHAPE
+ 		FROM 
+ 			TA_DT_CELL_M_GXH
+ 		WHERE
+ 			CELL_ID = #{cellId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<!-- 根据cellId查询小区shapeGxh -->
+ 	<select id="selectCommunityShapeGxhByCellId" parameterType="java.lang.String" resultType="java.lang.String">
+ 		SELECT
+ 			SHAPE_GXH
+ 		FROM 
+ 			TA_DT_CELL_M_GXH
+ 		WHERE
+ 			CELL_ID = #{cellId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<!-- 根据小区的编码查询小区信息 -->
+ 	<select id="selectTaDtCellMGxhByCellId" parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT 
+ 			CELL_ID AS CELLID
+ 		FROM 
+ 			TA_DT_CELL_M_GXH
+ 		WHERE
+ 			CELL_ID = #{cellId,jdbcType=VARCHAR}
+ 	</select>
+ 	
+ 	<!-- 小区轮廓信息保存 -->
+ 	<insert id="insertCommunity" parameterType="java.util.Map">
+ 		INSERT INTO TA_DT_CELL_M_GXH(
+ 			CITY_NAME,
+			CITY_CODE,
+			AREA_TYPE,
+			CNTY_ID,
+			COUNTY_NAME,
+			VILL_ID,
+			VILL_ID_GXH,
+			VILL_NAME,
+			VILL_NAME_GXH,
+			CELL_ID,
+			CELL_ID_GXH,
+			CELL_NAME,
+			CELL_NAME_GXH,
+			BS_ID,
+			BS_ID_GXH,
+			CELL_TYPE,
+			CELL_TYPE_GXH,
+			CELL_LONGITUDE,
+			CELL_LONGITUDE_GXH,
+			CELL_LATITUDE,
+			CELL_LATITUDE_GXH,
+			CELL_PRC,
+			CELL_PRC_GXH,
+			CELL_OCCUPY_AREA,
+			CELL_OCCUPY_AREA_GXH,
+			CELL_BUILD_AREA,
+			CELL_BUILD_AREA_GXH,
+			CELL_CNT,
+			CELL_CNT_GXH,
+			CELL_USER_CNT,
+			CELL_USER_CNT_GXH,
+			CELL_IN_USER_CNT,
+			CELL_IN_USER_CNT_GXH,
+			CELL_ADDR,
+			CELL_ADDR_GXH,
+			POPU_SCALE,
+			POPU_SCALE_GXH,
+			IS_NOT_BUILT_CELL,
+			IS_NOT_BUILT_CELL_GXH,
+			BUILD_MODE,
+			BUILD_MODE_GXH,
+			PORT_CNT,
+			PORT_CNT_GXH,
+			USE_PORT_CNT,
+			USE_PORT_CNT_GXH,
+			PORT_RATIO,
+			PORT_RATIO_GXH,
+			IS_TELE_COVER,
+			IS_TELE_COVER_GXH,
+			IS_UNICOM_COVER,
+			IS_UNICOM_COVER_GXH,
+			IS_BROADCAST_COVER,
+			IS_BROADCAST_COVER_GXH,
+			TRAN_RES_FLAG,
+			TRAN_RES_FLAG_GXH,
+			DIFFICULTY_LVL,
+			DIFFICULTY_LVL_GXH,
+			ACESS_TYPE,
+			ACESS_TYPE_GXH,
+			IS_SOLE,
+			IS_SOLE_GXH,
+			TELE_USER_CNT,
+			TELE_USER_CNT_GXH,
+			UNICOM_USER_CNT,
+			UNICOM_USER_CNT_GXH,
+			BROADCASE_USER_CNT,
+			BROADCASE_USER_CNT_GXH,
+			MOBILE_USER_RATIO,
+			MOBILE_USER_RATIO_GXH,
+			COMPET_PROD,
+			COMPET_PROD_GXH,
+			COMPET_PROM,
+			COMPET_PROM_GXH,
+			PROPERTY_COMPANY,
+			PROPERTY_COMPANY_GXH,
+			PROPERTY_TEL,
+			PROPERTY_TEL_GXH,
+			PROPERTY_ADDR,
+			PROPERTY_ADDR_GXH,
+			KEYMAN,
+			KEYMAN_GXH,
+			KEYMAN_POST,
+			KEYMAN_POST_GXH,
+			KEYMAN_TEL,
+			KEYMAN_TEL_GXH,
+			PROPERTY_CONT_NAME,
+			PROPERTY_CONT_NAME_GXH,
+			PROPERTY_CONT_POST,
+			PROPERTY_CONT_POST_GXH,
+			PROPERTY_CONT_TEL,
+			PROPERTY_CONT_TEL_GXH,
+			BUILDER_NAME,
+			BUILDER_NAME_GXH,
+			BUILDER_CONT_NAME,
+			BUILDER_CONT_NAME_GXH,
+			BUILDER_CONT_TEL,
+			BUILDER_CONT_TEL_GXH,
+			BUILDER_TEL,
+			BUILDER_TEL_GXH,
+			SEX,
+			SEX_GXH,
+			KD_USER_CNT,
+			KD_USER_CNT_GXH,
+			KD_EXP_USER_CNT,
+			KD_EXP_USER_CNT_GXH,
+			CELL_VALUE,
+			CELL_VALUE_GXH,
+			COVER_FLAG,
+			COVER_FLAG_GXH,
+			KD_INC,
+			KD_INC_GXH,
+			COVER_TYPE,
+			COVER_TYPE_GXH,
+			RES_SATURATED_RATIO,
+			RES_SATURATED_RATIO_GXH,
+			POTENTIAL_CNCL_RATIO,
+			POTENTIAL_CNCL_RATIO_GXH,
+			POTENTIAL_USER_RATIO,
+			POTENTIAL_USER_RATIO_GXH,
+			CNCL_RATIO,
+			CNCL_RATIO_GXH,
+			REGION_TYPE,
+			REGION_TYPE_GXH,
+			POTENTIAL_USER_CNT,
+			POTENTIAL_USER_CNT_GXH,
+			SHAPE,
+			SHAPE_GXH
+ 		)
+ 		VALUES(
+ 			#{cityName,jdbcType=VARCHAR},
+ 			#{cityCode,jdbcType=VARCHAR},
+ 			#{areaType,jdbcType=VARCHAR},
+ 			#{cntyId,jdbcType=VARCHAR},
+ 			#{countyName,jdbcType=VARCHAR},
+ 			#{villId,jdbcType=VARCHAR},
+ 			#{villIdGxh,jdbcType=VARCHAR},
+ 			#{villName,jdbcType=VARCHAR},
+ 			#{villNameGxh,jdbcType=VARCHAR},
+ 			#{cellId,jdbcType=VARCHAR},
+ 			#{cellIdGxh,jdbcType=VARCHAR},
+ 			#{cellName,jdbcType=VARCHAR},
+ 			#{cellNameGxh,jdbcType=VARCHAR},
+ 			#{bsId,jdbcType=VARCHAR},
+ 			#{bsIdGxh,jdbcType=VARCHAR},
+ 			#{cellType,jdbcType=VARCHAR},
+ 			#{cellTypeGxh,jdbcType=VARCHAR},
+ 			#{cellLongitude,jdbcType=DECIMAL},
+ 			#{cellLongitudeGxh,jdbcType=DECIMAL},
+ 			#{cellLatitude,jdbcType=DECIMAL},
+ 			#{cellLatitudeGxh,jdbcType=DECIMAL},
+ 			#{cellPrc,jdbcType=DOUBLE},
+ 			#{cellPrcGxh,jdbcType=DOUBLE},
+ 			#{cellOccupyArea,jdbcType=DOUBLE},
+ 			#{cellOccupyAreaGxh,jdbcType=DOUBLE},
+ 			#{cellBuildArea,jdbcType=DOUBLE},
+ 			#{cellBuildAreaGxh,jdbcType=DOUBLE},
+ 			#{cellCnt,jdbcType=INTEGER},
+ 			#{cellCntGxh,jdbcType=INTEGER},
+ 			#{cellUserCnt,jdbcType=INTEGER},
+ 			#{cellUserCntGxh,jdbcType=INTEGER},
+ 			#{cellInUserCnt,jdbcType=INTEGER},
+ 			#{cellInUserCntGxh,jdbcType=INTEGER},
+ 			#{cellAddr,jdbcType=VARCHAR},
+ 			#{cellAddrGxh,jdbcType=VARCHAR},
+ 			#{popuScale,jdbcType=VARCHAR},
+ 			#{popuScaleGxh,jdbcType=VARCHAR},
+ 			#{isNotBuiltCell,jdbcType=VARCHAR},
+ 			#{isNotBuiltCellGxh,jdbcType=VARCHAR},
+ 			#{buildMode,jdbcType=VARCHAR},
+ 			#{buildModeGxh,jdbcType=VARCHAR},
+			#{portCnt,jdbcType=INTEGER},
+			#{portCntGxh,jdbcType=INTEGER},
+			#{usePortCnt,jdbcType=INTEGER},
+			#{usePortCntGxh,jdbcType=INTEGER},
+			#{portRatio,jdbcType=VARCHAR},
+			#{portRatioGxh,jdbcType=VARCHAR},
+			#{isTeleCover,jdbcType=VARCHAR},
+			#{isTeleCoverGxh,jdbcType=VARCHAR},
+			#{isUnicomCover,jdbcType=VARCHAR},
+			#{isUnicomCoverGxh,jdbcType=VARCHAR},
+			#{isBroAdCastCover,jdbcType=VARCHAR},
+			#{isBroAdCastCoverGxh,jdbcType=VARCHAR},
+			#{tranResFlag,jdbcType=VARCHAR},
+			#{tranResFlagGxh,jdbcType=VARCHAR},
+			#{difficultyLvl,jdbcType=VARCHAR},
+			#{difficultyLvlGxh,jdbcType=VARCHAR},
+			#{acessType,jdbcType=VARCHAR},
+			#{acessTypeGxh,jdbcType=VARCHAR},
+			#{isSole,jdbcType=VARCHAR},
+			#{isSoleGxh,jdbcType=VARCHAR},
+			#{teleUserCnt,jdbcType=INTEGER},
+			#{teleUserCntGxh,jdbcType=INTEGER},
+			#{unicomUserCnt,jdbcType=INTEGER},
+			#{unicomUserCntGxh,jdbcType=INTEGER},
+			#{broAdCaseUserCnt,jdbcType=INTEGER},
+			#{broAdCaseUserCntGxh,jdbcType=INTEGER},
+			#{mobileUserRatio,jdbcType=DOUBLE},
+			#{mobileUserRatioGxh,jdbcType=DOUBLE},
+			#{competProd,jdbcType=VARCHAR},
+			#{competProdGxh,jdbcType=VARCHAR},
+			#{competProm,jdbcType=VARCHAR},
+			#{competPromGxh,jdbcType=VARCHAR},
+			#{propertyCompany,jdbcType=VARCHAR},
+			#{propertyCompanyGxh,jdbcType=VARCHAR},
+			#{properrtyTel,jdbcType=VARCHAR},
+			#{propertyTelGxh,jdbcType=VARCHAR},
+			#{propertyAddr,jdbcType=VARCHAR},
+			#{propertyAddrGxh,jdbcType=VARCHAR},
+			#{keyMan,jdbcType=VARCHAR},
+			#{keyManGxh,jdbcType=VARCHAR},
+			#{keyManPost,jdbcType=VARCHAR},
+			#{keyManPostGxh,jdbcType=VARCHAR},
+			#{keyManTel,jdbcType=VARCHAR},
+			#{keyManTelGxh,jdbcType=VARCHAR},
+			#{propertyContName,jdbcType=VARCHAR},
+			#{propertyContNameGxh,jdbcType=VARCHAR},
+			#{propertyContPost,jdbcType=VARCHAR},
+			#{propertyContPostGxh,jdbcType=VARCHAR},
+			#{propertyContTel,jdbcType=VARCHAR},
+			#{propertyContTelGxh,jdbcType=VARCHAR},
+			#{builderName,jdbcType=VARCHAR},
+			#{builderNameGxh,jdbcType=VARCHAR},
+			#{builderContName,jdbcType=VARCHAR},
+			#{builderContNameGxh,jdbcType=VARCHAR},
+			#{builderContTel,jdbcType=VARCHAR},
+			#{builderContTelGxh,jdbcType=VARCHAR},
+			#{builderTel,jdbcType=VARCHAR},
+			#{builderTelGxh,jdbcType=VARCHAR},
+			#{sex,jdbcType=VARCHAR},
+			#{sexGxh,jdbcType=VARCHAR},
+			#{kdUserCnt,jdbcType=INTEGER},
+			#{kdUserCntGxh,jdbcType=INTEGER},
+			#{kdExpUserCnt,jdbcType=INTEGER},
+			#{kdExpUserCntGxh,jdbcType=INTEGER},
+			#{cellValue,jdbcType=VARCHAR},
+			#{cellValueGxh,jdbcType=VARCHAR},
+			#{coverFlag,jdbcType=VARCHAR},
+			#{coverFlagGxh,jdbcType=VARCHAR},
+			#{kdInc,jdbcType=DOUBLE},
+			#{kdIncGxh,jdbcType=DOUBLE},
+			#{coverType,jdbcType=VARCHAR},
+			#{coverTypeGxh,jdbcType=VARCHAR},
+			#{resSaturatedRatio,jdbcType=DOUBLE},
+			#{resSaturatedRatioGxh,jdbcType=DOUBLE},
+			#{potentialCnclRatio,jdbcType=DOUBLE},
+			#{potentialCncclRatioGxh,jdbcType=DOUBLE},
+			#{potentialUserRatio,jdbcType=DOUBLE},
+			#{potentialUserRatioGxh,jdbcType=DOUBLE},
+			#{cnclRatio,jdbcType=DOUBLE},
+			#{cnclRatioGxh,jdbcType=DOUBLE},
+			#{regionType,jdbcType=VARCHAR},
+			#{regionTypeGxh,jdbcType=VARCHAR},
+			#{potentialUserCnt,jdbcType=INTEGER},
+			#{potentialUserCntGxh,jdbcType=INTEGER},
+			#{addressCommunity,jdbcType=CLOB},
+			#{shapeGxh,jdbcType=CLOB}
+ 		)
+ 	</insert>
+ 	
+ 	<!-- 修改小区轮廓信息 -->
+ 	<update id="updateCommunity" parameterType="java.util.Map">
+ 		UPDATE 
+ 			TA_DT_CELL_M_GXH
+ 		SET
+			VILL_ID_GXH = #{villIdGxh,jdbcType=VARCHAR},
+			VILL_NAME_GXH = #{villNameGxh,jdbcType=VARCHAR},
+			CELL_NAME_GXH = #{cellNameGxh,jdbcType=VARCHAR},
+			BS_ID_GXH = #{bsIdGxh,jdbcType=VARCHAR},
+			CELL_TYPE_GXH = #{cellTypeGxh,jdbcType=VARCHAR},
+			CELL_LONGITUDE_GXH = #{cellLongitudeGxh,jdbcType=DECIMAL},
+			CELL_LATITUDE_GXH =#{cellLatitudeGxh,jdbcType=DECIMAL},
+			CELL_PRC_GXH = #{cellPrcGxh,jdbcType=DOUBLE},
+			CELL_OCCUPY_AREA_GXH = #{cellOccupyAreaGxh,jdbcType=DOUBLE},
+			CELL_BUILD_AREA_GXH = #{cellBuildAreaGxh,jdbcType=DOUBLE},
+			CELL_CNT_GXH = #{cellCntGxh,jdbcType=INTEGER},
+			CELL_USER_CNT_GXH = #{cellUserCntGxh,jdbcType=INTEGER},
+			CELL_IN_USER_CNT_GXH = #{cellInUserCntGxh,jdbcType=INTEGER},
+			CELL_ADDR_GXH = #{cellAddrGxh,jdbcType=VARCHAR},
+			POPU_SCALE_GXH = #{popuScaleGxh,jdbcType=VARCHAR},
+			IS_NOT_BUILT_CELL_GXH = #{isNotBuiltCellGxh,jdbcType=VARCHAR},
+			BUILD_MODE_GXH = #{buildModeGxh,jdbcType=VARCHAR},
+			PORT_CNT_GXH = #{portCntGxh,jdbcType=INTEGER},
+			USE_PORT_CNT_GXH = #{usePortCnt,jdbcType=INTEGER},
+			PORT_RATIO_GXH = #{portRatioGxh,jdbcType=VARCHAR},
+			IS_TELE_COVER_GXH = #{isTeleCoverGxh,jdbcType=VARCHAR},
+			IS_UNICOM_COVER_GXH = #{isUnicomCoverGxh,jdbcType=VARCHAR},
+			IS_BROADCAST_COVER_GXH = #{isBroAdCastCoverGxh,jdbcType=VARCHAR},
+			TRAN_RES_FLAG_GXH = #{tranResFlagGxh,jdbcType=VARCHAR},
+			DIFFICULTY_LVL_GXH = #{difficultyLvlGxh,jdbcType=VARCHAR},
+			ACESS_TYPE_GXH = #{acessTypeGxh,jdbcType=VARCHAR},
+			IS_SOLE_GXH = #{isSoleGxh,jdbcType=VARCHAR},
+			TELE_USER_CNT_GXH = #{teleUserCntGxh,jdbcType=INTEGER},
+			UNICOM_USER_CNT_GXH = #{unicomUserCntGxh,jdbcType=INTEGER},
+			BROADCASE_USER_CNT_GXH = #{broAdCaseUserCntGxh,jdbcType=INTEGER},
+			MOBILE_USER_RATIO_GXH = #{movileUserRatioGxh,jdbcType=DOUBLE},
+			COMPET_PROD_GXH = #{competProdGxh,jdbcType=VARCHAR},
+			COMPET_PROM_GXH = #{competPromGxh,jdbcType=VARCHAR},
+			PROPERTY_COMPANY_GXH = #{propertyCompanyGxh,jdbcType=VARCHAR},
+			PROPERTY_TEL_GXH = #{propertyTelGxh,jdbcType=VARCHAR},
+			PROPERTY_ADDR_GXH = #{propertyAddrGxh,jdbcType=VARCHAR},
+			KEYMAN_GXH = #{keyManGxh,jdbcType=VARCHAR},
+			KEYMAN_POST_GXH = #{keyManPostGxh,jdbcType=VARCHAR},
+			KEYMAN_TEL_GXH = #{keyManTelGxh,jdbcType=VARCHAR},
+			PROPERTY_CONT_NAME_GXH = #{propertyContNameGxh,jdbcType=VARCHAR},
+			PROPERTY_CONT_POST_GXH = #{propertyContTelGxh,jdbcType=VARCHAR},
+			PROPERTY_CONT_TEL_GXH = #{propertyContTelGxh,jdbcType=VARCHAR},
+			BUILDER_NAME_GXH = #{builderNameGxh,jdbcType=VARCHAR},
+			BUILDER_CONT_NAME_GXH = #{builderContNameGxh,jdbcType=VARCHAR},
+			BUILDER_CONT_TEL_GXH = #{builderContTelGxh,jdbcType=VARCHAR},
+			BUILDER_TEL_GXH = #{builderTelGxh,jdbcType=VARCHAR},
+			SEX_GXH = #{sexGxh,jdbcType=VARCHAR},
+			KD_USER_CNT_GXH = #{kdUserCntGxh,jdbcType=INTEGER},
+			KD_EXP_USER_CNT_GXH = #{kdExpUserCnt,jdbcType=INTEGER},
+			CELL_VALUE_GXH = #{cellValueGxh,jdbcType=VARCHAR},
+			COVER_FLAG_GXH = #{coverFlagGxh,jdbcType=VARCHAR},
+			KD_INC_GXH = #{kdIncGxh,jdbcType=DOUBLE},
+			COVER_TYPE_GXH = #{coverTypeGxh,jdbcType=VARCHAR},
+			RES_SATURATED_RATIO_GXH = #{resSaturatedRatioGxh,jdbcType=DOUBLE},
+			POTENTIAL_CNCL_RATIO_GXH = #{potentialCnclRatioGxh,jdbcType=DOUBLE},
+			POTENTIAL_USER_RATIO_GXH = #{potentialUserRatioGxh,jdbcType=DOUBLE},
+			CNCL_RATIO_GXH = #{cnclRatioGxh,jdbcType=DOUBLE},
+			REGION_TYPE_GXH = #{regionTypeGxh,jdbcType=VARCHAR},
+			POTENTIAL_USER_CNT_GXH = #{potentialUserCntGxh,jdbcType=INTEGER},
+			SHAPE = #{shape,jdbcType=CLOB},
+			SHAPE_GXH = #{shapeGxh,jdbcType=CLOB}
+		WHERE 
+			CELL_ID = #{cellId,jdbcType=VARCHAR}
+ 	</update>
+ 	
+ 	<update id="updateGridUserByOrgIdAndUserType" parameterType="java.util.Map">
+ 		UPDATE 
+ 			GRID_USER
+ 		SET 
+ 			OA_ID = #{OA_ID,jdbcType=VARCHAR},
+ 			NAME = #{NAME,jdbcType=VARCHAR},
+ 			PHONE = #{PHONE,jdbcType=VARCHAR}
+ 		WHERE
+ 			ORG_ID = #{ORG_ID,jdbcType=VARCHAR}
+ 		AND 
+ 			USER_TYPE = 3
+ 		AND 
+ 			LOGIN_ID = #{LOGIN_ID,jdbcType=VARCHAR}
+ 	</update>
+</mapper>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.BuildDetailInfoMapper">
+
+	<!-- 楼宇列表 -->
+	<select id="getBuildDetailInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			buildType, num*100/num_total AS percent
+		FROM 
+		<if test="listType=='BUILD_AGE'.toString()">
+			<![CDATA[
+			(SELECT 
+				CASE WHEN BUILD_AGE < 2000 THEN '<2000' 
+				WHEN BUILD_AGE < 2005 AND BUILD_AGE >= 2000 THEN '2000-2005'
+				WHEN BUILD_AGE < 2010 AND BUILD_AGE >= 2005 THEN '2005-2010'
+				WHEN BUILD_AGE < 2015 AND BUILD_AGE >= 2010 THEN '2010-2015'
+				WHEN BUILD_AGE >= 2015 THEN '>=2015' ELSE '>=2015' END AS buildType, 
+				COUNT(1) AS num
+			FROM 
+				BUILDING_DETAIL_INFO 
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+			GROUP BY 
+				CASE WHEN BUILD_AGE < 2000 THEN '<2000' 
+				WHEN BUILD_AGE < 2005 AND BUILD_AGE >= 2000 THEN '2000-2005'
+				WHEN BUILD_AGE < 2010 AND BUILD_AGE >= 2005 THEN '2005-2010'
+				WHEN BUILD_AGE < 2015 AND BUILD_AGE >= 2010 THEN '2010-2015'
+				WHEN BUILD_AGE >=  2015 THEN '>=2015' ELSE '>=2015' END),
+			]]>
+		</if>
+		<if test="listType=='BUILD_AREA'.toString()">
+			<![CDATA[
+			(SELECT 
+				CASE WHEN BUILD_AREA < 50 THEN '<50'
+				WHEN BUILD_AGE < 70 AND BUILD_AREA >= 50 THEN '50-70'
+				WHEN BUILD_AGE < 90 AND BUILD_AREA >= 70 THEN '70-90'
+				WHEN BUILD_AGE < 110 AND BUILD_AREA >= 90 THEN '90-110'
+				WHEN BUILD_AGE >= 110 THEN '>=110' ELSE '>=110' END AS buildType,
+				COUNT(1) AS num
+			FROM 
+				BUILDING_DETAIL_INFO
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+			GROUP BY 
+				CASE WHEN BUILD_AREA < 50 THEN '<50'
+				WHEN BUILD_AGE < 70 AND BUILD_AREA >= 50 THEN '50-70'
+				WHEN BUILD_AGE < 90 AND BUILD_AREA >= 70 THEN '70-90'
+				WHEN BUILD_AGE < 110 AND BUILD_AREA >= 90 THEN '90-110'
+				WHEN BUILD_AGE >= 110 THEN '>=110' ELSE '>=110' END),
+			]]>
+		</if>
+		<if test="listType=='BUILD_LAYER'.toString()">
+			<![CDATA[
+			(SELECT
+				CASE WHEN BUILD_LAYER < 10 THEN '<10'
+				WHEN BUILD_LAYER < 20 AND BUILD_LAYER >= 10 THEN '10-20'
+				WHEN BUILD_LAYER < 30 AND BUILD_LAYER >= 20 THEN '20-30'
+				WHEN BUILD_LAYER >= 30 THEN '>=30' ELSE '>=30' END AS buildType,
+				COUNT(1) AS num
+			FROM 
+				BUILDING_DETAIL_INFO 
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+			GROUP BY 
+				CASE WHEN BUILD_LAYER < 10 THEN '<10'
+				WHEN BUILD_LAYER < 20 AND BUILD_LAYER >= 10 THEN '10-20'
+				WHEN BUILD_LAYER < 30 AND BUILD_LAYER >= 20 THEN '20-30'
+				WHEN BUILD_LAYER >= 30 THEN '>=30' ELSE '>=30' END),
+			]]>
+		</if>
+		<if test="listType=='HOUSE_NUM'.toString()">
+			<![CDATA[
+			(SELECT
+				CASE WHEN HOUSE_NUM < 60 THEN '<60'
+				WHEN HOUSE_NUM < 90 AND HOUSE_NUM >= 60 THEN '60-90'
+				WHEN HOUSE_NUM < 120 AND HOUSE_NUM >= 90 THEN '90-120'
+				WHEN HOUSE_NUM >= 120 THEN '>=120' ELSE '>=120' END AS buildType,
+				COUNT(1) AS num
+			FROM 
+				BUILDING_DETAIL_INFO 
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR} 
+			GROUP BY 
+				CASE WHEN HOUSE_NUM < 60 THEN '<60'
+				WHEN HOUSE_NUM < 90 AND HOUSE_NUM >= 60 THEN '60-90'
+				WHEN HOUSE_NUM < 120 AND HOUSE_NUM >= 90 THEN '90-120'
+				WHEN HOUSE_NUM >= 120 THEN '>=120' ELSE '>=120' END),
+			]]>
+		</if>
+		<if test="listType=='LIVE_NUM'.toString()">
+			<![CDATA[
+			(SELECT
+				CASE WHEN LIVE_NUM < 60 THEN '<60'
+				WHEN LIVE_NUM < 90 AND LIVE_NUM >= 60 THEN '60-90'
+				WHEN LIVE_NUM < 120 AND LIVE_NUM >= 90 THEN '90-120'
+				WHEN LIVE_NUM >= 120 THEN '>=120' ELSE '>=120' END AS buildType,
+				COUNT(1) AS num
+			FROM 
+				BUILDING_DETAIL_INFO 
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR} 
+			GROUP BY 
+				CASE WHEN LIVE_NUM < 60 THEN '<60'
+				WHEN LIVE_NUM < 90 AND LIVE_NUM >= 60 THEN '60-90'
+				WHEN LIVE_NUM < 120 AND LIVE_NUM >= 90 THEN '90-120'
+				WHEN LIVE_NUM >= 120 THEN '>=120' ELSE '>=120' END),
+			]]>
+		</if>
+		<if test="listType=='TENANT_NUM'.toString()">
+			<![CDATA[
+			(SELECT 
+				CASE WHEN TENANT_NUM < 60 THEN '<60'
+				WHEN TENANT_NUM < 90 AND TENANT_NUM >= 60 THEN '60-90'
+				WHEN TENANT_NUM < 120 AND TENANT_NUM >= 90 THEN '90-120'
+				WHEN TENANT_NUM >= 120 THEN '>=120' ELSE '>=120' END AS buildType,
+				COUNT(1) AS num
+			FROM 
+				BUILDING_DETAIL_INFO 
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR} 
+			GROUP BY 
+				CASE WHEN TENANT_NUM < 60 THEN '<60'
+				WHEN TENANT_NUM < 90 AND TENANT_NUM >= 60 THEN '60-90'
+				WHEN TENANT_NUM < 120 AND TENANT_NUM >= 90 THEN '90-120'
+				WHEN TENANT_NUM >= 120 THEN '>=120' ELSE '>=120' END),
+			]]>
+		</if>
+		<if test="listType=='IPTV'.toString()">
+			<![CDATA[
+			(SELECT
+				CASE WHEN IPTV < 20 THEN '<20'
+				WHEN IPTV < 40 AND IPTV >= 20 THEN '20-40'
+				WHEN IPTV < 60 AND IPTV >= 40 THEN '40-60'
+				WHEN IPTV >= 60 THEN '>=60' ELSE '>=60' END AS buildType,
+				COUNT(1) AS num
+			FROM 
+				BUILDING_DETAIL_INFO 
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR} 
+			GROUP BY 
+				CASE WHEN IPTV < 20 THEN '<20'
+				WHEN IPTV < 40 AND IPTV >= 20 THEN '20-40'
+				WHEN IPTV < 60 AND IPTV >= 40 THEN '40-60'
+				WHEN IPTV >= 60 THEN '>=60' ELSE '>=60' END),
+			]]>
+		</if>
+		<if test="listType=='PORT_NUM'.toString()">
+			<![CDATA[
+			(SELECT 
+				CASE WHEN PORT_NUM < 20 THEN '<20'
+				WHEN PORT_NUM < 40 AND PORT_NUM >= 20 THEN '20-40'
+				WHEN PORT_NUM < 60 AND PORT_NUM >= 40 THEN '40-60'
+				WHEN PORT_NUM >= 60 THEN '>=60' ELSE '>=60' END AS buildType,
+				COUNT(1) AS num
+			FROM 
+				BUILDING_DETAIL_INFO 
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR} 
+			GROUP BY 
+				CASE WHEN PORT_NUM < 20 THEN '<20'
+				WHEN PORT_NUM < 40 AND PORT_NUM >= 20 THEN '20-40'
+				WHEN PORT_NUM < 60 AND PORT_NUM >= 40 THEN '40-60'
+				WHEN PORT_NUM >= 60 THEN '>=60' ELSE '>=60' END),
+			]]>
+		</if>
+		<if test="listType=='PROT_PERCENT'.toString()">
+			<![CDATA[
+			(SELECT 
+				CASE WHEN PROT_PERCENT < 25 THEN '<25'
+				WHEN PROT_PERCENT < 50 AND PROT_PERCENT >= 25 THEN '25-50'
+				WHEN PROT_PERCENT < 75 AND PROT_PERCENT >= 50 THEN '50-75'
+				WHEN PROT_PERCENT < 100 AND PROT_PERCENT >= 75 THEN '75-100'
+				WHEN PROT_PERCENT >= 100 THEN '>=100' ELSE '>=100' END AS buildType,
+				COUNT(1) AS num
+			FROM 
+				BUILDING_DETAIL_INFO 
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR} 
+			GROUP BY 
+				CASE WHEN PROT_PERCENT < 25 THEN '<25'
+				WHEN PROT_PERCENT < 50 AND PROT_PERCENT >= 25 THEN '25-50'
+				WHEN PROT_PERCENT < 75 AND PROT_PERCENT >= 50 THEN '50-75'
+				WHEN PROT_PERCENT < 100 AND PROT_PERCENT >= 75 THEN '75-100'
+				WHEN PROT_PERCENT >= 100 THEN '>=100' ELSE '>=100' END),
+			]]>
+		</if>
+		(SELECT 
+			count(1) AS num_total 
+		FROM 
+			BUILDING_DETAIL_INFO 
+		WHERE 
+			grid_code = #{gridCode,jdbcType=VARCHAR})
+	</select>
+	<select id="getBroadband" parameterType="java.lang.String" resultType="java.util.Map">
+		select  TYP  AS buildType,CAST (round(borad,2) AS decimal(5,2)) AS percent    
+ 		from (SELECT 'FTTH' TYP,sum(coalesce(BROADBAND_FTTH,0))*100.0/(sum(coalesce(BROADBAND_FTTH,0))+sum(coalesce(BROADBAND_FTTB,0)))   borad
+		FROM BUILDING_DETAIL_INFO WHERE GRID_CODE = #{gridCode,jdbcType=VARCHAR} UNION ALL 
+		SELECT 'FTTB' TYP ,sum(coalesce(BROADBAND_FTTB,0))*100.0/(sum(coalesce(BROADBAND_FTTH,0))+sum(coalesce(BROADBAND_FTTB,0)))   borad
+		FROM BUILDING_DETAIL_INFO
+		WHERE GRID_CODE = #{gridCode,jdbcType=VARCHAR}) a 
+	</select>
+	<select id="getBuildDetailInfoType" resultType="com.bonc.gridinfo.dao.entity.BuildDetailInfo">
+		SELECT LIST_VALUE,LIST_TYPE FROM TB_LIST_VALUE WHERE "TYPE" = 'BUILDING' 
+	</select>
+</mapper>

@@ -1,0 +1,496 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.map.dao.mapper.FirstPageMapper">
+
+
+
+
+    <!-- begin hyh -->
+    <select id="getCityKpi" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		<!-- ORG_ID 这个一定要有 -->
+		SELECT ORG_ID,NAME , cast(rand()*100 as int) KPI
+		 FROM sys_org
+        WHERE PID = #{pid}
+       <!--  SELECT 
+        b.ORG_ID ORG_ID 
+        ,a.CITY_NAME name ,
+        cast ((sum(MOBILE_NUM)*100.00)/sum(ALL_NUM) as decimal(10,2)) as Kpi,
+        cast ((sum(MOBILE_NUM_LAST)*100.00)/sum(ALL_NUM_LAST) as decimal(10,2)) as lastmonth,
+        cast (((sum(MOBILE_NUM)*100.00)-(sum(MOBILE_NUM_LAST)*100.00))/sum(MOBILE_NUM_LAST) as decimal(10,2)) as increase	
+        FROM GRID_PERMEATION_RATE a 
+        LEFT JOIN SYS_ORG b ON a.CITY_CODE=b.ORG_ID AND b.pid =#{pid}
+        WHERE a.PERMEATION_TYPE=#{typeId}  
+        GROUP BY 
+        b.ORG_ID  
+        ,a.CITY_NAME -->
+	</select>
+    <select id="getLevel" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT * FROM
+		sys_org
+		WHERE 
+		PID = #{pid}
+	</select>
+	<select id="getCityKpiCity" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT 
+        b.ORG_ID ORG_ID 
+        ,a.CITY_NAME name ,
+        cast ((sum(MOBILE_NUM)*100.00)/sum(ALL_NUM) as decimal(10,2)) as Kpi,
+        cast ((sum(MOBILE_NUM_LAST)*100.00)/sum(ALL_NUM_LAST) as decimal(10,2)) as lastmonth,
+        cast (((sum(MOBILE_NUM)*100.00)-(sum(MOBILE_NUM_LAST)*100.00))/sum(MOBILE_NUM_LAST) as decimal(10,2)) as increase	
+        FROM GRID_PERMEATION_RATE a 
+        LEFT JOIN SYS_ORG b ON a.CITY_CODE=b.ORG_ID AND b.pid =#{pid}
+        WHERE a.PERMEATION_TYPE=#{typeId}  
+        GROUP BY 
+        b.ORG_ID  
+        ,a.CITY_NAME 
+	
+    </select>
+	<select id="getCityKpiOrg" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT GRID_PERMEATION_RATE.CITY_NAME AS NAME,
+        cast ((sum(MOBILE_NUM)*100.00)/sum(ALL_NUM) as decimal(10,2)) as Kpi,
+        cast ((sum(MOBILE_NUM_LAST)*100.00)/sum(ALL_NUM_LAST) as decimal(10,2)) as lastmonth,
+        cast (((sum(MOBILE_NUM)*100.00)-(sum(MOBILE_NUM_LAST)*100.00))/sum(MOBILE_NUM_LAST) as decimal(10,2)) as increase
+        FROM GRID_PERMEATION_RATE WHERE GRID_PERMEATION_RATE.ORG_ID IN (SELECT SYS_ORG.ORG_ID FROM SYS_ORG WHERE pid=#{pid})
+        AND GRID_PERMEATION_RATE.PERMEATION_TYPE=#{typeId}
+        GROUP BY ORG_ID	
+	</select>
+	<select id="getCityKpiGrid" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT sys_org.ORG_ID,NAME ,PERMEATION_RATE KPI FROM
+		sys_org,GRID_PERMEATION_RATE
+		WHERE 
+		sys_org.ORG_ID=GRID_PERMEATION_RATE.GRID_CODE
+	    and PID = #{pid} and GRID_PERMEATION_RATE.PERMEATION_TYPE=#{typeId}
+	</select>
+	<select id="getCityKpiPercentCity" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT sys_org.ORG_ID,NAME ,MARKET_PERCENT KPI FROM
+		sys_org,GRID_MARKET_PERCENT
+		WHERE 
+		sys_org.ORG_ID=GRID_MARKET_PERCENT.CITY_CODE
+	    and PID = #{pid} and GRID_MARKET_PERCENT.MARKET_TYPE=#{typeId}
+	</select>
+	<select id="getCityKpiPercentOrg" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT sys_org.ORG_ID,NAME ,MARKET_PERCENT KPI FROM
+		sys_org,GRID_MARKET_PERCENT
+		WHERE 
+		sys_org.ORG_ID=GRID_MARKET_PERCENT.ORG_ID
+	    and PID = #{pid} and GRID_MARKET_PERCENT.MARKET_TYPE=#{typeId}
+	</select>
+	<select id="getCityKpiPercentGrid" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT sys_org.ORG_ID,NAME ,MARKET_PERCENT KPI FROM
+		sys_org,GRID_MARKET_PERCENT
+		WHERE 
+		sys_org.ORG_ID=GRID_MARKET_PERCENT.GRID_CODE
+	    and PID = #{pid} and GRID_MARKET_PERCENT.MARKET_TYPE=#{typeId}
+	</select>
+	<select id="getCityKpiIncomeCity" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT sys_org.ORG_ID,NAME ,INCOME_PERCENT KPI FROM
+		sys_org,GRID_MAP_INCOME
+		WHERE 
+		sys_org.ORG_ID=GRID_MAP_INCOME.CITY_CODE
+	    and PID = #{pid} and GRID_MAP_INCOME.INCOME_TYPE=#{typeId}
+	</select>
+	<select id="getCityKpiIncomeOrg" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT sys_org.ORG_ID,NAME ,INCOME_PERCENT KPI FROM
+		sys_org,GRID_MAP_INCOME
+		WHERE 
+		sys_org.ORG_ID=GRID_MAP_INCOME.ORG_ID
+	    and PID = #{pid} and GRID_MAP_INCOME.INCOME_TYPE=#{typeId}
+	</select>
+	<select id="getCityKpiIncomeGrid" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT sys_org.ORG_ID,NAME ,INCOME_PERCENT KPI FROM
+		sys_org,GRID_MAP_INCOME
+		WHERE 
+		sys_org.ORG_ID=GRID_MAP_INCOME.GRID_CODE
+	    and PID = #{pid} and GRID_MAP_INCOME.INCOME_TYPE=#{typeId}
+	</select>
+	<select id="getCityKpiPercent" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT sys_org.ORG_ID,NAME ,PERMEATION_RATE KPI FROM
+		sys_org,GRID_MARKET_PERCENT
+		WHERE 
+		<if test="ORGLEVEL =='2'">
+		AND sys_org.ORG_ID=GRID_MARKET_PERCENT.CITY_CODE
+	    </if>
+	    <if test="ORGLEVEL =='3'">
+		AND sys_org.ORG_ID=GRID_MARKET_PERCENT.ORG_ID
+	    </if>
+	    <if test="ORGLEVEL =='4'">
+		AND sys_org.ORG_ID=GRID_MARKET_PERCENT.GRID_CODE
+	    </if>
+		and PID = #{pid} and GRID_MARKET_PERCENT.MARKET_TYPE=#{typeId}
+	</select>
+	<select id="getCityKpiIncome" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT ORG_ID,NAME ,PERMEATION_RATE KPI FROM
+		sys_org,GRID_MAP_INCOME
+		WHERE 
+		<if test="ORGLEVEL =='2'">
+		AND sys_org.ORG_ID=GRID_MAP_INCOME.CITY_CODE
+	    </if>
+	    <if test="ORGLEVEL =='3'">
+		AND sys_org.ORG_ID=GRID_MAP_INCOME.ORG_ID
+	    </if>
+	    <if test="ORGLEVEL =='4'">
+		AND sys_org.ORG_ID=GRID_MAP_INCOME.GRID_CODE
+	    </if>
+		and PID = #{pid} and GRID_MAP_INCOME.INCOME_TYPE=#{typeId}
+	</select>
+	<!-- 表结构要进行修改 -->
+	<select id="getCityKpiAbility" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT ORG_ID,NAME ,PERMEATION_RATE KPI FROM
+		sys_org,GRID_MAP_INCOME
+		WHERE 
+		<if test="ORGLEVEL =='2'">
+		AND sys_org.ORG_ID=GRID_MAP_INCOME.CITY_CODE
+	    </if>
+	    <if test="ORGLEVEL =='3'">
+		AND sys_org.ORG_ID=GRID_MAP_INCOME.ORG_ID
+	    </if>
+	    <if test="ORGLEVEL =='4'">
+		AND sys_org.ORG_ID=GRID_MAP_INCOME.GRID_CODE
+	    </if>
+		and PID = #{pid} and GRID_MAP_INCOME.INCOME_TYPE=#{typeId}
+	</select>
+	
+	<select id="getTypeList" resultType="java.util.Map">
+		SELECT
+
+		*
+		FROM
+		CONDITION_SCREEN
+		WHERE
+		"TYPE" = 'MAP_MANAGER'
+		AND(
+		CONDITION_SCREEN.parent_id = ''
+		OR CONDITION_SCREEN.parent_id IS NULL
+		)
+		ORDER BY
+		display_order
+	</select>
+	<select id="getKpiList" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT
+		*
+		FROM
+		CONDITION_SCREEN
+		WHERE
+		"TYPE" = 'MAP_MANAGER'
+		AND parent_id=#{typeId}
+		ORDER BY
+		display_order
+	</select>
+	<select id="getChannelTable" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT CHNL_TYPE,CHNL_TYPE_LEVEL2,COUNT(*)  AS num 
+        FROM channel_info 
+        
+        WHERE CHNL_TYPE IS NOT NULL 
+        AND  CHNL_TYPE_LEVEL2 IS NOT NULL
+        AND  GRID_CODE =#{code}
+        GROUP BY  CHNL_TYPE,CHNL_TYPE_LEVEL2
+        ORDER BY CHNL_TYPE
+	</select>
+	<select id="getMapOptionList" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT s.signing_id , c.CHNL_NAME
+        FROM  
+        sign_contract s ,CHANNEL_INFO c
+        WHERE   s.chnl_code = c.chnl_code 
+        AND  s.chnl_code IN (
+        SELECT  chnl_code FROM channel_manager  WHERE login_id =#{loginId}
+        )
+        AND  status ='F'
+	</select>
+	<select id="getMapTableList" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		 SELECT
+			s.signing_id,
+			sp.physical_id,
+			c.CHNL_NAME,
+			pi.physical_name,
+			pi.address,
+			pi.SMALL_TYPE,
+			s.status,
+			BIG_TYPE
+		FROM
+			sign_contract_physical sp,
+			sign_contract S,
+			(SELECT
+				CHNL_CODE ,
+				CHNL_NAME
+			FROM
+				CHANNEL_INFO
+			UNION ALL
+			SELECT 
+				B.LOGIN_ID CHNL_CODE,
+				B.NAME	CHNL_NAME
+			FROM
+				GRID_USER B
+			WHERE USER_TYPE = 6) c,
+			PHYSICAL_GRID_INFO pi
+		WHERE
+			sp.signing_id = s.signing_id
+			AND s.chnl_code = c.chnl_code
+           <if test="signingId != null and signingId != ''">
+           AND  S.signing_id = #{signingId}
+           </if>
+           AND s. status = 'F'
+		   AND sp.physical_id = pi.physical_id
+		   ORDER BY
+		   sp.physical_id
+	</select>
+	<select id="getMapTextArea" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		  SELECT * FROM sign_contract WHERE sign_contract.SIGNING_ID=#{signingId}
+	</select>
+	<update id="updateStatus" 
+		parameterType="java.lang.String">
+		  UPDATE sign_contract  SET status ='S',CONFIRM_DATE=to_char(CURRENT TIMESTAMP,'YYYYMMDD hh:mi:ss') where signing_id =#{signingId}
+	</update>
+	<!-- 修改 -->
+	<update id="updateStatusPhysical" 
+		parameterType="java.lang.String">
+		  update sign_contract_physical set status ='S' where signing_id = #{signingId} 
+		  and physical_id in 
+		  <foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		  </foreach>  
+	</update>
+	<!-- 修改 -->
+	<update id="updateStatusPhysicalReturn" 
+		parameterType="java.lang.String">
+		  update sign_contract_physical set status ='R' where signing_id = #{signingId} 
+		  and physical_id not in
+		   <foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		  </foreach>  
+	</update>
+	<update id="updateStatusArea" 
+		parameterType="java.lang.String">
+		   UPDATE MS_CONTRACT_AREA M SET STATUS = 
+           (SELECT STATUS FROM  sign_contract_physical S
+           WHERE M.PHYSICAL_ID=S.PHYSICAL_ID AND S.signing_id =#{signingId})
+           WHERE M.STATUS ='F'
+           AND  M.PHYSICAL_ID IN (SELECT PHYSICAL_ID FROM sign_contract_physical WHERE signing_id =#{signingId} )
+	</update>
+	<update id="updateStatusReturnAll" 
+		parameterType="java.lang.String">
+		   UPDATE sign_contract  SET status ='R',CONFIRM_DATE=to_char(CURRENT TIMESTAMP,'YYYYMMDD hh:mi:ss') where signing_id =#{signingId}
+	</update>
+	<update id="updateStatusPhysicalReturnAll" 
+		parameterType="java.lang.String">
+		  update sign_contract_physical set status ='R' where signing_id = #{signingId} 
+	</update>
+	<update id="updateStatusAreaReturnAll" 
+		parameterType="java.lang.String">
+		   UPDATE MS_CONTRACT_AREA M SET STATUS = 
+           (SELECT STATUS FROM  sign_contract_physical S
+           WHERE M.PHYSICAL_ID=S.PHYSICAL_ID AND S.signing_id =#{signingId})
+           WHERE M.STATUS ='F'
+           AND  M.PHYSICAL_ID IN (SELECT PHYSICAL_ID FROM sign_contract_physical WHERE signing_id =#{signingId} )
+	</update>
+	<select id="getTest" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		 SELECT sign_contract.CREATE_USER FROM sign_contract WHERE sign_contract.CREATE_USER LIKE '%'||#{dat}||'%'
+	</select>
+	<select id="getindexEnryTable" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		 SELECT * FROM evaluation_kpi WHERE evaluation_kpi.org_id=#{orgId} and evaluation_kpi.STATUS !='S'
+	</select>
+	<select id="getOptionName" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT DISTINCT evaluation_kpi.KPI_NAME FROM evaluation_kpi WHERE evaluation_kpi.org_id=#{orgId}
+	</select>
+	<select id="getReloadTable" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		 SELECT * FROM evaluation_kpi WHERE 1=1
+           <if test="orgId != null and orgId != ''">
+           AND  ORG_ID= #{orgId}
+           </if>
+           <if test="date != null and date != ''">
+           AND  CYCLE_TYPE = #{date}
+           </if>
+           <if test="name != null and name != ''">
+           AND  KPI_NAME  LIKE '%'||#{name}||'%' 
+          
+           </if>
+           <if test="status != null and status != ''">
+           AND  STATUS = #{status}
+           </if>
+           AND  STATUS !='S'
+	</select>
+	<!-- 修改 -->
+	<delete id="getDeleteTable" 
+		parameterType="java.lang.String">
+		DELETE FROM  EVALUATION_KPI WHERE  EVALUATION_KPI.KPI_ID IN 
+		<foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		</foreach>  
+		AND EVALUATION_KPI.ORG_ID=#{orgId}
+	</delete>
+	<select id="getUpdateTable" 
+		parameterType="java.lang.String">
+		 SELECT * FROM evaluation_kpi WHERE evaluation_kpi.org_id=#{orgId}
+	</select>
+	<!-- 修改 -->
+	<update id="getOnlyUpdate" 
+		parameterType="java.lang.String">
+		 UPDATE  EVALUATION_KPI SET EVALUATION_KPI.STATUS='F' WHERE 
+		 EVALUATION_KPI.KPI_ID IN 
+		 <foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		</foreach> 
+		 AND EVALUATION_KPI.ORG_ID=#{orgId}
+	</update>
+	<select id="getManagerTable" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		 SELECT * FROM evaluation_kpi WHERE evaluation_kpi.org_id=#{orgId} and  evaluation_kpi.STATUS IN ('S','F')
+	</select>
+	<!-- 修改 -->
+	<update id="getManagerUpdateTable" 
+		parameterType="java.lang.String">
+		 UPDATE  EVALUATION_KPI SET EVALUATION_KPI.STATUS='S' WHERE 
+		 EVALUATION_KPI.KPI_ID IN 
+		 <foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		</foreach> 
+		AND EVALUATION_KPI.ORG_ID=#{orgId}
+	</update>
+	<!-- 修改 -->
+	<update id="getManagerRejectTable" 
+		parameterType="java.lang.String">
+		 UPDATE  EVALUATION_KPI SET EVALUATION_KPI.STATUS='P' WHERE 
+		 EVALUATION_KPI.KPI_ID IN 
+		 <foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		</foreach> 
+		 AND EVALUATION_KPI.ORG_ID=#{orgId}
+	</update>
+	<select id="getSearchManagerTable" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		 SELECT * FROM evaluation_kpi WHERE 1=1
+           <if test="orgId != null and orgId != ''">
+           AND  ORG_ID= #{orgId}
+           </if>
+           <if test="date != null and date != ''">
+           AND  CYCLE_TYPE = #{date}
+           </if>
+           <if test="name != null and name != ''">
+           AND  KPI_NAME  LIKE '%'||#{name}||'%' 
+          
+           </if>
+           <if test="status != null and status != ''">
+           AND  STATUS = #{status}
+           </if>
+           AND  STATUS IN ('F','S')
+	</select>
+	
+	<delete id="deleteData" 
+		parameterType="java.lang.String">
+		 Delete  from WG_KH_REMIND where org_id = #{orgId}  and 
+         content  in (select KPI_NAME from EVALUATION_KPI where org_id = #{orgId}
+         And status in ('S','F'))
+	</delete>
+	<select id="getCheckData" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		 select KPI_NAME from EVALUATION_KPI where org_id = #{orgId}
+         And status in ('S','F')
+	</select>
+	<update id="getManagerUpdateValTable" 
+		parameterType="java.lang.String">
+		 update EVALUATION_KPI set TARGET_VALUE=#{val,jdbcType=DOUBLE} where org_id = #{orgId}
+         And KPI_ID in 
+         <foreach collection="ids" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		</foreach> 
+	</update>
+	<update id="getManagerBlur" 
+		parameterType="java.lang.String">
+		 update EVALUATION_KPI set TARGET_VALUE=#{val,jdbcType=DOUBLE} where org_id = #{orgId} and KPI_ID=#{KPI_ID}
+	</update>
+	<select id="getSupplyOptionName" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		select KPI_NAME from KPI_BASE_INFO where KPI_NAME NOT IN (
+        SELECT EVALUATION_KPI.KPI_NAME FROM EVALUATION_KPI WHERE EVALUATION_KPI.ORG_ID=#{orgId}
+        
+        )
+	</select>
+	<insert id="saveSupplyName" 
+		parameterType="java.lang.String">
+		 insert into WG_KH_REMIND (REMIND_ID, ORG_ID,CONTENT) 
+         values
+          <foreach collection="ids" item="obj" index="index" separator="," >
+			 (#{obj.REMIND_ID,jdbcType=VARCHAR}, #{obj.ORG_ID,jdbcType=VARCHAR}, #{obj.CONTENT,jdbcType=VARCHAR})
+		</foreach> 
+	</insert>
+	<select id="getRemindName" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT * FROM WG_KH_REMIND WHERE WG_KH_REMIND.ORG_ID=#{orgId}
+	</select>
+	<insert id="saveImportData" 
+		parameterType="com.bonc.gridinfo.dao.entity.EvaluationKpi">
+		 insert into EVALUATION_KPI (KPI_ID,KPI_TYPE,KPI_NAME,KPI_WEIGHT,KPI_DEFINE,CYCLE_TYPE,STATUS,ORG_ID,KPI_CODE) 
+         values
+         (#{kpi.kpiId,jdbcType=VARCHAR}, #{kpi.kpiType,jdbcType=VARCHAR}, #{kpi.kpiName,jdbcType=VARCHAR},
+         #{kpi.kpiWeight,jdbcType=INTEGER}, #{kpi.kpiDefine,jdbcType=VARCHAR}, #{kpi.cycleType,jdbcType=VARCHAR}
+         , #{kpi.status,jdbcType=VARCHAR}, #{kpi.orgId,jdbcType=VARCHAR}, #{kpi.kpiCode,jdbcType=VARCHAR}
+         )
+	</insert>
+	<select id="checkKpiCode" resultType="int"
+		parameterType="java.lang.String">
+		SELECT count(1) num FROM KPI_BASE_INFO WHERE KPI_BASE_INFO.KPI_CODE=#{kpiCode}
+	</select>
+	<select id="getMapChannelName" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT s.signing_id , c.CHNL_NAME
+        FROM  
+        sign_contract s ,CHANNEL_INFO c
+        WHERE   s.chnl_code = c.chnl_code AND s.signing_id=#{signingId}
+	</select>
+	<select id="getMapOptionChannelList" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT DISTINCT c.CHNL_CODE , c.CHNL_NAME
+		FROM  
+		sign_contract s ,CHANNEL_INFO c
+		WHERE   s.chnl_code = c.chnl_code
+		AND  s.chnl_code IN (
+		SELECT  chnl_code FROM channel_manager  WHERE login_id = 'LOGID'
+		)
+		AND  status ='F' 
+		UNION ALL 
+		SELECT 
+		    LOGIN_ID AS CHNL_CODE
+		    ,NAME AS CHNL_NAME
+		FROM 
+		GRID_USER 
+		WHERE USER_TYPE = 6 AND LOGIN_ID = #{loginId}
+	</select>
+	<select id="getMapSignNameByCode" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT SIGNING_ID FROM sign_contract s WHERE chnl_code = #{chnlCode} AND STATUS='F' 
+	</select>
+	<!-- end hyh -->
+
+	<!-- getGridInfoOverView 根据orgid查询首页网格数据 -->
+	<select id="getGridInfoOverView" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			* 
+		FROM 
+			GRID_INFO_OVERVIEW 
+		WHERE 
+			ORG_ID=#{orgId}
+	</select>
+
+
+</mapper>

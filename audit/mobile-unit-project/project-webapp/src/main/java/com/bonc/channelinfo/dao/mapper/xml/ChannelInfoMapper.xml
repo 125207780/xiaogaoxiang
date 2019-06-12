@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.channelinfo.dao.mapper.ChannelInfoMapper">
+
+	<!-- 渠道基础信息 -->
+	<select id="getBaseChannelInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			CHNL_CODE, CHNL_NAME, CHNL_ADDR, CHNL_TYPE_LEVEL1, CHNL_TYPE_LEVEL2, OPEN_DATE, CHNL_COUNTER_NUM, 
+			b.list_value AS CHNL_STAR, CHNL_CAPACITY_SCORE, OPER_NAME, CHNL_MNGR_NAME, CHNL_MNGR_NUMBER, USE_AREA, CHNL_CLERK_NUM
+		FROM
+			channel_info a
+		LEFT JOIN
+			tb_list_value b ON char(a.CHNL_STAR) = b.list_type AND b."TYPE" = 'CHNL_STAR'
+		WHERE 
+			CHNL_CODE = #{channelId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getBaseChannelInfoDay" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			CHL_CODE, CHL_NAME, INDEX_01, INDEX_02, INDEX_03, INDEX_04, INDEX_05
+		FROM 
+			CHANNEL_DAY_INDEX 
+		WHERE 
+			CHL_CODE = #{channelId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectAll" resultType="java.util.Map">
+		SELECT 
+			ORG_ID, LON, LAT
+		FROM
+			CHANNEL_INFO
+		WHERE
+			ORG_ID = #{orgId}
+		AND
+			LON IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+	</select>
+</mapper>

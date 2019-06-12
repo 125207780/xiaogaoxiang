@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.BuildingInfoMapper">
+
+	<!-- 楼宇列表 -->
+	<select id="getBuildingInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.BuildingInfo">
+		SELECT 
+			BUILDING_CODE, BUILDING_NAME, GRID_CODE, BUILDING_NUMBER, HOUSE_NUM, LIVE_NUM, TENANT_NUM, ADDRESS
+		FROM 
+			BUILDING_INFO 
+		WHERE 
+			1=1
+		AND 
+			GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		<if test="buildingName != null and buildingName != ''">
+			AND BUILDING_NAME like '%'||#{buildingName}||'%'
+		</if>
+	</select>
+	
+	<select id="selectAll" resultType="com.bonc.gridinfo.dao.entity.BuildingInfo">
+		SELECT 
+			BUILDING_CODE, BUILDING_NAME, GRID_CODE, BUILDING_NUMBER, HOUSE_NUM, LIVE_NUM, TENANT_NUM, ADDRESS
+		FROM 
+			BUILDING_INFO 
+		WHERE 
+			GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		<if test="buildingName != null and buildingName != ''">
+			AND BUILDING_NAME like '%'||#{buildingName}||'%'
+		</if>
+	</select>
+</mapper>

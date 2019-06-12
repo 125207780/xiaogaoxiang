@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.system.dao.mapper.LogManageMapper">
+	<select id="getLogList" parameterType="java.util.Map" resultType="com.bonc.system.bean.Logger">
+		SELECT
+		  t1.ID          AS id,
+		  t2.USER_NAME   AS userName,
+		  t1.USER_IP     AS userIp,
+		  t1.ACTION_NAME AS actionName,
+		  t1.METHOD_NAME AS methodName,
+		  t1.OP_TIME     AS opTime,
+		  t1.SUCCESS     AS success
+		FROM
+  		  SYS_OP_LOG t1 LEFT JOIN SYS_USER t2 ON t1.USER_ID = t2.USER_ID
+  		WHERE 1=1
+		<if test="userName != null and userName != ''">
+		  AND t2.USER_NAME like '%'||#{userName,jdbcType=VARCHAR}||'%'
+		</if>
+		ORDER BY t1.OP_TIME DESC
+	</select>
+	
+	<insert id="opInsert" parameterType="com.bonc.system.bean.Logger">
+		INSERT INTO SYS_OP_LOG (ID, USER_ID, DATA_ID, USER_IP, METHOD_NAME, ACTION_NAME, OP_TIME, PARAM) VALUES
+		  (#{id, jdbcType = VARCHAR}, #{userId, jdbcType = VARCHAR}, #{dataId, jdbcType = VARCHAR}, #{userIp, jdbcType = VARCHAR}, 
+		  #{methodName, jdbcType = TIMESTAMP}, #{actionName, jdbcType = VARCHAR}, #{opTime, jdbcType = VARCHAR}, #{param, jdbcType = VARCHAR})
+	</insert>
+	
+	<update id="opSuccess" parameterType="com.bonc.system.bean.Logger">
+		UPDATE SYS_OP_LOG SET SUCCESS = #{success, jdbcType = INTEGER} where ID = #{id, jdbcType = VARCHAR}
+	</update>
+</mapper>

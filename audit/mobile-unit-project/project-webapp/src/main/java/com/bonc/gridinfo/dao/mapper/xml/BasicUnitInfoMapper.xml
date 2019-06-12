@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.BasicUnitInfoMapper">
+
+	<!-- 基础单元信息 -->
+	<select id="getBasicUnitInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			PHYSICAL_ID, PHYSICAL_NAME, ADDRESS,BIG_TYPE, PHYSICAL_TYPE, GRID_CODE, MASTER, MASTER_NUMBER
+		FROM 
+			PHYSICAL_GRID_INFO 
+		WHERE 
+			1=1 
+		AND 
+			grid_code = #{gridCode,jdbcType=VARCHAR}
+		<if test="physicalName != null and physicalName != ''">
+			AND physical_name like '%'||#{physicalName}||'%'
+		</if>
+		<if test="bigType != null and bigType != ''">
+			AND BIG_TYPE like '%'||#{bigType}||'%'
+		</if>
+		<if test="physicalType != null and physicalType != ''">
+			AND PHYSICAL_TYPE like '%'||#{physicalType}||'%'
+		</if>
+		ORDER BY BIG_TYPE, PHYSICAL_TYPE
+	</select>
+	
+	<!-- 根据PHYSICAL_ID查询单条信息 -->
+	<select id="selectBasicUnitInfoByPhysicalId" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			PHYSICAL_ID, PHYSICAL_NAME, ADDRESS, PHYSICAL_TYPE
+		FROM 
+			PHYSICAL_GRID_INFO 
+		WHERE 
+			1=1 
+		AND 
+			PHYSICAL_ID = #{physicalId,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 根据id查询单条信息 -->
+	<select id="selectBasicUnitInfoById" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			physical_grid_code, physical_grid_name, physical_grid_type, market_type, master, house_num, check_in_time, address 
+		FROM 
+			PHYSICAL_GRID_INFO 
+		WHERE 
+			physical_grid_code = #{physicalGridCode,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectAll" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			PHYSICAL_ID, PHYSICAL_NAME, ADDRESS, BIG_TYPE,PHYSICAL_TYPE, GRID_CODE, MASTER, MASTER_NUMBER
+		FROM 
+			PHYSICAL_GRID_INFO 
+		WHERE 
+			GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		<if  test="physicalName != null and physicalName != ''">
+			AND physical_name like '%'||#{physicalName}||'%'
+		</if>
+		<if test="bigType != null and bigType != ''">
+			AND BIG_TYPE like '%'||#{bigType}||'%'
+		</if>
+		<if test="physicalType != null and physicalType != ''">
+			AND PHYSICAL_TYPE like '%'||#{physicalType}||'%'
+		</if>
+		ORDER BY BIG_TYPE, PHYSICAL_TYPE
+	</select>
+	
+	<select id="getTypeInfo"  parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			* 
+		FROM 
+			(SELECT 
+				BIG_TYPE, num, CAST (ROUND(double(a.num)*100/b.sum,2) AS decimal(5,2)) AS percent
+			FROM 
+				(SELECT 
+					CASE WHEN BIG_TYPE IS NULL OR BIG_TYPE = '' THEN '其他' ELSE BIG_TYPE END AS BIG_TYPE, count(1) AS num 
+				FROM 
+					PHYSICAL_GRID_INFO a 
+				WHERE 
+					GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+				GROUP BY 
+					CASE WHEN BIG_TYPE IS NULL OR BIG_TYPE= '' THEN '其他' ELSE BIG_TYPE END) a,
+				(SELECT COUNT(1) AS SUM FROM PHYSICAL_GRID_INFO WHERE GRID_CODE = #{gridCode,jdbcType=VARCHAR}) b) AS c 
+		ORDER BY 
+			c.BIG_TYPE DESC
+	</select>
+	
+	<select id="getTypeRatioInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			SMALL_TYPE, num, CAST (ROUND(double(a.num)*100/b.sum,2) AS decimal(5,2)) AS percent
+		FROM
+			(SELECT 
+				CASE WHEN SMALL_TYPE IS NULL OR SMALL_TYPE= '' THEN '其他' ELSE SMALL_TYPE END AS SMALL_TYPE, count(1) AS num 
+			FROM 
+				PHYSICAL_GRID_INFO a 
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR} 
+			AND 
+				BIG_TYPE = #{bigType,jdbcType=VARCHAR}
+			GROUP BY 
+				CASE WHEN SMALL_TYPE IS NULL OR SMALL_TYPE= '' THEN '其他' ELSE SMALL_TYPE END) a,
+			(SELECT COUNT(1) AS SUM FROM PHYSICAL_GRID_INFO WHERE GRID_CODE=#{gridCode,jdbcType=VARCHAR} AND BIG_TYPE = #{bigType,jdbcType=VARCHAR}) b	
+	</select>
+	
+	<select id="getBigTypeInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			* 
+		FROM 
+			(SELECT 
+				BIG_TYPE 
+			FROM 
+				PHYSICAL_GRID_INFO 
+			WHERE 
+				GRID_CODE = #{gridCode,jdbcType=VARCHAR} 
+			GROUP BY 
+				BIG_TYPE) AS C 
+		ORDER BY 
+			C.BIG_TYPE DESC
+	</select>
+	<!-- 一级类型 -->
+	<select id="getFirstType" resultType="java.util.Map">
+		SELECT CONDITION_CODE,CONDITION_NAME FROM CONDITION_SCREEN WHERE "TYPE" = 'JCDY' AND CONDITION_LEVEL = 1 
+	</select>
+	<!-- 二级类型 -->
+	<select id="getSecondType" parameterType="java.lang.String" resultType="java.util.Map">
+	SELECT 
+		C.CONDITION_CODE,C.CONDITION_NAME 
+	FROM CONDITION_SCREEN A 
+	LEFT JOIN CONDITION_SCREEN B
+	ON A.CONDITION_CODE = B.PARENT_ID AND B.CONDITION_LEVEL = 2 AND A."TYPE" = 'JCDY'
+	LEFT JOIN CONDITION_SCREEN C
+	ON B.CONDITION_CODE = C.PARENT_ID AND C.CONDITION_LEVEL = 3	AND A."TYPE" = 'JCDY'
+	WHERE A."TYPE" = 'JCDY' AND A.CONDITION_LEVEL = 1 AND A.CONDITION_CODE = #{conditionCode,jdbcType=VARCHAR} 
+	</select>
+	
+	<!-- 查询商场信息 -->
+	<select id="selectMallAll" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			LNG lng, LAT lat, ORG_ID orgId
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			ORG_ID = #{orgId}
+		AND
+			BIG_TYPE = '综合商场'
+		AND 
+			(SMALL_TYPE = '商铺' OR SMALL_TYPE = '超市')
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+	</select>
+	
+	<!-- 查询小区信息 -->
+	<select id="selectCommunityAll" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			LNG lng, LAT lat, ORG_ID orgId
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			ORG_ID = #{orgId}
+		AND
+			BIG_TYPE = '家居小区' 
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+	</select>
+	
+	<!-- 查询学校信息 -->
+	<select id="selectSchoolAll" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			LNG lng, LAT lat, ORG_ID orgId
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			ORG_ID = #{orgId}
+		AND
+			BIG_TYPE = '文化教育' 
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+	</select>
+	
+	<!-- 查询村庄信息 -->
+	<select id="selectVillageAll" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			LNG lng, LAT lat, ORG_ID orgId
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			ORG_ID = #{orgId}
+		AND
+			PHYSICAL_TYPE LIKE '%村庄%'
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+	</select>
+	
+	<!-- 查询乡镇信息 -->
+	<select id="selectTownAll" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			LNG lng, LAT lat, ORG_ID orgId
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			ORG_ID = #{orgId}
+		AND
+			PHYSICAL_TYPE LIKE '%乡镇%'
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+	</select>
+	
+	<!-- 查询市场信息 -->
+	<select id="selectMarketAll" resultType="com.bonc.gridinfo.dao.entity.BasicUnitInfo">
+		SELECT 
+			LNG lng, LAT lat, ORG_ID orgId
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			ORG_ID = #{orgId}
+		AND
+			SMALL_TYPE = '市场' 
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+	</select>
+</mapper>

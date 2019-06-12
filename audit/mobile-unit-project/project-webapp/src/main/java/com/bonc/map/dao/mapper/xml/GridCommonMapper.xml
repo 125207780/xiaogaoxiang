@@ -1,0 +1,1142 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.map.dao.mapper.GridCommonMapper">
+
+	<resultMap id="MapInfoMap" type="com.bonc.map.dao.entity.MapInfo" >
+		<id column="ORG_ID" property="orgId" jdbcType="VARCHAR" />
+		<result column="SHAPE" property="shape" jdbcType="VARCHAR" />
+		<result column="COLOR" property="color" jdbcType="VARCHAR" />
+		<result column="MAXLNG" property="maxlng" jdbcType="DOUBLE" />
+		<result column="MINLNG" property="minlng" jdbcType="DOUBLE" />
+		<result column="MAXLAT" property="maxlat" jdbcType="DOUBLE" />
+		<result column="MINLAT" property="minlat" jdbcType="DOUBLE" />
+    	<result column="CPLNG" property="cplng" jdbcType="DOUBLE" />
+     	<result column="CPLAT" property="cplat" jdbcType="DOUBLE" />
+  	</resultMap>
+	<resultMap id="MapPoi" type="com.bonc.map.dao.entity.MapPoi" >
+    	<id column="UID" property="uid" jdbcType="VARCHAR" />
+    	<result column="ADDR" property="addr" jdbcType="VARCHAR" />
+    	<result column="area_Id" property="areaId" jdbcType="VARCHAR" />
+    	<result column="area_name" property="areaName" jdbcType="VARCHAR" />
+    	<result column="name" property="name" jdbcType="VARCHAR" />
+  		<result column="INDEX_NUM" property="indexNum" jdbcType="INTEGER" />
+    	<result column="IMAGEURL" property="imageUrl" jdbcType="VARCHAR" />
+     	<result column="LNG" property="lng" jdbcType="DOUBLE" />
+    	<result column="LAT" property="lat" jdbcType="DOUBLE" />
+    	<result column="SHAPE" property="shape" jdbcType="CLOB" />
+     	<result column="TYPE" property="type" jdbcType="VARCHAR" />
+     	<result column="CELL_ID" property="cellId" jdbcType="VARCHAR" />
+  	</resultMap>
+  
+  	<!-- 得到该区县下的所有小区轮廓 -->
+  	<select id="getCommunityShapeByGriCode" parameterType="java.lang.String" resultMap="MapInfoMap">
+  		SELECT
+  			CNTY_ID AS orgId,
+  			SHAPE 
+  		FROM
+  			TA_DT_CELL_M_GXH
+  		WHERE
+  			CNTY_ID = #{orgId,jdbcType=VARCHAR}
+  		<if test="cellId != null and cellId != ''">
+  			AND CELL_ID = #{cellId,jdbcType=VARCHAR}
+  		</if>
+  	</select>
+  
+	<!-- 得到该区县下的所有网格轮廓 -->
+  	<select id="getShapeByGriCode" resultMap="MapInfoMap" parameterType="java.lang.String">
+   	 	SELECT 
+   	 		SYS_ORG.ORG_ID, GRID_DETAIL.SHAPE AS SHAPE
+		FROM 
+			SYS_ORG, GRID_DETAIL
+	 	WHERE 
+	 		SYS_ORG.ORG_ID = GRID_DETAIL.ORG_ID
+	 	AND 
+	 		SYS_ORG.PID = #{orgId,jdbcType=VARCHAR} 
+		<if test="gridCode != '' ">
+			AND SYS_ORG.ORG_ID != #{gridCode}
+		</if>
+	</select>
+
+ 	<select id="selectList" parameterType="com.bonc.system.dao.entity.SysOrg" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT 
+			t.org_id orgId, 
+			t.pid pid, 
+			t.name name, 
+			t.memo memo, 
+			t.display_order displayOrder, 
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		FROM 
+			SYS_ORG t 
+		WHERE 1=1
+		<if test="name != null and name != ''">
+			AND t.name like '%'||#{name}||'%'
+		</if>			
+		<if test="orgId != null and orgId != ''">
+			AND t.org_id = #{orgId}
+		</if>
+		<if test="pid != null and pid != ''">
+			AND t.pid = #{pid}
+		</if>
+		AND 
+			t.orglevel != 5 
+		<if test="treeCode != null and treeCode != ''">
+			AND t.tree_code like #{treeCode}||'%'
+		</if>
+		ORDER BY 
+			t.orglevel, t.display_order
+	</select>
+	
+	<select id="selectSysOrgPolygon" resultMap="MapInfoMap" parameterType="java.lang.String" >
+   		SELECT 
+   			ORG_ID, SHAPE, MAXLNG, MINLNG, MAXLAT, MINLAT, CPLNG, CPLAT, COLOR 
+   		FROM 
+   			sys_org_polygon
+		WHERE 
+			ORG_ID = #{orgId,jdbcType=VARCHAR}
+  	</select>
+  	
+  	<select id="selectSysOrgPolygons" resultMap="MapInfoMap" parameterType="java.lang.String" >
+   		SELECT 
+   			ORG_ID, SHAPE, MAXLNG, MINLNG, MAXLAT, MINLAT, CPLNG, CPLAT, COLOR 
+   		FROM 
+   			sys_org_polygon
+		WHERE 
+			ORG_ID IN
+			<foreach collection="list" open="(" close=")" separator="," index="index" item="orgId">
+			#{orgId,jdbcType=VARCHAR}
+			</foreach>
+  	</select>
+    
+  	<select id="selectAllChannelByOrgId" resultMap="MapPoi" >
+	   	SELECT 
+	   		CHNL_CODE AS UID, CHNL_NAME AS NAME, LON AS LNG, LAT 
+		FROM 
+			CHANNEL_INFO 
+	    WHERE 
+	    	LON IS NOT NULL 
+		AND 
+			LAT IS NOT NULL 
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			ORG_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  
+	<select id="selectAllStationByOrgId" resultMap="MapPoi" parameterType="java.lang.String" >
+   		SELECT 
+   			STATION_CODE AS UID, STATION_NAME AS NAME, STATION_LON AS LNG, STATION_LAT AS LAT 
+		FROM 
+			STATION_INFO 
+	    WHERE 
+	    	STATION_LON IS NOT NULL 
+		AND 
+			STATION_LAT IS NOT NULL
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			ORG_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  
+  	<select id="selectAllMallByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+		SELECT 
+			PHYSICAL_ID AS UID, PHYSICAL_NAME AS NAME, LNG, LAT
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			BIG_TYPE = '综合商场'
+		AND 
+			(SMALL_TYPE = '商铺' OR SMALL_TYPE = '超市')
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			ORG_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllNewSchoolByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT 
+			PHYSICAL_ID AS UID, PHYSICAL_NAME AS NAME, LNG, LAT
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			BIG_TYPE = '文化教育' 
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			ORG_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllVillageByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT 
+			PHYSICAL_ID AS UID, PHYSICAL_NAME AS NAME, LNG, LAT
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			PHYSICAL_TYPE LIKE '%村庄%'
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			ORG_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllTownByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT 
+			PHYSICAL_ID AS UID, PHYSICAL_NAME AS NAME, LNG, LAT
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			PHYSICAL_TYPE LIKE '%乡镇%'
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			ORG_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllMarketByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT 
+			PHYSICAL_ID AS UID, PHYSICAL_NAME AS NAME, LNG, LAT
+		FROM 
+			PHYSICAL_GRID_INFO
+		WHERE 
+			SMALL_TYPE = '市场' 
+		AND
+			LNG IS NOT NULL 
+		AND 
+			LAT IS NOT NULL
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			ORG_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllAbGroupByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT 
+			a.GC_CODE AS UID,
+			a.GC_NAME AS NAME,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			SUBSTR(a.CLASS_ID, 1, 1) IN ('A', 'B')
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			a.JING_DU IS NOT NULL
+		AND 
+			a.WEI_DU IS NOT NULL
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			CNTY_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllCdGroupByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT 
+			a.GC_CODE AS UID,
+			a.GC_NAME AS NAME,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			a.CLASS_ID in ('C', 'D')
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			a.JING_DU IS NOT NULL
+		AND 
+			a.WEI_DU IS NOT NULL
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			CNTY_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllCommunityInfoByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT
+			a.CELL_ID AS UID,
+			a.CELL_NAME AS NAME,
+			a.CELL_LONGITUDE AS LNG,
+			a.CELL_LATITUDE AS LAT
+		FROM
+			WG_TA_DT_CELL a 
+		WHERE 
+			EXISTS 
+			(SELECT 1 FROM SYS_ORG b WHERE b.org_id = a.grid_code and b.ORGLEVEL = 4)
+		AND
+			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+		AND
+			a.CELL_LONGITUDE IS NOT NULL
+		AND 
+			a.CELL_LATITUDE IS NOT NULL
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			CNTY_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllNonCommunityInfoByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT
+			a.CELL_ID AS UID,
+			a.CELL_NAME AS NAME,
+			a.CELL_LONGITUDE AS LNG,
+			a.CELL_LATITUDE AS LAT
+		FROM
+			WG_TA_DT_CELL a 
+		WHERE 
+			NOT EXISTS 
+			(SELECT 1 FROM SYS_ORG b WHERE b.org_id = a.grid_code and b.ORGLEVEL = 4)
+		AND
+			(GRID_CODE IS NULL OR <![CDATA[ GRID_CODE = '']]>)
+		AND
+			a.CELL_LONGITUDE IS NOT NULL
+		AND 
+			a.CELL_LATITUDE IS NOT NULL
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			CNTY_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllNonAbGroupByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT 
+			a.GC_CODE AS UID,
+			a.GC_NAME AS NAME,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			SUBSTR(a.CLASS_ID, 1, 1) IN ('A', 'B')
+		AND 
+			NOT EXISTS (SELECT 1 FROM SYS_ORG b WHERE b.ORG_ID = a.GRID_CODE AND b.ORGLEVEL = 4)
+		AND
+			(GRID_CODE IS NULL OR <![CDATA[ GRID_CODE = '']]>)
+		AND
+			a.JING_DU IS NOT NULL
+		AND 
+			a.WEI_DU IS NOT NULL
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			CNTY_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllNonCdGroupByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT 
+			a.GC_CODE AS UID,
+			a.GC_NAME AS NAME,
+			a.JING_DU AS LNG,
+			a.WEI_DU AS LAT
+		FROM
+			GROUP_EXPORT_INFO a 
+		WHERE 
+			a.CLASS_ID in ('C', 'D')
+		AND 
+			NOT EXISTS (SELECT 1 FROM SYS_ORG b WHERE b.ORG_ID = a.GRID_CODE AND b.ORGLEVEL = 4)
+		AND
+			(GRID_CODE IS NULL OR <![CDATA[ GRID_CODE = '']]>)
+		AND
+			a.JING_DU IS NOT NULL
+		AND 
+			a.WEI_DU IS NOT NULL
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			CNTY_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllImportantCommunityByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT
+  			CELL_ID AS UID,
+  			CELL_NAME AS NAME,
+  			LON AS LNG,
+  			LAT
+  		FROM 
+  			RP_BB_CELL
+  		WHERE
+  			LON IS NOT NULL
+  		AND 
+  			LAT IS NOT NULL
+  		AND
+  			(GRID_CODE IS NOT NULL OR <![CDATA[ GRID_CODE <> '']]>)
+  		<if test="orgIds != null and orgIds != ''">
+		AND 
+			CNTY_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  		<select id="selectGridSchoolOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT
+  			e.SCH_ID AS UID,
+  			e.SCH_NAME AS NAME,
+  			e.SCH_LONGTITUDE AS LNG,
+  			e.SCH_LATITUDE AS LAT,
+  			b.org_id as cnty_code
+  		FROM 
+  			bonc02.DIM_SCH_INFO_M e
+		LEFT JOIN  grid.sys_org a ON e.grid_code = a.org_id AND a.orglevel = 4
+		LEFT JOIN  grid.sys_org b ON a.pid = b.org_id AND b.orglevel = 3
+        LEFT JOIN  grid.sys_org c ON b.pid = c.org_id AND c.orglevel = 2
+  		WHERE
+  			SCH_LONGTITUDE IS NOT NULL
+  		AND 
+  			SCH_LATITUDE IS NOT NULL
+  		AND
+  			(e.GRID_CODE IS NOT NULL OR <![CDATA[ e.GRID_CODE <> '']]>)
+  		<if test="orgIds != null and orgIds != ''">
+		AND 
+			b.ORG_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	<select id="selectAllOfficeBuildingOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT
+  			 physic_code AS UID,
+  			 physic_name as NAME,
+  			 physic_lon AS LNG,
+  			 physic_lat AS LAT
+  		FROM 
+  			physical_bdmap_detail 
+
+  		WHERE PHYSIC_TYPE='写字楼'
+  		<if test="orgIds != null and orgIds != ''">
+		AND 
+			GRID_CODE IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	<select id="selectAllGovernmentUnitOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+  		SELECT
+  			 physic_code AS UID,
+  			 physic_name as NAME,
+  			 physic_lon AS LNG,
+  			 physic_lat AS LAT
+  		FROM 
+  			physical_bdmap_detail 
+
+  		WHERE PHYSIC_TYPE='政府单位'
+  		<if test="orgIds != null and orgIds != ''">
+		AND 
+			GRID_CODE IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+	<select id="selectAllPoiByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+		SELECT 
+			SHAPE, LNG, LAT, UID, NAME, 
+			(SELECT 
+				COUNT(1) 
+			FROM 
+				PHYSICAL_BASE_INDEX I 
+			WHERE 
+				I.UID = P.UID) AS INDEX_NUM
+		FROM 
+			MAP_BD_POI P
+		WHERE 
+			ORG_ID = #{orgId,jdbcType=VARCHAR}
+		AND 
+			shape_type = 1
+	</select>
+	
+	<!-- 查询所有基础单元信息 -->
+	<select id="selectAllPoiByOrgIds" resultMap="MapPoi"  parameterType="java.lang.String" >
+		SELECT 
+			P.SHAPE, P.LON AS lng, P.LAT, P.UID, P.NAME, NVL(INDEX_NUM,0) AS indexNum
+		FROM 
+			MAP_BD_POI_ZX P
+		LEFT JOIN (SELECT UID, count(1) INDEX_NUM FROM PHYSICAL_BASE_INDEX GROUP BY UID) I ON I.UID = P.UID
+		WHERE 
+			P.AREA_ID = #{orgId,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 查询小区基础单元信息 -->
+	<select id="selectCommunityPoiByOrgIds" resultMap="MapPoi"  parameterType="java.lang.String" >
+		SELECT
+			P.SHAPE,
+			P.LON AS lng,
+			P.LAT,
+			P.UID,
+			P.NAME,
+			1 indexNum,
+			I.CELL_ID AS cellId
+		FROM
+			PHYSICAL_BASE_INDEX_TEMP I,
+			MAP_BD_POI_ZX P
+		WHERE
+			I.UID = P.UID
+			AND P.AREA_ID = #{orgId,jdbcType=VARCHAR}
+			AND I.TAG = '小区'
+	</select>
+	
+  	<select id="selectAoiIdxNum" resultMap="MapPoi" parameterType="java.util.Map" >
+  		SELECT 
+  			uid, count(*) AS INDEX_NUM 
+  		FROM 
+  			physical_base_index
+ 	 	WHERE 
+ 	 		ORG_ID = #{orgId,jdbcType=VARCHAR}
+  		<if test="uid != null and uid != ''">
+			AND uid = #{uid}
+ 		</if>
+		GROUP BY 
+			uid
+  	</select>
+
+    <select id="initSearchName" resultType="java.lang.String" parameterType="java.lang.String" >
+    	SELECT distinct NAME FROM SEARCH_VIEW WHERE ORG_ID = #{orgId}
+  	</select>
+
+    <select id="initSearchPlaceName" resultType="java.lang.String" parameterType="java.lang.String" >
+    	SELECT 
+    		distinct NAME
+		FROM 
+			SEARCH_VIEW
+    	WHERE 
+    		ORG_ID = #{orgId}
+    	<if test="place != '' || place != null ">
+   			AND NAME LIKE '%'||#{place,jdbcType=VARCHAR}||'%' FETCH FIRST 5 ROWS ONLY 
+    	</if>
+  	</select>
+  
+    <select id="selectSearchList" resultMap="MapPoi" parameterType="java.util.Map" >
+    	SELECT 
+    		NAME, UID, IMAGEURL, LNG, LAT, ADDR, TAG, SHAPE, TYPE, 
+    		CASE TYPE WHEN 'POI' THEN (SELECT COUNT(1) FROM physical_base_index I WHERE I.UID = V.UID) ELSE 1 END AS INDEX_NUM
+		FROM 
+			SEARCH_VIEW V
+    	WHERE 
+    		1=1
+    	<if test="name != null and textLabel != ''">
+			AND NAME LIKE '%'||#{name,jdbcType=VARCHAR}||'%' 
+		</if>
+    	AND 
+    		ORG_ID = #{orgId,jdbcType=VARCHAR}
+    	ORDER BY 
+    		uid
+  	</select>
+
+	<select id="selectAreaShape" resultMap="MapPoi" parameterType="java.lang.String" >
+    	SELECT SHAPE FROM SYS_ORG_DETAIL WHERE ORG_ID = #{orgId,jdbcType=VARCHAR}
+  	</select>
+
+	<select id="selectHouse" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			city_name, city_code, area_type, cnty_id, county_name, vill_id, vill_name, cell_id, 
+			cell_name, bs_id, cell_type, cell_longitude, cell_latitude, cell_prc, cell_occupy_area, 
+			cell_build_area, cell_cnt, cell_user_cnt, cell_in_user_cnt, cell_addr, popu_scale, 
+			is_not_built_cell, build_mode, port_cnt, use_port_cnt, port_ratio, is_tele_cover, 
+			is_unicom_cover, is_broadcast_cover, tran_res_flag, difficulty_lvl, acess_type, 
+			is_sole, tele_user_cnt, unicom_user_cnt, broadcase_user_cnt, mobile_user_ratio, 
+			compet_prod, compet_prom, property_company, property_tel, property_addr, keyman, 
+			keyman_post, keyman_tel, property_cont_name, property_cont_post, property_cont_tel, 
+			builder_name, builder_cont_name, builder_cont_tel, builder_tel, sex, kd_user_cnt,
+			kd_exp_user_cnt, cell_value, cover_flag, kd_inc, cover_type, res_saturated_ratio, 
+			potential_cncl_ratio, potential_user_ratio, cncl_ratio, region_type, potential_user_cnt
+		FROM 
+			TA_DT_CELL_M 
+		WHERE 
+			cell_id = #{physical_id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectSchool" resultType="java.util.Map" parameterType="java.lang.String">
+			SELECT 
+				org_id, physical_id, school_name, campus, addr, education_level,
+				total_student_scale, student_scale, manager_dept
+			FROM 
+				TB_BB_SCHOOL 
+			WHERE 
+				physical_id = #{physical_id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectSchoolOrHouse" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT BIG_TYP FROM physical_grid_info WHERE PHYSICAL_ID = #{uid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectPoiByUid" parameterType="java.lang.String" resultMap="MapPoi">
+		SELECT 
+			uid, lng, lat, shape, name, ADDR, TAG, ORG_ID orgId
+		FROM 
+			MAP_BD_POI 
+		WHERE 
+			uid = #{uid}
+	</select>
+  
+   	<select id="selectSchoolPoi" resultMap="MapPoi" parameterType="java.lang.String" >
+   		SELECT 
+   			NAME, UID, IMAGEURL, LNG, LAT, ADDR, TAG, SHAPE 
+		FROM 
+			MAP_BD_POI P
+    	WHERE 
+    		uid in 
+    		(select 
+    			uid
+    		FROM 
+    			BONC02.RPT_SCH_PORT_M m
+    		WHERE 
+    			m.area_city_id = #{orgId,jdbcType=VARCHAR}
+    		AND 
+    			M.STATIS_MONTH = YEAR(CURRENT DATE -1 MONTH) * 100 + MONTH(CURRENT DATE -1 MONTH))
+  		<if test="name != null and textLabel != ''">
+			AND NAME LIKE '%'||#{name,jdbcType=VARCHAR}||'%' 
+		</if>
+     	ORDER BY 
+     		uid
+  	</select>
+  	
+  	<!-- 所选择的的网格为空则根据当前登录人组织编码查询所有网格信息 -->
+  	<select id="selectGridInfoByPid" parameterType="java.lang.String" resultType="com.bonc.system.dao.entity.SysOrg">
+  		SELECT 
+  			ORG_ID AS orgId, NAME AS name
+  		FROM 
+  			SYS_ORG
+  		WHERE
+  			PID = #{orgId,jdbcType=VARCHAR}
+  	</select>
+  	
+  	<!-- 当选择的网格信息不为空时，则根据当前选择的网格编码查询网格信息 -->
+  	<select id="selectGridInfoByGridCode" parameterType="java.lang.String" resultType="com.bonc.system.dao.entity.SysOrg">
+  		SELECT 
+  			ORG_ID AS orgId, NAME AS name
+  		FROM 
+  			SYS_ORG
+  		WHERE
+  			ORG_ID = #{orgId,jdbcType=VARCHAR}
+  	</select>
+  	
+  	<!-- 根据归属网格，查询所有的渠道信息   NEWCODE代指CHNL_CODE-->
+  	<select id="selectChannelByGridCodes" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT 
+  	 		A.AREA_NAME AS AREANAME, A.COUNTY_NAME AS COUNTYNAME, B.NAME GRIDNAME, A.CHNL_NAME NAME, D.TYPE_NAME AS GRIDTYPE, A.CHNL_CODE AS NEWCODE, A.GRID_CODE AS GRIDCODE, A.LON AS LNG, A.LAT AS LAT
+  		FROM 
+   			CHANNEL_INFO A 
+  		LEFT JOIN SYS_ORG B ON A.GRID_CODE = B.ORG_ID
+  		LEFT JOIN GRID_DETAIL C ON B.ORG_ID = C.ORG_ID 
+  		LEFT JOIN GRID_TYPE D ON C.TYPE_ID = D.TYPE_ID
+    	WHERE 
+     		CHNL_STATUS = 0
+    	AND
+     		VALUE(A.GRID_CODE, '') <![CDATA[ <> ]]> ''
+     	AND
+     	<if test="orgLevel == 2">
+  			A.AREA_ID = #{orgId}
+  		</if>
+  		<if test="orgLevel == 3">
+  			A.ORG_ID = #{orgId}
+  		</if>
+  		<if test="gridCode != null and gridCode !='' ">
+  		AND
+  			A.GRID_CODE = #{gridCode}
+  		</if>
+    	<!--  AND not exists (select 1
+          	from GRID.CHANNEL_INFO_XW e
+        	where (e.TYPE like '%小微%' or e.TYPE like '%铁通%')
+           and e.CHNL_CODE = a.CHNL_CODE) -->
+  GROUP BY A.AREA_NAME, A.COUNTY_NAME, B.NAME, A.CHNL_NAME, D.TYPE_NAME, A.CHNL_CODE, A.GRID_CODE, A.LON, A.LAT</select>
+  	
+  	<!-- 根据归属网格，查询所有的渠道信息（未入格）   NEWCODE代指CHNL_CODE-->
+  	<select id="selectChannelByGridCodesNotEnter" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT  
+			A.AREA_NAME AS AREANAME, A.COUNTY_NAME AS COUNTYNAME, B.NAME GRIDNAME, A.CHNL_NAME NAME, D.TYPE_NAME AS GRIDTYPE, A.CHNL_CODE AS NEWCODE, A.GRID_CODE AS GRIDCODE, A.LON AS LNG, A.LAT AS LAT
+		FROM 
+			CHANNEL_INFO A 
+		LEFT JOIN SYS_ORG B ON A.GRID_CODE = B.ORG_ID
+		LEFT JOIN GRID_DETAIL C ON B.ORG_ID = C.ORG_ID 
+		LEFT JOIN GRID_TYPE D ON C.TYPE_ID = D.TYPE_ID
+  		WHERE 
+  			CHNL_STATUS = 0
+  		AND
+  			VALUE(A.GRID_CODE, '') = ''
+  		AND 
+  			<if test="orgLevel == 2">
+  			A.AREA_ID = #{orgId}
+  			</if>
+  			<if test="orgLevel == 3">
+  			A.ORG_ID = #{orgId}
+  			</if>
+  		<!--  AND not exists (select 1
+         	from GRID.CHANNEL_INFO_XW e
+         	where (e.TYPE like '%小微%' or e.TYPE like '%铁通%')
+           	and e.CHNL_CODE = a.CHNL_CODE)  -->
+		GROUP BY A.AREA_NAME, A.COUNTY_NAME, B.NAME, A.CHNL_NAME, D.TYPE_NAME, A.CHNL_CODE, A.GRID_CODE, A.LON, A.LAT
+  	</select>
+  	
+  	<!-- 根据归属网格，查询所有的基站信息 NEWCODE代指STATION_CODE-->
+  	<select id="selectStationByGridCodes" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT 
+   			CITY_NAME AS AREANAME, AREA_NAME AS COUNTYNAME, B.NAME AS GRIDNAME, STATION_NAME AS NAME, D.TYPE_NAME AS GRIDTYPE, A.STATION_CODE AS NEWCODE, A.GRID_CODE AS GRIDCODE, A.STATION_LON AS LNG, A.STATION_LAT AS LAT
+  		FROM 
+   			STATION_INFO A
+  		LEFT JOIN SYS_ORG B ON A.GRID_CODE = B.ORG_ID
+  		LEFT JOIN GRID_DETAIL C ON B.ORG_ID = C.ORG_ID 
+  		LEFT JOIN GRID_TYPE D ON C.TYPE_ID = D.TYPE_ID
+  		WHERE 
+   			VALUE(A.GRID_CODE, '') <![CDATA[ <> ]]> ''
+    	AND 
+  			<if test="orgLevel == 2">
+  			A.CITY_ID = #{orgId}
+  			</if>
+  			<if test="orgLevel == 3">
+  			A.ORG_ID = #{orgId}
+  			</if> 
+  			<if test="gridCode != null and gridCode !='' ">
+  		AND
+  			A.GRID_CODE = #{gridCode}
+  		</if>
+  		AND  
+    		A.IS_ONNET like '%在网%' and A.CITY_NAME <![CDATA[ <> ]]> '省公司'
+  GROUP BY CITY_NAME, AREA_NAME, B.NAME, STATION_NAME, D.TYPE_NAME, A.STATION_CODE, A.GRID_CODE, A.STATION_LON, A.STATION_LAT</select>
+  	
+  	<!-- 根据归属网格，查询所有的基站信息（未入格）   NEWCODE代指CHNL_CODE-->
+  	<select id="selectStationByGridCodesNotEnter" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT 
+			CITY_NAME AS AREANAME, AREA_NAME AS COUNTYNAME, B.NAME AS GRIDNAME, STATION_NAME AS NAME, D.TYPE_NAME AS GRIDTYPE, A.STATION_CODE AS NEWCODE, A.GRID_CODE AS GRIDCODE, A.STATION_LON AS LNG, A.STATION_LAT AS LAT
+		FROM 
+			STATION_INFO A
+		LEFT JOIN SYS_ORG B ON A.GRID_CODE = B.ORG_ID
+		LEFT JOIN GRID_DETAIL C ON B.ORG_ID = C.ORG_ID 
+		LEFT JOIN GRID_TYPE D ON C.TYPE_ID = D.TYPE_ID
+		WHERE 
+			VALUE(A.GRID_CODE, '') = ''
+  		AND 
+  			<if test="orgLevel == 2">
+  			A.CITY_ID = #{orgId}
+  			</if>
+  			<if test="orgLevel == 3">
+  			A.ORG_ID = #{orgId}
+  			</if>
+  		AND 
+    		A.IS_ONNET like '%在网%' and A.CITY_NAME <![CDATA[ <> ]]> '省公司'
+		GROUP BY CITY_NAME, AREA_NAME, B.NAME, STATION_NAME, D.TYPE_NAME, A.STATION_CODE, A.GRID_CODE, A.STATION_LON, A.STATION_LAT
+  	</select>
+  	
+  	<!-- 根据归属网格，查询所有小区信息 NEWCODE代指PHYSICAL_CODE-->
+  	<select id="selectCommunityByGridCodes" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT CITY_ID, CITY_NAME, CNTY_ID, CNTY_NAME, GRID_CODE, GRID_NAME, 
+  		CELL_ID, CELL_NAME, CELL_OCCUPY_AREA, CELL_CNT, CELL_USER_CNT, CELL_ADDR,
+  		CELL_LONGITUDE, CELL_LATITUDE, CELL_VALUE, KD_USER_CNT,(case CELL_TYPE when '1' then '重点' when '0' then '' end)CELL_TYPE
+		FROM WG_TA_DT_CELL
+  		WHERE
+   			value(grid_code, '') <![CDATA[ <> ]]> ''
+  		AND
+			<if test="orgLevel == 2">
+			CITY_ID = #{orgId}
+			</if>
+			<if test="orgLevel == 3">
+			CNTY_ID = #{orgId}
+			</if>
+			<if test="gridCode != null and gridCode !='' ">
+  			AND
+  				GRID_CODE = #{gridCode}
+  			</if>
+  	</select>
+  	
+  	<!-- 根据归属网格，查询所有的小区信息（未入格）   NEWCODE代指CHNL_CODE-->
+  	<select id="selectCommunityByGridCodesNotEnter" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT 
+  			CITY_ID, CITY_NAME, CNTY_ID, CNTY_NAME, GRID_CODE, GRID_NAME, 
+	  		CELL_ID, CELL_NAME, CELL_OCCUPY_AREA, CELL_CNT, CELL_USER_CNT, CELL_ADDR,
+	  		CELL_LONGITUDE, CELL_LATITUDE, CELL_VALUE, KD_USER_CNT,(CASE CELL_TYPE WHEN '1' THEN '重点' WHEN '0' THEN '' END)CELL_TYPE
+		FROM 
+			WG_TA_DT_CELL
+		WHERE
+			 value(grid_code, '') = ''
+  		AND 
+			<if test="orgLevel == 2">
+			CITY_ID = #{orgId}
+			</if>
+			<if test="orgLevel == 3">
+			CNTY_ID = #{orgId}
+			</if>
+  	</select>
+  	
+  	<!-- 根据归属网格，查询所有楼宇信息 NEWCODE代指PHYSICAL_CODE-->
+  	<select id="selectBuildingByGridCodes" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT 
+			D.NAME AS AREANAME, C.NAME AS COUNTYNAME, B.NAME AS GRIDNAME, A.PHYSICAL_NAME AS NAME, E.GRID_TYPE AS GRIDTYPE, A.PHYSICAL_ID AS NEWCODE, A.GRID_CODE AS GRIDCODE, A.LNG AS LNG, A.LAT AS LAT
+		FROM
+			PHYSICAL_GRID_INFO A
+		LEFT JOIN SYS_ORG B ON A.GRID_CODE = B.ORG_ID
+		LEFT JOIN SYS_ORG C ON B.PID = C.ORG_ID 
+		LEFT JOIN SYS_ORG D ON C.PID = D.ORG_ID
+		LEFT JOIN GRID_INFO E ON B.ORG_ID = E.GRID_CODE
+  		WHERE 
+	  		A.PHYSICAL_TYPE LIKE '%内部楼栋%'
+  		AND
+  		value(A.grid_code, '') <![CDATA[ <> ]]> ''
+  		AND
+			<if test="orgLevel == 2 or orgLevel == 3">
+  			A.ORG_ID IN
+  			<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+  			</if>
+  	</select>
+  	
+  	<!-- 根据归属网格，查询所有的楼宇信息（未入格）   NEWCODE代指CHNL_CODE-->
+  	<select id="selectBuildingByGridCodesNotEnter" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT 
+			D.NAME AS AREANAME, C.NAME AS COUNTYNAME, B.NAME AS GRIDNAME, A.PHYSICAL_NAME AS NAME, E.GRID_TYPE AS GRIDTYPE, A.PHYSICAL_ID AS NEWCODE, A.GRID_CODE AS GRIDCODE, A.LNG AS LNG, A.LAT AS LAT
+		FROM
+			PHYSICAL_GRID_INFO A
+		LEFT JOIN SYS_ORG B ON A.GRID_CODE = B.ORG_ID
+		LEFT JOIN SYS_ORG C ON B.PID = C.ORG_ID 
+		LEFT JOIN SYS_ORG D ON C.PID = D.ORG_ID
+		LEFT JOIN GRID_INFO E ON B.ORG_ID = E.GRID_CODE
+  		WHERE 
+	  		A.PHYSICAL_TYPE LIKE '%内部楼栋%'
+  		AND 
+  			value(A.grid_code, '') = ''
+  		AND 
+  			<if test="orgLevel == 2 or orgLevel == 3">
+  			A.ORG_ID IN
+  			<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+  			</if>
+  			  	</select>
+  	
+  	<!-- 根据归属网格，查询所有网格信息 -->
+  	<select id="selectGridInfoByGridCodes" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT 
+  			CITY_ID, CITY_NAME, CNTY_ID, CNTY_NAME, GRID_CODE, GRID_NAME, GRID_TYPE,
+  			MARKETING_DIRECTOR, DIRECT_SELLER, MOBILE_CHNL_NUM, UNICOM_CHNL_NUM, TELECOM_CHNL_NUM, 
+  			STATION_NUM, TOWN_NUM, VILLAGE_NUM, CHNL_USER_NUM, STATION_23G_USER, STATION_4G_USER,
+  			GROUP_NUM, KD_USER_NUM, GRID_RESIDENT_USER, FEE, COMPARE_LAST_MONTH, COMPARE_YSE, 
+  			CHNL_SHAPE, USER_4G_PER, VOICE_USER_NUM, BXL_BRAND_PER
+		FROM 
+			GRID_INFO_EXPORT 
+		WHERE
+  			value(grid_code, '') <![CDATA[ <> ]]> ''
+  		AND  
+			<if test="orgLevel == 2">
+			CITY_ID = #{orgId}
+			</if>
+			<if test="orgLevel == 3">
+			CNTY_ID = #{orgId}
+			</if>
+			<if test="gridCode != null and gridCode !='' ">
+  			AND
+  				GRID_CODE = #{gridCode}
+  			</if>
+  	</select>
+  	
+  	<!-- 根据归属网格，查询所有网格信息(未入格) -->
+  	<select id="selectGridInfoByGridCodesNotEnter" parameterType="java.util.Map" resultType="java.util.Map">
+  		SELECT 
+  			CITY_ID, CITY_NAME, CNTY_ID, CNTY_NAME, GRID_CODE, GRID_NAME, GRID_TYPE,
+  			MARKETING_DIRECTOR, DIRECT_SELLER, MOBILE_CHNL_NUM, UNICOM_CHNL_NUM, TELECOM_CHNL_NUM, 
+  			STATION_NUM, TOWN_NUM, VILLAGE_NUM, CHNL_USER_NUM, STATION_23G_USER, STATION_4G_USER,
+  			GROUP_NUM, KD_USER_NUM, GRID_RESIDENT_USER, FEE, COMPARE_LAST_MONTH, COMPARE_YSE, 
+  			CHNL_SHAPE, USER_4G_PER, VOICE_USER_NUM, BXL_BRAND_PER
+		FROM 
+			GRID_INFO_EXPORT 
+		WHERE
+	 		value(grid_code, '') = ''
+  		AND  
+			<if test="orgLevel == 2">
+			CITY_ID = #{orgId}
+			</if>
+			<if test="orgLevel == 3">
+			CNTY_ID = #{orgId}
+			</if>
+  	</select>
+  	
+  	<select id="selectGroupInfoByGridCodes" parameterType="java.util.Map" resultType="java.util.Map">
+		  SELECT 
+			AREA_NAME, CNTY_NAME, 
+			GRID_CODE,  NAME, GC_CODE, GC_NAME,
+			JING_DU, WEI_DU
+			FROM GROUP_EXPORT_INFO 
+			WHERE UPPER(SUBSTR(CLASS_ID,1,1)) IN
+			<foreach collection="classIds" open="(" close=")" separator="," index="index" item="classId">
+	    		#{classId}
+			</foreach>
+			and
+				value(grid_code, '') <![CDATA[ <> ]]> ''
+  			AND 
+			<if test="orgLevel == 2">
+				AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				CNTY_ID = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				and statis_date = #{statisDate} 
+			</if>
+			<if test="gridCode != null and gridCode !='' ">
+  			AND
+  				GRID_CODE = #{gridCode}
+  			</if>
+  	</select>
+  	<select id="selectCDGroupInfoByGridCodes" parameterType="java.util.Map" resultType="java.util.Map">
+		  SELECT 
+				AREA_NAME, CNTY_NAME, 
+				GRID_CODE,  NAME, GC_CODE, GC_NAME,
+				JING_DU, WEI_DU,STATIS_DATE,CLASS_ID,GC_ADDR,linkman,linkman_msisdn,EMP_NUM,IS_XWKD,IS_KTZX,IS_JTKD,IS_QYSY 
+			FROM 
+				CD_GROUP_EXPORT_INFO 
+			WHERE 
+				UPPER(SUBSTR(CLASS_ID,1,1)) IN
+			<foreach collection="classIds" open="(" close=")" separator="," index="index" item="classId">
+	    		#{classId}
+			</foreach>
+			and
+				value(grid_code, '') <![CDATA[ <> ]]> ''
+  			AND 
+			<if test="orgLevel == 2">
+				AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				CNTY_ID = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				and statis_date = #{statisDate} 
+			</if>
+			<if test="gridCode != null and gridCode !='' ">
+  			AND
+  				GRID_CODE = #{gridCode}
+  			</if>
+  	</select>
+  	<!-- 资源管理导出CD类已入格或者未入格 -->
+  	<select id="selectZYGLCDGroupInfoByGridCodes" parameterType="java.util.Map" resultType="java.util.Map">
+		  SELECT 
+				AREA_NAME, CNTY_NAME, 
+				GRID_CODE,  NAME, GC_CODE, GC_NAME,
+				JING_DU, WEI_DU,STATIS_DATE,CLASS_ID,GC_ADDR,linkman,linkman_msisdn,EMP_NUM,IS_XWKD,IS_KTZX,IS_JTKD,IS_QYSY 
+			FROM 
+				CD_GROUP_EXPORT_INFO 
+			WHERE 1=1 
+			AND
+			<if test='isEnter =="是"'>
+			value(grid_code, '') <![CDATA[ <> ]]> ''
+			</if>
+			<if test='isEnter =="否"'>
+			value(grid_code, '') = ''
+			</if>
+			<if test="orgLevel == 2">
+			AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+			AND CNTY_ID = #{orgId}
+			</if>
+			<if test="orgLevel == 4">
+			AND GRID_CODE = #{orgId}
+			</if>	
+  	</select>
+  	<!-- 根据归属网格，查询所有的AB集团信息（未入格）   NEWCODE代指CHNL_CODE-->
+  	<select id="selectABGroupInfoByGridCodesNotEnter" parameterType="java.util.Map" resultType="java.util.Map">
+  		 SELECT 
+			AREA_NAME, CNTY_NAME, 
+			GRID_CODE,  NAME, GC_CODE, GC_NAME,
+			JING_DU, WEI_DU
+			FROM GROUP_EXPORT_INFO
+			WHERE UPPER(SUBSTR(CLASS_ID,1,1)) IN
+			<foreach collection="classIds" open="(" close=")" separator="," index="index" item="classId">
+	    		#{classId}
+			</foreach>
+			and
+				value(grid_code, '') = ''
+  			AND 
+			<if test="orgLevel == 2">
+				AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				CNTY_ID = #{orgId}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				and statis_date = #{statisDate} 
+			</if>
+  	</select>
+  	<!-- 根据归属网格，查询所有的AB集团信息（未入格）   NEWCODE代指CHNL_CODE-->
+  	<select id="selectCDGroupInfoByGridCodesNotEnter" parameterType="java.util.Map" resultType="java.util.Map">
+  		 SELECT 
+				AREA_NAME, CNTY_NAME, 
+				GRID_CODE,  NAME, GC_CODE, GC_NAME,
+				JING_DU, WEI_DU,STATIS_DATE,CLASS_ID,GC_ADDR,linkman,linkman_msisdn,EMP_NUM,IS_XWKD,IS_KTZX,IS_JTKD,IS_QYSY 
+			FROM 
+				CD_GROUP_EXPORT_INFO 
+			WHERE 1=1 
+			AND
+			value(grid_code, '') = ''
+			<if test="orgLevel == 2">
+			AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+			AND CNTY_ID = #{orgId}
+			</if>
+			<if test="orgLevel == 4">
+			AND GRID_CODE = #{orgId}
+			</if>	
+  	</select>
+  	<!--根据orgId查询对应的AreaName  -->
+  	<select id="getAreaName" parameterType="java.lang.String" resultType="java.lang.String">
+  		SELECT 
+  			MEMO AS AREA_NAME 
+  		FROM
+  			SYS_ORG
+  		WHERE
+  			ORG_ID = #{orgId}
+  	</select>
+
+  	<!-- 根据新orgId查询对应的老orgId -->
+  	<select id="getOldOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+  		SELECT 
+  			 OLD_ORG_ID
+  		FROM
+  			GRID.DIM_AREA_ORG 
+  		WHERE
+  			NEW_ORG_ID = #{orgId}
+  	</select>
+  	
+  	<!-- 得到该区县下的所有未入格小区 -->
+	<select id="selectAllNonCommunityByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+   	 	SELECT 
+   	 		CELL_ID AS UID, CELL_NAME AS NAME, CELL_LONGITUDE AS LNG,CELL_LATITUDE AS LAT 
+		FROM 
+			WG_TA_DT_CELL_NO_GRID
+	 	WHERE 1=1 
+	 		<if test="orgIds != null and orgIds != ''">
+		 
+			 and CNTY_CODE IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	</select>
+	
+		<select id="selectAllNonChannelByOrgId" resultMap="MapPoi" parameterType="java.lang.String">
+	   	SELECT 
+	   		CHNL_CODE AS UID, CHNL_NAME AS NAME, LON AS LNG, LAT 
+		FROM 
+			CHANNEL_INFO 
+	    WHERE 
+	    	LON IS  NULL 
+		AND 
+			LAT IS  NULL 
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			ORG_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectAllNonStationByOrgId" resultMap="MapPoi" parameterType="java.lang.String" >
+   		SELECT 
+   			STATION_CODE AS UID, STATION_NAME AS NAME, STATION_LON AS LNG, STATION_LAT AS LAT 
+		FROM 
+			STATION_INFO 
+	    WHERE 
+	    	STATION_LON IS  NULL 
+		AND 
+			STATION_LAT IS  NULL
+		<if test="orgIds != null and orgIds != ''">
+		AND 
+			ORG_ID IN 
+		 	<foreach collection="orgIds" open="(" close=")" separator="," index="index" item="orgId">
+	    		#{orgId,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="selectGridDetail" resultMap="MapInfoMap"  >
+   		SELECT 
+   			ORG_ID as orgId
+		FROM 
+			GRID_DETAIL 
+	    WHERE 
+         (ALLOW_MODIFY='0' or ALLOW_MODIFY is null)
+		<if test="orgId != null and orgId != ''">
+		AND	ORG_ID = #{orgId}
+		</if>
+  	</select>
+  	
+  	<select id="getSmallArea" resultType="java.util.Map" parameterType="java.lang.String">
+    	SELECT id,maxlng,maxlat,minlng,minlat FROM  grid_smallInfo 
+		WHERE id IN (SELECT id FROM GRID_SMALLAREA WHERE 
+		org_id IN  (  SELECT org_id FROM SYS_ORG WHERE pid =#{orgId,jdbcType=VARCHAR}  AND orglevel =4
+		 UNION  SELECT org_id FROM sys_org WHERE org_id = #{orgId,jdbcType=VARCHAR}  AND orglevel =4
+		)
+		)
+  	</select>
+</mapper>

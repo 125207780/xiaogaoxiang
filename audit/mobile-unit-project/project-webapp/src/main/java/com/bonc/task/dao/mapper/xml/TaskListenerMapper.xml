@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.task.dao.mapper.TaskListenerMapper">
+
+	<!-- 查询任务监控 -->
+	<select id="getTaskListenerTree" parameterType="com.bonc.task.dao.entity.TaskListener" resultType="com.bonc.task.dao.entity.TaskListener">
+		select 
+			t.monitor_code monitorCode, 
+			t.pid pid, 
+			t.content content, 
+			t.display_order displayOrder, 
+			t.tree_code treeCode,
+			t.tree_level treeLevel
+		from 
+			task_monitor_info t 
+		where 1=1		
+		<if test="treeCode != null and treeCode != ''">
+			and t.tree_code like  '%'||#{treeCode}||'%'
+		</if>
+		order by 
+			t.display_order
+	</select>
+	
+	<select id="selectTaskListenerById" 
+		parameterType="java.lang.String"
+		resultType="com.bonc.task.dao.entity.TaskListener">
+		select 
+			t.org_id orgId, 
+			t.pid pid, 
+			t.content content, 
+			t.display_order displayOrder, 
+			t.tree_Level treeLevel,
+			t.tree_code treeCode
+		from 
+			task_monitor_info t 
+		where t.org_id = #{orgId}
+	</select>
+	
+	
+	<select id="getTaskListenerInfo" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskListener" >
+		SELECT
+		t.ORG_ID orgId,
+		t.ACTIVITYNAME activityName,
+		t.CAMPAIGNNAME campaignName,
+		t.ACTIVITYBEGINDATE activityBeginDate,
+		t.ACTIVITYENDDATE activityEndDate,
+		t.OFFERINGNAME offeringName,
+		t.MONITOR_CODE monitorCode,
+		t.LEADER_ADVICE leaderAdvice
+		FROM
+		TASK_MONITOR_INFO t
+		WHERE 1=1  and t.monitor_code = #{monitorCode,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getSysUserInfo" parameterType="java.lang.String" resultType="com.bonc.system.dao.entity.SysUser">
+		SELECT  USER_ID,USER_NAME ,ORG_ID FROM SYS_USER WHERE ORG_ID =#{orgId,jdbcType=VARCHAR}
+	</select>
+	<insert id="addGridItemInfo" parameterType="com.bonc.task.dao.entity.TaskListener">
+	INSERT INTO GRID_ITEM_INFO
+	(USER_ID, USER_NAME, ITEM_CODE, ITEM_NAME, ITEM_STATUS, ITEM_DESC, ITEM_CONTENT, ITEM_HANDLER, ITEM_ISSUEDER)
+	VALUES(
+		#{userId,jdbcType=VARCHAR}, 
+		#{userName,jdbcType=VARCHAR}, 
+		#{itemCode,jdbcType=VARCHAR}, 
+		#{activityName,jdbcType=VARCHAR}, 
+		'1',
+		'', 
+		#{leaderAdvice,jdbcType=VARCHAR}, 
+		#{userName,jdbcType=VARCHAR}, 
+		#{orgName,jdbcType=VARCHAR}
+	) 
+	</insert>
+	
+	<update id="addLeaderAdviceInfo" parameterType="com.bonc.task.dao.entity.TaskListener">
+		update TASK_MONITOR_INFO SET LEADER_ADVICE = #{leaderAdvice,jdbcType=VARCHAR},CREATE_DATE=#{createDate,jdbcType=VARCHAR} where monitor_code= #{monitorCode,jdbcType=VARCHAR}
+	</update>
+</mapper>

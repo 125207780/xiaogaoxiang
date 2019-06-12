@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.contract.dao.mapper.WgMsContractAreaDevelopMapper">
+
+	<!-- 包保区域业务发展信息 -->
+	<select id="getWgMsContractAreaDevelopInfo" parameterType="java.lang.String" resultType="com.bonc.contract.dao.entity.WgMsContractAreaDevelop">
+		SELECT 
+			c.ORG_ID, c.NAME AS areaName, GRID_CODE, GRID_NAME, CHNL_CODE, CHNL_NAME, CHNL_TYPE, PHYSICAL_ID, PHYSICAL_NAME, ADDR, BIG_TYPE,SMALL_TYPE, LINE_NUM, KD_NUM, MOBILE_NUM, QT_NUM, TOTAL_NUM, REMARK
+		FROM 
+			WG_MS_CONTRACT_AREA_DEVELOP a, grid_org b, GRID_ORG c 
+		WHERE 
+			a.GRID_CODE = b.ORG_ID 
+		AND 
+			b.PID = c.ORG_ID
+		AND 
+			a.GRID_CODE in
+			<foreach collection="sql" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		<if test="wgMsContractAreaDevelop.statisDate != null and wgMsContractAreaDevelop.statisDate != ''">
+			AND a.STATIS_DATE = #{wgMsContractAreaDevelop.statisDate,jdbcType=VARCHAR}
+		</if>
+		<if test="wgMsContractAreaDevelop.bigType != null and wgMsContractAreaDevelop.bigType != ''">
+			AND a.BIG_TYPE = #{wgMsContractAreaDevelop.bigType,jdbcType=VARCHAR}
+		</if>
+		<if test="wgMsContractAreaDevelop.smallType != null and wgMsContractAreaDevelop.smallType != ''">
+			AND a.SMALL_TYPE = #{wgMsContractAreaDevelop.smallType,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+</mapper>

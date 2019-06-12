@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.GridStationMapper">
+
+	<!-- 查询网格信息 -->
+	<select id="getGridInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.GridInfo">
+		SELECT GRID_NAME,GRID_CODE,GRID_TYPE,GRID_MANAGER FROM GRID_INFO WHERE AREA_ID = #{areaId,jdbcType=VARCHAR} 
+		<if test="gridName != null and gridName != ''">
+			and GRID_NAME like '%'||#{gridName}||'%'
+		</if>
+	</select>
+	
+	<select id="getGridStationtInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.OrgGridStation">
+		select area_Id,area_name,station_code,station_name,station_type,
+		grid_code,grid_name,grid_type,status,join_date,update_date
+		from org_grid_station
+		where area_Id=#{areaId,jdbcType=VARCHAR} and status='A'
+		<if test="gridCode != null and gridCode != ''">
+			and grid_code like '%'||#{gridCode}||'%'
+		</if>
+	</select>
+	
+	<select id="getGridDeptInfoByName" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.OrgGridStation">
+		select area_Id,area_name,station_code,station_name,station_type,
+		grid_code,grid_name,grid_type,status,join_date,update_date
+		from org_grid_station
+		where area_Id=#{areaId,jdbcType=VARCHAR} and status='A'
+		<if test="stationName != null and stationName != ''">
+			and station_name like '%'||#{stationName}||'%'
+		</if>
+	</select>
+	
+	<select id="getNoGridStation" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+		a.STATION_CODE,a.STATION_TYPE,a.STATION_NAME
+		FROM
+		STATION_INFO a
+		LEFT JOIN org_grid_station b ON
+		a.STATION_CODE = b.STATION_CODE AND b.STATUS = 'A'
+		WHERE
+		b.STATION_CODE IS NULL
+		AND(
+			a.STATION_LON IS NULL
+			OR a.STATION_LAT IS NULL
+		)
+		AND a.ORG_ID = #{areaId,jdbcType=VARCHAR}
+		<if test="stationName != null and stationName != ''">
+			and a.STATION_NAME like '%'||#{stationName}||'%'
+		</if>
+	</select>
+	<update id="removeSingleGrid" parameterType="java.lang.String">
+		update org_grid_station set 
+			update_date = #{updateDate,jdbcType=VARCHAR},
+			status='P' where
+			area_id=#{areaId,jdbcType=VARCHAR} and
+			grid_code=#{gridCode,jdbcType=VARCHAR} and
+			station_code =#{stationCode,jdbcType=VARCHAR}
+	</update>
+	<select id="getParenOrg" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT NAME AS areaName FROM SYS_ORG WHERE ORG_ID=#{areaId,jdbcType=VARCHAR}
+	</select>
+	<insert id="addSingleGrid" parameterType="com.bonc.gridinfo.dao.entity.OrgGridStation">
+		insert into org_grid_station(area_id,area_name,station_code,station_name,station_type,
+		grid_code,grid_name,grid_type,status,join_date,update_date)
+		values(
+			#{areaId,jdbcType=VARCHAR},
+			#{areaName,jdbcType=VARCHAR},
+			#{stationCode,jdbcType=VARCHAR},
+			#{stationName,jdbcType=VARCHAR},
+			#{stationType,jdbcType=VARCHAR},
+			#{gridCode,jdbcType=VARCHAR},
+			#{gridName,jdbcType=VARCHAR},
+			#{gridType,jdbcType=VARCHAR},
+			'A',
+			#{joinDate,jdbcType=VARCHAR},
+			#{updateDate,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	 <select id="CallDb2GXWH" parameterType="java.util.Map" statementType="CALLABLE">
+	    <![CDATA[  
+	    {call BD2ADMIN.SP_WG_GXWH_UPDATE(#{orgId,mode=IN,jdbcType=VARCHAR},#{OUTPARA,mode=OUT,jdbcType=VARCHAR})}
+	  	]]>  
+	  </select>
+	  
+	  
+	  <insert id="saveImportData" parameterType="com.bonc.gridinfo.dao.entity.OrgGridStation">
+	 	INSERT INTO ORG_GRID_STATION
+	( AREA_ID,AREA_NAME, GRID_CODE, GRID_NAME, GRID_TYPE,STATION_CODE, STATION_NAME,STATION_TYPE,STATUS)
+	VALUES( #{orgGridStation.areaId},#{orgGridStation.areaName}, #{orgGridStation.gridCode},#{orgGridStation.gridName},#{orgGridStation.gridType},
+	#{orgGridStation.stationCode},#{orgGridStation.stationName},#{orgGridStation.stationType},'A')
+	  
+	  </insert>
+	  
+	  <update id="updateImportData" parameterType="com.bonc.gridinfo.dao.entity.OrgGridStation">
+	  	UPDATE ORG_GRID_STATION
+	  	SET AREA_ID=#{orgGridStation.areaId}, AREA_NAME=#{orgGridStation.areaName}, 
+	  	GRID_CODE=#{orgGridStation.gridCode}, GRID_NAME=#{orgGridStation.gridName}, 
+		GRID_TYPE=#{orgGridStation.gridType}, STATION_CODE=#{orgGridStation.stationCode},
+		STATION_NAME=#{orgGridStation.stationName}, STATION_TYPE=#{orgGridStation.stationType}, 
+		STATUS='A' where STATION_CODE=#{orgGridStation.stationCode}
+	  
+	  </update>
+	  
+	 <select id="findByStationCode" parameterType = "java.lang.String" resultType="java.lang.String">
+	 	SELECT STATION_CODE FROM ORG_GRID_STATION WHERE STATION_CODE=#{stationCode,jdbcType=VARCHAR}
+	 </select>
+	 
+	 <select id="findByStationInfo" parameterType = "java.lang.String" resultType="java.lang.String">
+	 SELECT STATION_CODE,STATION_TYPE FROM  STATION_INFO WHERE (STATION_LAT IS NULL OR STATION_LON IS NULL) AND STATION_CODE = #{stationCode,jdbcType=VARCHAR}
+	 </select>
+	 
+	 <select id="findGridCodeByName" parameterType = "java.lang.String" resultType="java.util.Map">
+	 	SELECT
+		A.ORG_ID AS gridCode,
+		NAME,
+		C.TYPE_NAME as gridType
+	FROM
+		SYS_ORG a,
+		GRID_DETAIL b,
+		GRID_TYPE C
+	WHERE
+		B.TYPE_ID = C.TYPE_ID
+		AND a.ORG_ID = b.ORG_ID
+		AND ORGLEVEL = 4
+		AND PID = #{orgId}
+		AND NAME =#{gridName}
+	 </select>
+	 
+	 <select id="findStationTypeByStationCode"  parameterType = "java.lang.String" resultType="java.lang.String">
+	 	SELECT STATION_TYPE FROM STATION_INFO WHERE STATION_CODE = #{stationCode} AND org_id  = #{orgId}
+	 </select>
+</mapper>

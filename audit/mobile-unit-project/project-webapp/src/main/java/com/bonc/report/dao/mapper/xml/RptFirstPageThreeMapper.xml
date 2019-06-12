@@ -1,0 +1,59 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.report.dao.mapper.RptFirstPageThreeMapper">
+	
+	<select id="rptGridBusinessTargetDoneD" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			GRID_MANAGER_CODE, GRID_MANAGER_NAME, GRID_MANAGER_PHONE, CUSTOMER_FEE_WEIGHT, CUSTOMER_FEE_TARGET_D,
+			CUSTOMER_FEE_D, CUSTOMER_FEE_RATE_D, CUSTOMER_FEE_OWE, CUSTOMER_FEE_SCORE, CUSTOMER_ADD_WEIGHT, CUSTOMER_ADD_TARGET_D,
+			CUSTOMER_ADD_D, CUSTOMER_ADD_RATE_D, CUSTOMER_ADD_OWE, CUSTOMER_ADD_SCORE, TELE_WEIGHT, TELE_TARGET_D, TELE_D, TELE_RATE_D,
+			TELE_OWE, TELE_SCORE, BROADADD_WEIGHT, BROADADD_TARGET_D, BROADADD_D, BROADADD_RATE_D, BROADADD_OWE, BROADADD_SCORE, TERMINAL_WEIGHT,
+			TERMINAL_TARGET_D, TERMINAL_COMPLETE_D, MOBILE_CONTRACT_D, TERMINAL_CONTRACT_D, TERMINAL_RATE_D, TERMINAL_OWE, TERMINAL_SCORE,
+			HOMENET_ADD_WEIGHT, HOMENET_ADD_TARGET_D, HOMENET_ADD_D, HOMENET_ADD_RATE_D, HOMENET_ADD_OWE, HOMENET_ADD_SCORE, CELL_WEIGHT,
+			CELL_TARGET, CELL_SUM_LAST_M, CELL_NUM_LAST_M, PERMEABILITY_LAST_M, CELL_SUM, CELL_NUM, CELL_NUM_LAST_D, CELL_TARGET_D, PERMEABILITY_D,
+			CELL_RATE_D, CELL_OWE, CELL_SCORE, DEPADD_WEIGHT, DEPADD_SUM_M, DEPADD_SUM_LAST_M, DEPADD_SUM_D, DEPADD_SUM_LAST_D, DEPADD_TARGET_D,
+			DEPADD_D, DEPADD_RATE_D, DEPADD_OWE, DEPADD_SCORE, FUSION_WEIGHT, FUSION_SUM_M, FUSION_SUM_LAST_M, FUSION_RATE_LAST_M, FUSION_SUM_D,
+			FUSION_SUM_LAST_D, FUSION_TARGET_D, FUSION_D, FUSION_RATE_D, FUSION_OWE, FUSION_SCORE, ENCLOSURE_WEIGHT, ENCLOSURE_TARGET_D, ENCLOSURE_D,
+			MIC_BRO_D, ENTERPRISE_D, ENCLOSURE_RATE_D, ENCLOSURE_OWE, ENCLOSURE_SCORE, DAY_SCORE, PROVINCE_ORDER, CITY_ORDER, CNTY_ORDER
+		FROM
+			GRID_BUSINESS_TARGET_DONE_D
+		WHERE
+			1 = 1
+			<choose>
+				<when test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+					AND ORG_LEVEL = 1
+				</when>
+				<when test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+					AND ORG_LEVEL = 2
+					AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+				</when>
+				<when test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+					AND ORG_LEVEL = 3
+					AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+				</when>
+				<when test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+					AND ORG_LEVEL = 4
+					AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+					AND ORG_ID IN
+					<foreach collection="orgId" item="orgId" open="(" separator="," close=")">
+						#{orgId}
+					</foreach>
+				</otherwise>
+			</choose>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY CITY_NAME
+	</select>
+	
+	<select id="selectSelfHelpReportByNetCode" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			NET_CODE, SELF_HELP_TABLE_NAME, SELF_HELP_TABLE_EXPORT_THEAD, SELF_HELP_TABLE_EXPORT_COLUMN
+		FROM 
+			FORM_SELF_HELP_REPORT_T
+		WHERE 
+			NET_CODE = #{netCode}
+	</select>
+</mapper>

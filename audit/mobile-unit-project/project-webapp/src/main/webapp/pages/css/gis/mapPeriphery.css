@@ -1,0 +1,208 @@
+@charset "UTF-8";
+
+/* 基础单元周边css start */
+#poiTbody {
+	position: absolute;
+	left: 11px;
+	top: 100px;
+	width: 130px;
+	height: 265px;
+	background-color: rgba(101, 101, 126, 0.8);
+	z-index: 1;
+}
+.poiFont {
+	vertical-align: 3px;
+	font-size: 12px;
+	color: white;
+	margin-left: 22px;
+}
+#returnMenuInfo {
+	text-align: left;
+	color: cyan;
+}
+#channelPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 3.5px;
+	background-color: #FFEFD5;
+	margin-left: 22px;
+}
+#channelPoiSpan:hover {
+	background-color: #AD7AE1;
+}
+#stationPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 24px;
+	background-color: #FFEFD5;
+	margin-left: 22px;
+}
+#stationPoiSpan:hover {
+	background-color: #DAA520;
+}
+#mallPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 46px;
+	background-color: #FFEFD5;
+	margin-left: 22px;
+}
+#mallPoiSpan:hover {
+	background-color: #5BBAD3;
+}
+#schoolPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 68px;
+	background-color: #FFEFD5;
+	margin-left: 22px;
+}
+#schoolPoiSpan:hover {
+	background-color: #FA6467;
+}
+#villagePoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 91px;
+	background-color: #FFEFD5;
+	margin-left: 22px;
+}
+#villagePoiSpan:hover {
+	background-color: #69C260;
+}
+#townPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 111px;
+	background-color: #FFEFD5;
+	margin-left: 22px;
+}
+#townPoiSpan:hover {
+	background-color: #FD8A58;
+}
+#marketPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 131px;
+	background-color: #FFEFD5;
+	margin-left: 22px;
+}
+#marketPoiSpan:hover {
+	background-color: #27AFFF;
+}
+#allChannelPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 154px;
+	background-color: #FFEFD5;
+	margin-left: 22px;
+}
+#allChannelPoiSpan:hover {
+	background-color: #AD7AE1;
+}
+#allStationPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 177px;
+	background-color: #FFEFD5;
+	margin-left: 22px;
+}
+#allStationPoiSpan:hover {
+	background-color: #DAA520;
+}
+#opticalBoxPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 198px;
+	background-color: #FFEFD5;
+	margin-left: 23.5px;
+}
+#opticalBoxPoiSpan:hover {
+	background-color: #7A67EE;
+}
+#splittingBoxPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 219px;
+	background-color: #FFEFD5;
+	margin-left: 23.5px;
+}
+#splittingBoxPoiSpan:hover {
+	background-color: #7A67EE;
+}
+#communityManagerSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 241px;
+	background-color: #FFEFD5;
+	margin-left: 25.5px;
+}
+#communityManagerSpan:hover {
+	background-color: #7A67EE;
+}
+#communityPoiSpan {
+	width: 20px;
+	height: 12px;
+	position: absolute;
+	top: 152px;
+	background-color: #FFEFD5;
+	margin-left: 22px;
+}
+#communityPoiSpan:hover {
+	background-color: #CD6839;
+}
+#poiImg {
+	position: absolute;
+	left: 38%;
+	bottom:0%;
+	width: 430px;
+	height: 36px;
+	background-color: rgba(101, 101, 126, 0.8);
+	z-index: 9999;
+	text-align: center;
+}
+#poiImg ul {
+	margin-top: 2px;
+	list-style: none;
+    text-align: center;
+}
+#poiImg ul li {
+	display: inline;
+	margin: 5px;
+}
+#poiImg img {
+	width: 18px;
+	height: 18px;
+}
+#poiImg font {
+    color: white;
+    font-size: 12px;
+	padding-left: 5px;
+}
+/* 去除百度地图左下角logo */
+.BMap_cpyCtrl {
+	display: none;
+}
+.anchorBL a {
+	display: none;
+}
+/*去取百度地图缩放平移控件*/
+.BMap_stdMpPan{
+	display: none;	
+}
+.BMap_stdMpZoom{
+	display: none;
+}
+/* 基础单元周边css end */

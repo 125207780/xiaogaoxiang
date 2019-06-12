@@ -1,0 +1,746 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.map.dao.mapper.FirstPageNewMapper">
+
+
+	<!-- getGridInfoOverView 根据orgid查询首页网格数据 -->
+	<select id="getGridInfoOverView" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			sum(DIRECTORS_COUNT) 		as 	directorsCount, 
+			sum(GRID_MANAGER_COUNT) 	as 	gridManagerCount, 
+			sum(DIRECT_USER_COUNT) 		as 	directUserCount, 
+			sum(REPAIR_USER_COUNT) 		as 	repairUserCount, 
+			sum(INCOME_SCALE) 			as 	incomeScale, 
+			sum(CDCUSTOMER_SCALE)  		as 	cdcustomerScale, 
+			sum(CELL_SCALE) 			as 	cellScale, 
+			sum(CHANNEL_SCALE) 			as 	channelScale, 
+			sum(CUSTOMER_SCALE) 		as 	customerScale, 
+			sum(CHANNEL_COUNT) 			as 	channelCount,  
+			sum(CHANNEL_COUNT_ST) 		as 	channelCountSt, 
+			sum(CHANNEL_COUNT_ZX) 		as 	channelCountZx, 
+			sum(CHANNEL_COUNT_FX) 		as 	channelCountFx, 
+			sum(AGENCY_COUNT) 			as 	agencyCount, 
+			sum(OWN_HALL_COUNT) 		as 	ownHallCount, 
+			sum(STATION_COUNT) 			as 	stationCount, 
+			sum(STATION_23G_COUNT) 		as 	station23gCount, 
+			sum(STATION_4G_COUNT) 		as 	station4gCount, 
+			sum(CUSTOMERS_CALL_COUNT) 	as 	customersCallCount, 
+			sum(CUSTOMERS_CALL_ADD) 	as 	customersCallAdd, 
+			sum(CUSTOMERS_CALL_NET) 	as 	customersCallNet, 
+			sum(CUSTOMERS_RATE_23G) 	as 	customersRate23g, 
+			sum(CUSTOMERS_RATE_4G) 		as 	customersRate4g, 
+			sum(BROAD_USER_COUNT) 		as 	broadUserCount, 
+			sum(LOGIN_DIR_SUM) 			as 	loginDirSum, 
+			sum(CHANNEL_SIGN_COUNT) 	as 	channelSignCount, 
+			sum(PHYSICAL_SIGN_COUNT) 	as 	physicalSignCount, 
+			sum(TASK_COUNT) 			as 	taskCount, 
+			sum(TASK_DONE) 				as 	taskDone, 
+			sum(TASK_ALARM) 			as 	taskAlarm, 
+			sum(CELL_COUNT) 			as 	cellCount, 
+			sum(COLLEGES_COUNT) 		as 	collegesCount, 
+			sum(STORE_COUNT) 			as 	storeCount, 
+			sum(BRO_CELL_COUNT) 		as 	broCellCount, 
+			sum(MARKET_COUNT) 			as 	marketCount, 
+			sum(BUSINESS_COUNT) 		as 	businessCount, 
+			sum(INCOME) 				as 	income, 
+			sum(BRO_COUNT) 				as 	broCount, 
+			sum(GOVER_CUS_SUM) 			as 	goverCusSum, 
+			sum(BUSINESS_ADD) 			as 	businessAdd, 
+			sum(TELE_COUNT) 			as 	teleCount, 
+			sum(USER_COUNT_4G) 			as 	userCount4g,
+			sum(GRID_COUNT) 			as 	gridCount,
+			sum(GRID_TYPE1_COUNT) 		as 	gridType1Count,
+			sum(GRID_TYPE2_COUNT) 		as 	gridType2Count,
+			sum(GRID_TYPE3_COUNT) 		as 	gridType3Count
+		FROM 
+			GRID_INFO_OVERVIEW 
+		WHERE
+			ORG_ID = #{orgId}
+	</select>
+	
+	<!-- getGridTop获取网格数据的前后5名 -->
+	<select id="getGridTop" parameterType="java.lang.String" resultType="java.util.Map" >
+		<!-- SELECT 
+			<if test="orgLevel == '1'.toString()">
+				A.ORG_ID ORG_ID,
+				A.NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				B.ORG_ID ORG_ID,
+				B.NAME ORG_NAME,
+			</if>
+			COUNT(c.ORG_ID) PUB_DATA
+		FROM 
+			SYS_ORG A 
+		LEFT JOIN SYS_ORG B ON A.ORG_ID = B.PID AND B.ORGLEVEL = 3
+		LEFT JOIN SYS_ORG C ON B.ORG_ID = C.PID AND C.ORGLEVEL = 4 
+		LEFT JOIN GRID_DETAIL D ON C.ORG_ID = D.ORG_ID 
+		WHERE 
+			A.ORGLEVEL = 2
+		<if test="gridType !=null and gridType != ''">
+			AND D.TYPE_ID = #{gridType,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+			AND A.ORG_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			A.ORG_ID,
+			A.NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			B.ORG_ID,
+			B.NAME
+		</if>
+		ORDER BY 
+			PUB_DATA DESC -->
+		SELECT 
+			<if test="orgLevel == '1'.toString()">
+				AREA_ID ORG_ID,
+				AREA_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				CNTY_ID ORG_ID,
+				CNTY_NAME ORG_NAME,
+			</if>
+			<if test="gridType == null or gridType == ''">
+				sum(GRID_COUNT)
+			</if>
+			<if test="gridType == '1'.toString()">
+				sum(GRID_TYPE1_COUNT) PUB_DATA
+			</if>
+			<if test="gridType == '2'.toString()">
+				sum(GRID_TYPE2_COUNT) PUB_DATA
+			</if>
+			<if test="gridType == '3'.toString()">
+				sum(GRID_TYPE3_COUNT) PUB_DATA
+			</if>
+		from GRID_INFO_OVERVIEW
+		<where>
+			<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+				AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</where>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			AREA_ID,
+			AREA_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			CNTY_ID,
+			CNTY_NAME
+		</if>
+		order by 
+		<if test="gridType == null or gridType == ''">
+			sum(GRID_COUNT)
+		</if>
+		<if test="gridType == '1'.toString()">
+			sum(GRID_TYPE1_COUNT)
+		</if>
+		<if test="gridType == '2'.toString()">
+			sum(GRID_TYPE2_COUNT)
+		</if>
+		<if test="gridType == '3'.toString()">
+			sum(GRID_TYPE3_COUNT)
+		</if>
+	</select>
+	
+	<!-- getChnlTop获取渠道数据的前后5名 -->
+	<select id="getChnlTop" parameterType="java.lang.String" resultType="java.util.Map" >
+		<!-- SELECT 
+			<if test="orgLevel == '1'.toString()">
+				A.CITY_ID ORG_ID,
+				A.CITY_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				A.AREA_ID ORG_ID,
+				A.AREA_NAME ORG_NAME,
+			</if>
+			COUNT(B.CHNL_CODE) PUB_DATA
+		FROM 
+			WG_HF_SCALE A
+		LEFT JOIN CHANNEL_INFO B ON A.PHYSICAL_ID = B.CHNL_CODE
+		where A.PHYSICAL_TYPE = '0' AND A.PHYSICAL_ID is not null
+		<if test="gridType == '1'.toString()">
+			AND B.CHNL_TYPE = '实体渠道'
+		</if>
+		<if test="gridType == '2'.toString()">
+			AND B.CHNL_TYPE = '直销渠道'
+		</if>
+		<if test="gridType == '3'.toString()">
+			AND B.CHNL_TYPE = '分销渠道'
+		</if>
+		<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+			AND A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			A.CITY_ID,
+			A.CITY_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			A.AREA_ID,
+			A.AREA_NAME
+		</if>
+		ORDER BY 
+			PUB_DATA DESC -->
+		
+		SELECT 
+			<if test="orgLevel == '1'.toString()">
+				AREA_ID ORG_ID,
+				AREA_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				CNTY_ID ORG_ID,
+				CNTY_NAME ORG_NAME,
+			</if>
+			<if test="gridType == null or gridType == ''">
+				sum(channel_count)
+			</if>
+			<if test="gridType == '1'.toString()">
+				sum(channel_count_st) PUB_DATA
+			</if>
+			<if test="gridType == '2'.toString()">
+				sum(channel_count_zx) PUB_DATA
+			</if>
+			<if test="gridType == '3'.toString()">
+				sum(channel_count_fx) PUB_DATA
+			</if>
+		from GRID_INFO_OVERVIEW
+		<where>
+			<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+				AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</where>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			AREA_ID,
+			AREA_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			CNTY_ID,
+			CNTY_NAME
+		</if>
+		order by 
+		<if test="gridType == null or gridType == ''">
+			sum(channel_count)
+		</if>
+		<if test="gridType == '1'.toString()">
+			sum(channel_count_st)
+		</if>
+		<if test="gridType == '2'.toString()">
+			sum(channel_count_zx)
+		</if>
+		<if test="gridType == '3'.toString()">
+			sum(channel_count_fx)
+		</if>
+			
+	</select>
+	
+	<!-- getChnlLevel1Top获取渠道一级数据的前后5名 -->
+	<select id="getChnlLevel1Top" parameterType="java.lang.String" resultType="java.util.Map" >
+		<!-- SELECT 
+			<if test="orgLevel == '1'.toString()">
+				A.CITY_ID ORG_ID,
+				A.CITY_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				A.AREA_ID ORG_ID,
+				A.AREA_NAME ORG_NAME,
+			</if>
+			COUNT(B.CHNL_CODE) PUB_DATA
+		FROM 
+			WG_HF_SCALE A
+		LEFT JOIN  CHANNEL_INFO B ON A.PHYSICAL_ID = B.CHNL_CODE 
+		WHERE 
+			A.PHYSICAL_TYPE = '0' AND A.PHYSICAL_ID is not null
+		<if test="gridType == '1'.toString()">
+			AND B.CHNL_TYPE_LEVEL1 in ('加盟店', '授权店')
+		</if>
+		<if test="gridType == '2'.toString()">
+			AND B.CHNL_TYPE_LEVEL1 in ('直营店', '自营渠道')
+		</if>
+		<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+			WHERE A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+		</if>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			A.CITY_ID,
+			A.CITY_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			A.AREA_ID,
+			A.AREA_NAME
+		</if>
+		ORDER BY 
+			PUB_DATA DESC -->
+			
+		SELECT 
+			<if test="orgLevel == '1'.toString()">
+				AREA_ID ORG_ID,
+				AREA_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				CNTY_ID ORG_ID,
+				CNTY_NAME ORG_NAME,
+			</if>
+			<if test="gridType == '1'.toString()">
+				sum(AGENCY_COUNT) PUB_DATA
+			</if>
+			<if test="gridType == '2'.toString()">
+				sum(OWN_HALL_COUNT) PUB_DATA
+			</if>
+		from GRID_INFO_OVERVIEW
+		<where>
+			<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+				AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</where>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			AREA_ID,
+			AREA_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			CNTY_ID,
+			CNTY_NAME
+		</if>
+		order by 
+		<if test="gridType == '1'.toString()">
+			sum(AGENCY_COUNT)
+		</if>
+		<if test="gridType == '2'.toString()">
+			sum(OWN_HALL_COUNT)
+		</if>
+	</select>
+	
+	<!-- getStatTop获取基站数据的前后5名 -->
+	<select id="getStatTop" parameterType="java.lang.String" resultType="java.util.Map" >
+		<!-- SELECT 
+			<if test="orgLevel == '1'.toString()">
+				A.CITY_ID ORG_ID,
+				A.CITY_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				A.AREA_ID ORG_ID,
+				A.AREA_NAME ORG_NAME,
+			</if>
+			COUNT(1) PUB_DATA
+		FROM 
+			WG_HF_SCALE A, STATION_INFO B 
+		WHERE 
+			A.PHYSICAL_ID = B.STATION_CODE 
+		AND 
+			PHYSICAL_TYPE = '1'
+			<if test="gridType == '1'.toString()">
+				AND B.STATION_TYPE IN ('2G','3G') 
+			</if>
+			<if test="gridType == '3'.toString()">
+				AND B.STATION_TYPE = '4G'
+			</if>
+			<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+				AND A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			A.CITY_ID
+			,A.CITY_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			A.AREA_ID,
+			A.AREA_NAME
+		</if>
+		ORDER BY 
+			PUB_DATA DESC -->
+		SELECT 
+			<if test="orgLevel == '1'.toString()">
+				AREA_ID ORG_ID,
+				AREA_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				CNTY_ID ORG_ID,
+				CNTY_NAME ORG_NAME,
+			</if>
+			<if test="gridType == null or gridType == ''">
+				sum(station_count) PUB_DATA
+			</if>
+			<if test="gridType == '1'.toString() or gridType == '2'.toString()">
+				sum(station_23g_count) PUB_DATA
+			</if>
+			<if test="gridType == '3'.toString()">
+				sum(station_4g_count) PUB_DATA
+			</if>
+		from GRID_INFO_OVERVIEW
+		<where>
+			<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+				AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</where>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			AREA_ID,
+			AREA_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			CNTY_ID,
+			CNTY_NAME
+		</if>
+		order by 
+		<if test="gridType == null or gridType == ''">
+			sum(station_count)
+		</if>
+		<if test="gridType == '1'.toString() or gridType == '2'.toString()">
+			sum(station_23g_count)
+		</if>
+		<if test="gridType == '3'.toString()">
+			sum(station_4g_count)
+		</if>
+	</select>
+	
+	<!-- getVoiceTop获取语音数据的前后5名 -->
+	<select id="getVoiceTop" parameterType="java.lang.String" resultType="java.util.Map" >
+		<!-- SELECT 
+			<if test="orgLevel == '1'.toString()">
+				AREA_ID ORG_ID,
+				AREA_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				CNTY_ID ORG_ID,
+				CNTY_NAME ORG_NAME,
+			</if>
+			<if test="gridType == '1'.toString()">
+				SUM(INDEX_01) PUB_DATA
+			</if>
+			<if test="gridType == '2'.toString()">
+				SUM(INDEX_02) PUB_DATA
+			</if>
+			<if test="gridType == '3'.toString()">
+				SUM(INDEX_03) PUB_DATA
+			</if>
+		FROM 
+			rp_gsm_user
+			<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+				WHERE AREA_ID = #{orgId,jdbcType=INTEGER}
+			</if>
+		GROUP BY 
+			<if test="orgLevel == '1'.toString()">
+				AREA_ID,
+				AREA_NAME
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				CNTY_ID,
+				CNTY_NAME
+			</if>
+		ORDER BY PUB_DATA DESC -->
+		
+		SELECT 
+			<if test="orgLevel == '1'.toString()">
+				AREA_ID ORG_ID,
+				AREA_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				CNTY_ID ORG_ID,
+				CNTY_NAME ORG_NAME,
+			</if>
+			<if test="gridType == '1'.toString()">
+				sum(customers_call_count) PUB_DATA
+			</if>
+			<if test="gridType == '2'.toString()">
+				sum(customers_call_add) PUB_DATA
+			</if>
+			<if test="gridType == '3'.toString()">
+				sum(customers_call_net) PUB_DATA
+			</if>
+		from GRID_INFO_OVERVIEW
+		<where>
+			<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+				AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</where>
+		GROUP BY 
+		<if test="orgLevel == '1'.toString()">
+			AREA_ID,
+			AREA_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			CNTY_ID,
+			CNTY_NAME
+		</if>
+		order by 
+		<if test="gridType == '1'.toString()">
+			sum(customers_call_count)
+		</if>
+		<if test="gridType == '2'.toString()">
+			sum(customers_call_add)
+		</if>
+		<if test="gridType == '3'.toString()">
+			sum(customers_call_net)
+		</if>
+	</select>
+	
+	<!-- 人员top5排名 -->
+	<select id="getStaffTop" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgLevel == '1'.toString()">
+				AREA_ID ORG_ID,
+				AREA_NAME ORG_NAME,
+			</if>
+			<if test="orgLevel == '2'.toString()">
+				CNTY_ID ORG_ID,
+				CNTY_NAME ORG_NAME,
+			</if>
+			<!-- 网格经理数 -->
+			<if test="gridType == '3'.toString()">
+				sum(grid_manager_count) PUB_DATA
+			</if>
+			<!-- 渠道经理数 -->
+			<if test="gridType == '1'.toString()">
+				sum(chnl_nanager_count) PUB_DATA
+			</if>
+			<!-- 直销人员数 -->
+			<if test="gridType == '6'.toString()">
+				sum(direct_user_count) PUB_DATA
+			</if>
+			<!-- 装维人员数 -->
+			<if test="gridType == '7'.toString()">
+				sum(repair_user_count) PUB_DATA
+			</if>
+		from GRID_INFO_OVERVIEW
+		<where>
+			<if test="orgId !=null and orgId != '' and orgLevel == '2'.toString()">
+				AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</where>
+		group by 
+		<if test="orgLevel == '1'.toString()">
+			AREA_ID,
+			AREA_NAME
+		</if>
+		<if test="orgLevel == '2'.toString()">
+			CNTY_ID,
+			CNTY_NAME
+		</if>
+		order by 
+		<!-- 网格经理数 -->
+		<if test="gridType == '3'.toString()">
+			sum(grid_manager_count)
+		</if>
+		<!-- 渠道经理数 -->
+		<if test="gridType == '1'.toString()">
+			sum(chnl_nanager_count)
+		</if>
+		<!-- 直销人员数 -->
+		<if test="gridType == '6'.toString()">
+			sum(direct_user_count)
+		</if>
+		<!-- 装维人员数 -->
+		<if test="gridType == '7'.toString()">
+			sum(repair_user_count)
+		</if>
+	</select>
+	
+	<!-- getGridTableInfo 按类型查询网格数据 -->
+	<select id="getGridTableInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			CITY_NAME, AREA_NAME,
+			GRID_CODE, GRID_NAME, GRID_TYPE, MOBILE_CHNL_NUM, 
+			UNICOM_CHNL_NUM, TELECOM_CHNL_NUM, STATION_NUM, 
+			TOWN_NUM, VILLAGE_NUM, CHNL_USER_NUM, STATION_23G_USER, 
+			STATION_4G_USER, GROUP_NUM, KD_USER_NUM, GRID_RESIDENT_USER,
+			FEE, COMPARE_LAST_MONTH, COMPARE__YSE, USER_PER, CHNL_SHAPE, 
+			USER_4G_PER, KD_PORT_USED_PER, VOICE_USER_NUM, BXL_BRAND_PER
+		 FROM 
+		 	WG_KSH_GRID_SCALE	
+		<where>
+			<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+				AND CITY_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+				AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if> 
+			<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+				AND GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if> 
+			<if test="smallScaleType != null and smallScaleType !=''">
+				AND GRID_TYPE = #{smallScaleType,jdbcType=VARCHAR}
+			</if>
+		</where> 
+	</select>
+	
+	<!-- getChnlTableInfo 按类型查询渠道数据 -->
+	<select id="getChnlTableInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			C.org_id  CITY_ID,--地市编码
+			C.name CITY_NAME,--地市名称
+      		A.org_id  AREA_ID,--区县编码
+			A.county_name AREA_NAME,--区县名称
+			A.CHNL_CODE,--渠道编码
+			A.CHNL_NAME,--渠道名称
+			A.CHNL_TYPE_LEVEL1,--渠道一类
+			A.CHNL_TYPE_LEVEL2,--渠道二类
+			A.CHNL_STAR,--渠道星级
+			A.CHNL_ADDR,--渠道地址
+			A.CHNL_MNGR_NAME,--渠道经理名称
+			A.CHNL_MNGR_NAME,
+			A.CHNL_TYPE,--渠道类型
+			A.GRID_CODE,  --网格编码
+			D.name GRID_NAME--网格名称
+		FROM CHANNEL_INFO A  
+		LEFT JOIN sys_org B ON A.org_id=B.org_id
+		LEFT JOIN sys_org C ON B.pid=C.org_id
+		LEFT JOIN sys_org D ON A.GRID_CODE=D.org_id
+		<where>
+			<if test="smallScaleType == '1'.toString() ">
+				AND A.CHNL_TYPE = '实体渠道'
+			</if>
+			<if test="smallScaleType == '2'.toString() ">
+				AND A.CHNL_TYPE = '直销渠道'
+			</if>
+			<if test="smallScaleType == '3'.toString() ">
+				AND A.CHNL_TYPE = '分销渠道'
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+				AND C.org_id = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+				AND A.org_id = #{orgId,jdbcType=VARCHAR}
+			</if> 
+			<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+				AND A.GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if> 
+		</where>
+	</select>
+	<!-- getChnlLevel1TableInfo 按类型查询渠道一级数据 -->
+	<select id="getChnlLevel1TableInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			C.org_id  CITY_ID,--地市编码
+			C.name CITY_NAME,--地市名称
+      		A.org_id  AREA_ID,--区县编码
+			A.county_name AREA_NAME,--区县名称
+			A.CHNL_CODE,--渠道编码
+			A.CHNL_NAME,--渠道名称
+			A.CHNL_TYPE_LEVEL1,--渠道一类
+			A.CHNL_TYPE_LEVEL2,--渠道二类
+			A.CHNL_STAR,--渠道星级
+			A.CHNL_ADDR,--渠道地址
+			A.CHNL_MNGR_NAME,--渠道经理名称
+			A.CHNL_MNGR_NAME,
+			A.CHNL_TYPE,--渠道类型
+			A.GRID_CODE,  --网格编码
+			D.name GRID_NAME--网格名称
+		FROM CHANNEL_INFO A  
+		LEFT JOIN sys_org B ON A.org_id=B.org_id
+		LEFT JOIN sys_org C ON B.pid=C.org_id
+		LEFT JOIN sys_org D ON A.GRID_CODE=D.org_id
+		<where>
+			<if test="smallScaleType == '1'.toString()">
+				AND A.CHNL_TYPE_LEVEL1 in ('加盟店', '授权店')
+			</if>
+			<if test="smallScaleType == '2'.toString()">
+				AND A.CHNL_TYPE_LEVEL1 in ('直营店', '自营渠道')
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+				AND C.org_id = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+				AND A.org_id = #{orgId,jdbcType=VARCHAR}
+			</if> 
+			<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+				AND A.GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<!-- getStatTableInfo 按类型查询基站数据 -->
+	<select id="getStatTableInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT                                      
+      		B.PID CITY_CODE,--地市编码                        
+			A.CITY_NAME,--地市名称                    
+	    	A.ORG_ID AREA_CODE,--区县编码                     
+			A.AREA_NAME,--区县名称                    
+			A.STATION_CODE,--基站编码                 
+			A.STATION_NAME,--基站名称                 
+			A.GRID_CODE ,--网格编码                   
+			C.NAME GRID_NAME,--网格名称                         
+			A.VOICE_USER_NUM,--通话客户数              
+			A.AVG_DOU,--人均流量DOU                   
+			A.NEW_VOICE_USER,--新增通话客户数            
+			A.AVG_MOU,--人均MOU                     
+			A.COMPARE_LAST,--同比                   
+			A.COMPARE_YES,--环比                    
+			A.TOTAL_FEE,--总收入                     
+			A.HOME_NUM,--基站常驻居住地用户数               
+			A.WORK_NUM,--基站常驻工作地用户数               
+			A.STATION_TYPE                        
+		FROM STATION_INFO A                   
+		LEFT JOIN SYS_ORG B ON A.ORG_ID=B.ORG_ID
+		LEFT JOIN SYS_ORG C ON A.GRID_CODE=C.ORG_ID
+		<where>
+			<if test="smallScaleType == '1'.toString() or smallScaleType == '2'.toString()">
+				AND A.STATION_TYPE in('2G', '3G')
+			</if>
+			<if test="smallScaleType == '3'.toString() ">
+				AND A.STATION_TYPE='4G'
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+				AND B.PID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+				AND A.ORG_ID = #{orgId,jdbcType=VARCHAR}
+			</if> 
+			<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+				AND A.GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if> 
+		</where>
+	</select>
+	
+	<!-- getStaffTableInfo 按类型查询基站数据 -->
+	<select id="getStaffTableInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		select AREA_CODE CITY_ID, AREA_NAME CITY_NAME, CNTY_CODE AREA_ID, CNTY_NAME AREA_NAME, OA_ID, LOGIN_ID, USER_NAME, 
+			USER_PHONE, GRID_CODE, GRID_NAME, GRID_TYPE, USER_TYPE	
+		from grid_user_detail 
+		<where>
+			<if test="orgId != null and orgId != '' and orgLevel == '2'.toString()">
+				and AREA_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgId != null and orgId != '' and orgLevel == '3'.toString()">
+				and CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if> 
+			<if test="orgId != null and orgId != '' and orgLevel == '4'.toString()">
+				and GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if> 
+			<if test="smallScaleType != null and smallScaleType != ''">
+				and USER_TYPE = #{smallScaleType,jdbcType=VARCHAR}
+			</if>
+		</where>
+			
+	</select>
+	
+	<!-- getBigType 查询一类指标数据 -->
+	<select id="getBigType" resultType="java.util.Map">
+		SELECT 
+			KPI_TYPE, 
+			KPI_TYPE_NAME 
+		FROM 
+			dim_kpi_type 
+		GROUP BY 
+			KPI_TYPE, KPI_TYPE_NAME
+	</select>
+	
+	<!-- getSmallType 查询二类指标数据 -->
+	<select id="getSmallType" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			KPI_CODE,
+			KPI_NAME 
+		FROM dim_kpi 
+		WHERE 1=1 
+		<if test="kpiType !=null and kpiType != '' ">
+			AND KPI_TYPE = #{kpiType,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<!--getAssessmentEcharts获取考核得分echart数据  -->
+	<select id="getAssessmentEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+	
+	</select>
+	
+</mapper>

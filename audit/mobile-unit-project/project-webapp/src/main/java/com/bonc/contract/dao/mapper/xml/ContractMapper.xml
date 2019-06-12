@@ -1,0 +1,385 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.contract.dao.mapper.ContractMapper">
+
+	<select id="getIndexGridList" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			S.ORG_ID,S.NAME ,D.TYPE_ID 
+		FROM 
+			SYS_ORG S, GRID_DETAIL D
+		WHERE 
+			S.PID = #{pid} AND S.ORGLEVEL = 4
+		AND 
+			S.ORG_ID = D.ORG_ID
+	</select>
+
+	<select id="getIndexChannelList" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT
+			CHNL_CODE, CHNL_NAME
+		FROM
+			channel_info
+		WHERE
+			GRID_CODE = #{gridCode}
+		UNION ALL
+		SELECT
+			b.LOGIN_ID CHNL_CODE, b.name CHNL_NAME
+		FROM
+			GRID_USER b
+		WHERE 
+			ORG_ID = #{gridCode}
+		AND 
+			user_type = 6
+	</select>
+
+	<select id="getIndexTable" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			o.name AS grid_name,
+			c.chnl_name,
+			c.chnl_code,
+			p.big_type,
+			c.chnl_type,
+			c.chnl_type_level2,
+			p.physical_name,
+			p.address,
+			p.big_type,
+			p.physical_id,
+			m.STATUS,
+			c.OBJ_TYPE
+		FROM
+			MS_CONTRACT_AREA m, SYS_ORG o,
+			(SELECT 
+				c.CHNL_CODE, c.CHNL_NAME, c.CHNL_TYPE, c.CHNL_TYPE_LEVEL1,
+				c.CHNL_TYPE_LEVEL2, t.LIST_VALUE CHNL_STATUS, 0 OBJ_TYPE
+		FROM
+			CHANNEL_INFO c
+		LEFT JOIN TB_LIST_VALUE t ON char(c.CHNL_STATUS) = t.LIST_TYPE AND t."TYPE" = 'CHNL_STATUS'
+		UNION ALL
+		SELECT
+			LOGIN_ID AS CHNL_CODE,
+			NAME AS CHNL_NAME,
+			'直销人员' AS CHNL_TYPE,
+			'' AS CHNL_TYPE_LEVEL1,
+			'' AS CHNL_TYPE_LEVEL2,
+			'正常' AS CHNL_STATUS,
+			1 AS OBJ_TYPE
+		FROM
+			GRID_USER
+		WHERE 
+			USER_TYPE = 6) c,
+			PHYSICAL_GRID_INFO p
+		WHERE
+			m.GRID_CODE = o.ORG_ID
+		AND 
+			m.CHNL_CODE = c.CHNL_CODE
+		AND 
+			m.PHYSICAL_ID = p.PHYSICAL_ID
+		AND 
+			m.STATUS != 'P'
+		AND 
+			m.GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		<if test="chnlCode != null and chnlCode != ''">
+			AND m.CHNL_CODE = #{chnlCode,jdbcType=VARCHAR}
+		</if>
+
+		<if test="statusArr != null and statusArr != ''">
+			AND m.STATUS IN
+			<foreach item="item" index="index" collection="statusArr" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		ORDER BY 
+			m.PHYSICAL_ID
+	</select>
+	
+	<select id="initContractInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			DIRECTOR_NAME, DIRECTOR_PHONE, RESPONSIBLE_CHNL_CODE, RESPONSIBLE_CHNL_NAME, RESPONSIBLE_CELL_CODE, RESPONSIBLE_CELL_NAME
+		FROM 
+			RP_GRID_RESPONSIBILITY
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+			</if>
+			<if test="orgLevel == 2">
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="channelName != null and channelName != ''">
+				AND RESPONSIBLE_CHNL_NAME LIKE '%'||#{channelName}||'%'
+			</if>
+			<if test="communityName != null and communityName != ''">
+				AND RESPONSIBLE_CELL_NAME LIKE '%'||#{communityName}||'%'
+			</if>
+		ORDER BY
+			CITY_NAME, CNTY_CODE, GRID_CODE
+	</select>
+	
+		<select id="initContractAnalysis" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			ORG_ID,
+			ORG_NAME,
+			ORG_LEVEL,CITY_CODE,CNTY_CODE,GRID_CODE,
+			sum(CHNL_CNT) AS CHNL_CNT,
+			SUM( RESPONSIBLE_CHNL_CNT ) AS RESPONSIBLE_CHNL_CNT,
+			SUM( CELL_CNT ) AS CELL_CNT,
+			SUM( RESPONSIBLE_CELL_CNT ) AS RESPONSIBLE_CELL_CNT
+		FROM 
+			RP_GRID_RESPONSIBILITY_TOL
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = #{orgLevel}
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = #{orgLevel}
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = #{orgLevel}
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+		GROUP BY
+			ORG_LEVEL,ORG_ID,ORG_NAME,CITY_CODE,CNTY_CODE,GRID_CODE
+		ORDER BY 
+		    ORG_LEVEL,ORG_ID,ORG_NAME
+	</select>
+	
+	<select id="exportContractAnalysis" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			ORG_ID,
+			ORG_NAME,CNTY_NAME,CITY_NAME,GRID_NAME,
+			ORG_LEVEL,CITY_CODE,CNTY_CODE,GRID_CODE,
+			sum(CHNL_CNT) AS CHNL_CNT,
+			SUM( RESPONSIBLE_CHNL_CNT ) AS RESPONSIBLE_CHNL_CNT,
+			SUM( CELL_CNT ) AS CELL_CNT,
+			SUM( RESPONSIBLE_CELL_CNT ) AS RESPONSIBLE_CELL_CNT
+		FROM 
+			RP_GRID_RESPONSIBILITY_TOL
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL in (1,2,3,4)
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL in (2,3,4)
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL in (3,4)
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+		GROUP BY
+			ORG_LEVEL,ORG_ID,ORG_NAME,CITY_CODE,CITY_NAME,CNTY_CODE,CNTY_NAME,GRID_CODE,GRID_NAME
+		ORDER BY 
+		    ORG_LEVEL,CITY_NAME,CNTY_NAME,GRID_NAME
+	</select>
+	
+	
+		<select id="initContractEchart" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			sum(CHNL_CNT) AS CHNL_CNT,
+			SUM( RESPONSIBLE_CHNL_CNT ) AS RESPONSIBLE_CHNL_CNT,
+			SUM( CELL_CNT ) AS CELL_CNT,
+			SUM( RESPONSIBLE_CELL_CNT ) AS RESPONSIBLE_CELL_CNT
+		FROM 
+			RP_GRID_RESPONSIBILITY_TOL
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = #{orgLevel}
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = #{orgLevel}
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = #{orgLevel}
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+	</select>
+	
+	<select id="selectChannelInfoByOrgId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			E.OLD_ORG_ID AS CITY_CODE,
+			D.NAME AS CITY_NAME,
+			C.ORG_ID AS CNTY_CODE,
+			C.NAME AS CNTY_NAME,
+			B.ORG_ID AS GRID_CODE,
+			B.NAME AS GRID_NAME,
+			A.CHNL_CODE AS CHNL_CODE,
+			A.CHNL_NAME	AS CHNL_NAME
+		FROM 
+			GRID.CHANNEL_INFO A,
+			GRID.SYS_ORG B,
+			GRID.SYS_ORG C,
+			GRID.SYS_ORG D,
+			DIM_AREA_ORG E
+		WHERE 	
+			A.GRID_CODE = B.ORG_ID 
+		AND 
+			B.ORGLEVEL = 4
+	  	AND 
+	  		B.PID = C.ORG_ID 
+	  	AND 
+	  		C.ORGLEVEL = 3
+		AND 
+			C.PID = D.ORG_ID 
+		AND 
+			D.ORGLEVEL = 2
+		AND 
+			D.ORG_ID = E.NEW_ORG_ID
+		AND
+			D.ORG_ID = #{orgId}
+	</select>
+	
+	<select id="selectCellInfoByOrgId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			E.OLD_ORG_ID AS CITY_CODE,
+			D.NAME AS CITY_NAME,
+			C.ORG_ID AS CNTY_CODE,
+			C.NAME AS CNTY_NAME,
+			B.ORG_ID AS GRID_CODE,
+			B.NAME AS GRID_NAME,
+			A.CELL_ID AS CELL_CODE,
+			A.CELL_NAME AS CELL_NAME
+		FROM 
+			GRID.WG_TA_DT_CELL A,
+			GRID.SYS_ORG B,
+			GRID.SYS_ORG C,
+			GRID.SYS_ORG D,
+			DIM_AREA_ORG E
+		WHERE 
+			A.GRID_CODE = B.ORG_ID 
+		AND 
+			B.ORGLEVEL = 4
+		AND 
+			B.PID = C.ORG_ID 
+		AND 
+			C.ORGLEVEL = 3
+		AND 
+			C.PID = D.ORG_ID 
+		AND 
+			D.ORGLEVEL = 2
+		AND 
+			D.ORG_ID = E.NEW_ORG_ID
+		AND
+			D.ORG_ID = #{orgId}
+	</select>
+	
+	<select id="selectStationCellByCellCode" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT
+			GRID_CODE
+		FROM 
+			WG_TA_DT_CELL 
+		WHERE
+			CELL_ID = #{cellCode}
+	</select>
+	
+	<select id="selectRpGridResponsibilityByCellCode" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			DIRECTOR_NAME,
+			DIRECTOR_PHONE,
+			RESPONSIBLE_CHNL_CODE,
+			RESPONSIBLE_CHNL_NAME,
+			RESPONSIBLE_CELL_CODE,
+			RESPONSIBLE_CELL_NAME
+		FROM
+			RP_GRID_RESPONSIBILITY 
+		WHERE 
+			RESPONSIBLE_CELL_CODE = #{cellCode}
+	</select>
+	
+	<insert id="insertRpGridResponsibility" parameterType="java.util.Map">
+		INSERT INTO 
+			RP_GRID_RESPONSIBILITY(
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			DIRECTOR_NAME,
+			DIRECTOR_PHONE,
+			RESPONSIBLE_CHNL_CODE,
+			RESPONSIBLE_CHNL_NAME,
+			RESPONSIBLE_CELL_CODE,
+			RESPONSIBLE_CELL_NAME)
+		VALUES(
+			#{CITY_CODE,jdbcType=VARCHAR},
+			#{CITY_NAME,jdbcType=VARCHAR},
+			#{CNTY_CODE,jdbcType=VARCHAR},
+			#{CNTY_NAME,jdbcType=VARCHAR},
+			#{GRID_CODE,jdbcType=VARCHAR},
+			#{GRID_NAME,jdbcType=VARCHAR},
+			#{DIRECTOR_NAME,jdbcType=VARCHAR},
+			#{DIRECTOR_PHONE,jdbcType=VARCHAR},
+			#{RESPONSIBLE_CHNL_CODE,jdbcType=VARCHAR},
+			#{RESPONSIBLE_CHNL_NAME,jdbcType=VARCHAR},
+			#{RESPONSIBLE_CELL_CODE,jdbcType=VARCHAR},
+			#{RESPONSIBLE_CELL_NAME,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updateRpGridResponsesibility" parameterType="java.util.Map">
+		UPDATE 
+			RP_GRID_RESPONSIBILITY 
+		SET 
+			CITY_CODE = #{CITY_CODE,jdbcType=VARCHAR},
+			CITY_NAME = #{CITY_NAME,jdbcType=VARCHAR},
+			CNTY_CODE = #{CNTY_CODE,jdbcType=VARCHAR},
+			CNTY_NAME = #{CNTY_NAME,jdbcType=VARCHAR},
+			GRID_CODE = #{GRID_CODE,jdbcType=VARCHAR},
+			GRID_NAME = #{GRID_NAME,jdbcType=VARCHAR},
+			DIRECTOR_NAME = #{DIRECTOR_NAME,jdbcType=VARCHAR},
+			DIRECTOR_PHONE = #{DIRECTOR_PHONE,jdbcType=VARCHAR},
+			RESPONSIBLE_CHNL_CODE = #{RESPONSIBLE_CHNL_CODE,jdbcType=VARCHAR},
+			RESPONSIBLE_CHNL_NAME = #{RESPONSIBLE_CHNL_NAME,jdbcType=VARCHAR},
+			RESPONSIBLE_CELL_NAME = #{RESPONSIBLE_CELL_NAME,jdbcType=VARCHAR}
+		WHERE 
+			RESPONSIBLE_CELL_CODE = #{RESPONSIBLE_CELL_CODE,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getContractDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			DIRECTOR_NAME,
+			DIRECTOR_PHONE,
+			RESPONSIBLE_CHNL_CODE,
+			RESPONSIBLE_CHNL_NAME,
+			RESPONSIBLE_CELL_CODE,
+			RESPONSIBLE_CELL_NAME
+		FROM 
+			RP_GRID_RESPONSIBILITY
+		WHERE 
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+	</select>
+</mapper>

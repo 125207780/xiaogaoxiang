@@ -1,0 +1,125 @@
+.myHeaders{
+/* 	border-bottom: 8px solid #5EDEE0; */
+	height:54px;
+	line-height:53px;
+	background:#108dec !important;
+}
+.top-logo{
+	font-size:18px;
+	color:#fff;
+}
+.myHeaders .headmiddle{
+	margin-left:50px;
+}
+.myHeaders .nav>li{
+	float: left;
+	margin-right:20px;
+}
+.myHeaders .nav>li>a{
+	color:#FFF;
+	display: inline-block;
+	height:30px;
+	line-height:30px;
+	padding:0 20px;
+	border-radius:13px;
+	background: #108dec;
+	font-size:16px;
+}
+.myHeaders .nav>li>a:hover{
+	background: #108dec;
+}
+.myHeaders .second-nav{
+	width: 100px;
+	display: none;
+	position: absolute;
+	top:54px;
+	left:-20px;
+	z-index:2;
+	padding-bottom:10px;
+}
+.myHeaders .second-nav li{
+	position: relative;
+	width: 100%;
+	height: 40px;
+	line-height: 37px;
+	background:#cccccb;
+ 	color:#999;
+ 	padding:0 20px 0px 20px;
+}
+ .underline{
+ 	border-bottom:3px solid #108dec;
+} 
+
+.myHeaders .second-nav li:hover{
+	background:#e4e4e4;
+}
+.myHeaders .second-nav li a{
+	display: block;
+	text-align: center;
+	color:#000000;
+}
+
+.myHeaders .headmiddle .second-nav li .third-nav{
+	width: 120px;
+	display: none;
+	margin-left: 80px;
+	margin-top: -40px;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	overflow:hidden;
+}
+.headright{
+	margin-right:10px;
+	width:auto;
+}
+.headright li {
+	float: left;
+	margin-left: 0px;
+	color:#666;
+}
+.headright li a.exit-out,.headright li a.toggle-role{
+	color:#666;
+	display: inline-block;
+	height:30px;
+	line-height:30px;
+	padding:0;
+	margin-left:10px;
+	font-size:14px;
+	color:#777;
+}
+a.exit-out{
+	color:#fff !important;
+}
+.headright li a:hover{
+	color:#108DEC;
+}
+.user-wel{
+	color:#fff;
+	font-size:16px;
+}
+.user-wel{
+	color:#fff;
+	font-size:16px;
+}
+.user-wel .ace-nav{
+	margin-right:0;
+}
+.myHeaders img{
+	width:128px;
+	height:51px;
+	margin:0 10px;
+}
+#contentLoader{
+	margin-top:-2px;
+}
+#chooseSysRoleUser{
+	position: absolute;
+	top:200px;
+	left:50%;
+	margin-left:-100px;
+	width:200px;
+	border-top:4px solid #108dec;
+	padding-top:15px;
+	background: #fff;
+}
+

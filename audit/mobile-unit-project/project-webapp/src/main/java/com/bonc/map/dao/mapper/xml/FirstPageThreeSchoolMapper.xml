@@ -1,0 +1,907 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.map.dao.mapper.FirstPageThreeSchoolMapper">
+
+	<select id="getSchoolUserMonth" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_MONTH,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			SCH_ID,
+			SCH_NAME,
+			SCH_PART_ID,
+			SCH_PART_NAME,
+			USR_ID,
+			SVC_CODE,
+			HOME_TYP_NAME,
+			TAOCAN_ID,
+			TAOCAN_NAME,
+			ONLINE_MONTH,
+			IS_NEWUSER_MONTH,
+			IS_NEWUSER_AFTER0801,
+			IS_CALL,
+			IS_COMMUNICATION,
+			IS_4G,
+			IS_UNLIMIT,
+			IS_VNET,
+			IS_KD,
+			IS_CHARGE,
+			IS_DISCNT,
+			DISCNT_ID,
+			DISCNT_NAME,
+			IS_CONTRACT,
+			IS_CONTRACT_PHONE,
+			IS_CONTRACT_KD,
+			IS_CONTRACT_OTHER,
+			CONT_PRODUCT_ID,
+			CONT_PRODUCT_NAME,
+			CONT_TIME,
+			CONT_VAL,
+			CONT_INVAL,
+			ARPU,
+			ARPU_TWO_MONTH,
+			ARPU_MEAN,
+			MOU,
+			MOU_TWO_MONTH,
+			MOU_MEAN,
+			DOU,
+			DOU_TWO_MONTH,
+			DOU_MEAN,
+			FEE_DISCNT,
+			DISCNT_YOUHUI_ID,
+			DISCNT_YOUHUI_RANK,
+			CONT_PACKAGE_ID,
+			CONT_PACKAGE_NAME,
+			IS_NEWUSER_LM,
+			ARPU_LM,
+			MOU_LM,
+			DOU_LM,
+			CALL_FREQ,
+			OPEN_DATE,
+			IS_ACCT_USR,
+			SEX,
+			AGE,
+			TERM_BRND,
+			TERM_TYP,
+			PAY_FEE,
+			PRODUCT_ID,
+			PRODUCT_NAME,
+			KD_DISCNT_TYPE,
+			APRU_REAL_FEE,
+			BXL_TYP_ID,
+			APP_TYPE_NAME,
+			MAIN_DISC_FEE
+		FROM 
+			RP_WG_SALE_LABEL_M
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_MONTH = #{statisDate}
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getSchoolUserPortraitMonth" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_MONTH,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			SCH_ID,
+			SCH_NAME,
+			USR_ID,
+			SVC_CODE,
+			TAOCAN_ID,
+			TAOCAN_NAME,
+			ONLINE_MONTH,
+			OPEN_DATE,
+			USR_TYPE,
+			SEX,
+			AGE,
+			IS_4G,
+			IS_UNLIMIT,
+			IS_VNET,
+			IS_KD,
+			IS_DISCNT,
+			DISCNT_ID,
+			DISCNT_NAME,
+			ACTVI_TYPE_ID,
+			ACTVI_TYPE,
+			ACTVI_PROD,
+			ACTVI_PROD_NAME,
+			ACTVI_EFF_DATE,
+			ACTVI_EXP_DATE,
+			ARPU,
+			MOU,
+			DOU,
+			CALL_FREQ,
+			GPRS_LEVEL_ID,
+			GPRS_LEVEL,
+			VOICE_LEVEL_ID,
+			VOICE_LEVEL,
+			FEE_LEVEL_ID,
+			FEE_LEVEL,
+			FEE_DISCNT,
+			TERM_BRND,
+			TERM_TYP,
+			PRODUCT_ID,
+			PRODUCT_NAME,
+			APP_TYPE_ID,
+			APP_TYPE_NAME,
+			DISC_FEE_ID,
+			DISC_FEE_NAME
+		FROM 
+			RP_WG_SCH_USER_LABEL_M
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_MONTH = #{statisDate}
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getSchoolUserStatusDay" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_DATE,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			SCH_ID,
+			SCH_NAME,
+			SCH_PART_ID,
+			SCH_PART_NAME,
+			ADD_CMCC_D,
+			ADD_SHARE_CMCC_D,
+			ADD_CMCC_M,
+			ADD_CUCC_M,
+			ADD_CTCC_M,
+			ADD_SHARE_CMCC_M,
+			RANK_ADD_CMCC_M,
+			ADD_CMCC_AFTER0801,
+			ADD_CUCC_AFTER0801,
+			ADD_CTCC_AFTER0801,
+			ADD_SHARE_CMCC_AFTER0801,
+			RANK_ADD_CMCC_AFTER0801,
+			CALL_CMCC,
+			CALL_CUCC,
+			CALL_CTCC,
+			CALL_SHARE_CMCC,
+			CALL_RANK_CMCC,
+			CALL_SHARE_CUCC,
+			CALL_SHARE_CTCC,
+			COMMUNI_CMCC,
+			COMMUNI_CUCC,
+			COMMUNI_CTCC,
+			COMMUNI_SHARE_CMCC,
+			COMMUNI_RANK_CMCC,
+			COMMUNI_SHARE_CUCC,
+			COMMUNI_SHARE_CTCC,
+			G4_CMCC_D,
+			G4_CMCC_M,
+			G4_CMCC,
+			G4_RATE,
+			G4_RANK,
+			UMLIMIT_CMCC_D,
+			UMLIMIT_CMCC_M,
+			UNLIMIT_CMCC,
+			UNLIMIT_RATE,
+			UNLIMIT_RANK,
+			UNLIMIT_DIEJIA,
+			ARPU,
+			ARPU_HB,
+			DOU,
+			DOU_HB,
+			MOU,
+			MOU_HB,
+			VNET,
+			VNET_RATE,
+			CHARGE,
+			CHARGE_RATE,
+			KD_CMCC_D,
+			KD_CMCC_M,
+			KD_CMCC,
+			KD_RATE,
+			CONTRACT_CMCC,
+			CONTRACT_PHONE_CMCC,
+			CONTRACT_KD_CMCC,
+			CONTRACT_OTHER_CMCC,
+			CONTRACT_CMCC_TOL,
+			HY_RATE
+		FROM 
+			RP_WG_SALE_LABEL_D_TOL
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getSchoolUserStatusMonth" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_MONTH,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			SCH_ID,
+			SCH_NAME,
+			SCH_PART_ID,
+			SCH_PART_NAME,
+			ADD_CMCC_M,
+			ADD_CUCC_M,
+			ADD_CTCC_M,
+			ADD_SHARE_CMCC_M,
+			RANK_ADD_CMCC_M,
+			ADD_CMCC_AFTER0801,
+			ADD_CUCC_AFTER0801,
+			ADD_CTCC_AFTER0801,
+			ADD_SHARE_CMCC_AFTER0801,
+			RANK_ADD_CMCC_AFTER0801,
+			CALL_CMCC,
+			CALL_CUCC,
+			CALL_CTCC,
+			CALL_SHARE_CMCC,
+			CALL_RANK_CMCC,
+			CALL_SHARE_CUCC,
+			CALL_SHARE_CTCC,
+			COMMUNI_CMCC,
+			COMMUNI_CUCC,
+			COMMUNI_CTCC,
+			COMMUNI_SHARE_CMCC,
+			COMMUNI_RANK_CMCC,
+			COMMUNI_SHARE_CUCC,
+			COMMUNI_SHARE_CTCC,
+			G4_CMCC_M,
+			G4_CMCC,
+			G4_RATE,
+			G4_RANK,
+			UMLIMIT_CMCC_M,
+			UNLIMIT_CMCC,
+			UNLIMIT_RATE,
+			UNLIMIT_RANK,
+			UNLIMIT_DIEJIA,
+			ARPU,
+			ARPU_TWO_MONTH,
+			ARPU_MEAN,
+			MOU,
+			MOU_TWO_MONTH,
+			MOU_MEAN,
+			DOU,
+			DOU_TWO_MONTH,
+			DOU_MEAN,
+			VNET,
+			VNET_RATE,
+			CHARGE,
+			CHARGE_RATE,
+			KD_CMCC_M,
+			KD_CMCC,
+			KD_RATE,
+			CONTRACT_CMCC,
+			CONTRACT_PHONE_CMCC,
+			CONTRACT_KD_CMCC,
+			CONTRACT_OTHER_CMCC,
+			CONTRACT_CMCC_TOL,
+			HY_RATE
+		FROM 
+			RP_wg_SALE_LABEL_M_TOL
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_MONTH = #{statisDate}
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getSchoolImportantActiveStatusDay" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_DATE,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			SCH_ID,
+			SCH_NAME,
+			SCH_PART_ID,
+			SCH_PART_NAME,
+			PACK_HE,
+			PACK_CHANG,
+			PACK_DISTRI_FLOW,
+			PACK_VOICE,
+			PACK_FLOW_SPEED_UP,
+			ACCESS_DISC_FEE,
+			ACCESS_DISC_TICKET,
+			ACCESS_DISC_VOICE,
+			ACCESS_DISC_GROUP,
+			DISC_FEE,
+			DISC_TICKET,
+			DISC_UNLIMIT,
+			TERMI_DISC_HOT,
+			TERMI_DISC_CREDIT,
+			KD_DISC_MULTI,
+			KD_DISC_DIAJIA,
+			KD_DISC_SINGAL,
+			DISC_TAOCAN
+		FROM 
+			RP_WG_BW_ZD_SALE_LABEL_T3_D
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getSchoolImportantActiveDetailStatusDay" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_DATE,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			SCH_ID,
+			SCH_NAME,
+			SCH_PART_ID,
+			SCH_PART_NAME,
+			LEVEL_1_NAME,
+			DISCNT_ID,
+			DISCNT_NAME,
+			ORDER_TODAY,
+			ORDER_MONTH,
+			ORDER_TOTAL
+		FROM 
+			RP_WG_BW_ZD_SALE_LABEL_T4_D
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getSchoolStockUserTenureStatusDay" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_DATE,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			SCH_ID,
+			SCH_NAME,
+			SCH_PART_ID,
+			SCH_PART_NAME,
+			PZ_USRS,
+			ONNET_USRS,
+			ONNET_RATE
+		FROM 
+			RP_WG_BW_PAI_ZHAO_TOL_D
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getSchoolUserShareDistributionDay" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_DATE,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			SCH_ID,
+			SCH_NAME,
+			SCH_PART_ID,
+			SCH_PART_NAME,
+			ALL_NUM,
+			CMCC,
+			ALL_COMPI,
+			CUCC,
+			CTCC,
+			RATE_BENWANG,
+			RATE_COMPI,
+			ALL_NEW_NUM,
+			NEW_CMCC,
+			ALL_NEW_COMPI,
+			NEW_CUCC,
+			NEW_CTCC,
+			RATE_NEW_BENWANG,
+			RATE_NEW_COMPI,
+			ALL_NUM_S,
+			CMCC_S,
+			ALL_COMPI_S,
+			CUCC_S,
+			CTCC_S,
+			RATE_BENWANG_S,
+			RATE_COMPI_S,
+			ALL_NEW_NUM_S,
+			NEW_CMCC_S,
+			NEW_COMPI_S,
+			NEW_CUCC_S,
+			NEW_CTCC_S,
+			RATE_NEW_BENWANG_S,
+			RATE_NEW_COMPI_S
+		FROM 
+			RP_WG_SCH_USER_RATE_D
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getSchoolUserShareDistributionMonth" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_MONTH,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			SCH_ID,
+			SCH_NAME,
+			SCH_PART_ID,
+			SCH_PART_NAME,
+			ALL_NUM,
+			CMCC,
+			ALL_COMPI,
+			CUCC,
+			CTCC,
+			RATE_BENWANG,
+			RATE_COMPI,
+			ALL_NEW_NUM,
+			NEW_CMCC,
+			ALL_NEW_COMPI,
+			NEW_CUCC,
+			NEW_CTCC,
+			RATE_NEW_BENWANG,
+			RATE_NEW_COMPI,
+			ALL_NUM_S,
+			CMCC_S,
+			ALL_COMPI_S,
+			CUCC_S,
+			CTCC_S,
+			RATE_BENWANG_S,
+			RATE_COMPI_S,
+			ALL_NEW_NUM_S,
+			NEW_CMCC_S,
+			NEW_COMPI_S,
+			NEW_CUCC_S,
+			NEW_CTCC_S,
+			RATE_NEW_BENWANG_S,
+			RATE_NEW_COMPI_S
+		FROM 
+			RP_WG_SCH_USER_RATE_M
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_MONTH = #{statisDate}
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getOutNetUserDay" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_MONTH,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			OTHR_PARTY,
+			OTHER_HOME_AREA_ID,
+			OTHER_OPRAT_TYP_ID,
+			SCH_ID,
+			SCH_NAME,
+			SCH_USERS,
+			CALL_FREQ,
+			CALL_DUR,
+			LOCAL_SCH_USERS,
+			LOCAL_CALL_FREQ,
+			LOCAL_CALL_DUR,
+			CITY_NAME,
+			<!-- AREA_ID, -->
+			<!-- IF_DANGYUE,
+			IF_DANGRI,
+			INNET_TIME, -->
+			SCH_PART_ID,
+			SCH_PART_NAME
+		FROM 
+			MK_WG_SCH_OTH_USER_INFO  
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_MONTH = #{statisDate}
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getSchoolInfoMonth" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			SCH_ID,
+			SCH_NAME,
+			SCH_WEB_ADDR,
+			SCH_LEVEL,
+			SCH_COMPETENT_ORG,
+			SCH_USER,
+			NEW_SCH_USER,
+			TEACH_WORKS,
+			CMCC_PERCNT,
+			TYPE_NAME,
+			SCH_PROPERTY,
+			REMARK,
+			AREA_ID,
+			CMCC_SCH_ID,
+			CMCC_AREA_ID,
+			CMCC_AREA_NAME,
+			SCH_LEVEL_ID,
+			SCH_ADDR,
+			IF_KEY_SCH,
+			SCH_LONGTITUDE,
+			SCH_LATITUDE
+		FROM 
+			DIM_WG_SCH_INFO_M
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="schoolName != null and schoolName != ''">
+				AND SCH_NAME LIKE '%'||#{schoolName}||'%'
+			</if>
+		ORDER BY
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+</mapper>

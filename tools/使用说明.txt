@@ -1,0 +1,19 @@
+<---------------------下瓦片-------------------------->
+1 瓦片下载，使用下载工具RAR压缩包里的工具下载就可以。
+2 瓦片下载完成后，使用TileDownload工程里的CheckTile.java进行核查一次
+3 将mapserver部署到tomcat下，mapserver/tiles目录下放下好的瓦片文件，目录结构为mapserver/tiles/14/2341/141.png
+<---------------------获取关键字位置，范围------------------->
+1 运行ShapeReader工程中Main.java 输入为 shp文件存放路径，和输出结果保存路径。
+shp文件目录下不只要放shp文件，其他的dat等文件也要放同一目录，arcgis给的文件都放那就是了。
+输出为map_search.sql和outText.sql，map_search.sql暂时不用了，只要outText.sql
+outText.sql 的格式为：关键字,地市名，如果是用其他渠道获取的关键字，只要按这个格式写个文件就可以了。
+
+2 运行ShapeReader工程中DownloadBD，输入参数outText.sql和输出结果保存路径
+输出为(1)map_bd_search.sql 直接导入到map_bd_search表中
+    （2）map_bd_search_shape.sql 是小区范围数据，需要用UP工程才能更新到数据库，
+     （3）image ，关键字搜索后的图片信息，复制到web工程的webapp/pages/gis/images
+
+3运行UP工程Update,输入map_bd_search_shape.sql，和sys.properties，sys.properties中配置数据库链接信息
+此工程主要是用来将map_bd_search_shape.sql中的范围字段更新到clob字段上。因为clob字段无法用insert 插入。
+
+4运行Inside的SqlUpdate，计算map_bd_search所在的地市,并更新到org_id字段上。输入参数为sys.properties

@@ -1,0 +1,480 @@
+
+
+@CHARSET "UTF-8";
+.kpi{
+	width: 100%;
+	height: 100%;
+	color:#fff;
+}
+.kpi-left{
+	width: 46%;
+    height: 561px;
+    border: 1px solid #00E1FD;
+    display: block;
+    float: left;
+}
+.kpi-middle{
+	width: 26.5%;
+    height: 561px;
+    border: 1px solid #00E1FD;
+    display: block;
+    float: left;
+    margin-left: 0.5%;
+}
+.kpi-right{
+	width: 26.5%;
+    height: 561px;
+    border: 1px solid #00E1FD;
+    display: block;
+    float: left;
+    margin-left: 0.5%;
+}
+.kpiSearch{
+	margin-top: 2.5%;
+	margin-left: 1%;
+	border: 1px solid #00E1FD;
+	width: 98%;
+	height: 280px;
+}
+.view-title {
+    position: relative;
+    background: #03233C;
+    color: #00E1FD;
+    text-align: center;
+    padding: 0px 10px;
+    line-height: 19px;
+    height: 22px;
+    margin-left: 13px;
+    border: 1px solid #00E1FD;
+    margin-top: -11px;
+    width: 120px;
+    font-size: 10px;
+}
+.myOrners{
+   position:absolute;
+   width:10px;
+   height:10px;
+   border:3px solid #00E1FD;
+}
+.myOrner1{
+   top:-2px;
+   left:-2px;
+   border-right:none;
+   border-bottom:none;
+}
+.myOrner2{
+   top:-2px;
+   right:-2px;
+   border-left:none;
+   border-bottom:none;
+}
+.myOrner3{
+   right:-2px;
+   bottom:-2px;
+   border-left:none;
+   border-top:none;
+}
+.myOrner4{
+   bottom:-2px;
+   left:-2px;
+   border-right:none;
+   border-top:none;
+}
+.kpiView{
+	margin-top: 2.5%;
+    margin-left: 1%;
+    border: 1px solid #00E1FD;
+    width: 98%;
+    height: 243px;
+}
+.kpi-index{
+	margin-top:0%;
+	margin-left:1%;
+	width: 98%;
+	height: 140px;
+	overflow: auto !important;
+	/* border: 1px solid #00E1FD; */
+}
+.kpi-select{
+	margin-top:3%;
+	margin-left:1%;
+	width: 47%;
+	height:25px;
+	display: block;
+	float: left;
+}
+.kpi-select > span{
+	width: 95px;
+    height: 25px;
+    line-height: 25px;
+    text-align: right;
+    display: block;
+    float: left;
+}
+.kpi-select > span > i{
+	color: red;
+    margin-right: 5px;
+    font-style: normal;
+}
+.kpiSelect{
+	width: 58% !important;
+	height: 25px !important;
+}
+#AccountPeriod {
+	height: 25px !important;
+	width: 58% !important;
+}
+.kpi-name{
+	width: 98%;
+	margin-left: 1%;
+	margin-top:2%;
+	height: 111px;
+}
+.kpi-name > span{
+	display: block;
+	float: left;
+}
+.kpi-select > i{
+	display: block;
+	float: right;
+	color: red;
+	line-height: 26px;
+	cursor: pointer;
+}
+.kpiName-content{
+	width: 88.7%;
+	height: 72px;
+	border: 1px solid #00E1FD;
+	display: block;
+	float: left;
+	overflow: auto;
+}
+.kpiNameDiv > span{
+	display: block;
+	float: left;
+	margin: 6px 6px;
+}
+.kpiNameDiv{
+	/* width: 111px; */
+    height: 30px;
+    display: block;
+    float: left;
+    margin-left: 18px;
+}
+.kpiNameDiv > i{
+	display: block;
+	float: left;
+	color: red;
+	line-height: 33px;
+	cursor: pointer;
+}
+.kpiNameDiv > div {
+	display: block;
+	float: left;
+	line-height: 33px;
+}
+.inputName > span{
+	display: block;
+	float: left;
+	margin: 6px 6px;
+	cursor: pointer;
+}
+.inputNameMiddle > span{
+	display: block;
+	float: left;
+	margin: 6px 6px;
+	cursor: pointer;
+}
+.inputName{
+	display: block;
+	float: left;
+	margin: 2px 12px;
+}
+.inputNameMiddle{
+	display: block;
+	float: left;
+	margin: 2px 12px;
+}
+.inputName > input {
+	display: block;
+    float: left;
+    width: 15px;
+    height: 25px;
+}
+.inputNameMiddle > input {
+	display: block;
+    float: left;
+    width: 15px;
+    height: 25px;
+}
+.kpi-button{
+	width: 25%;
+	height: 40px;
+    margin-top: 0px;
+    display: block;
+    float: right;
+}
+.kpi-buttonRight{
+	width: 25%;
+	height: 40px;
+    margin-top: 0px;
+    display: block;
+    float: right;
+}
+.kpi-button > button {
+	height: 28px;
+    width: 55px;
+    line-height: 2px;
+    margin-top: 8px;
+    margin-left: 8px;
+}
+.kpi-buttonRight > button {
+	height: 28px;
+    width: 55px;
+    line-height: 2px;
+    margin-top: 8px;
+    margin-left: 8px;
+}
+.kpi-middle > h5{
+    margin-top: 1% !important;
+    margin-left: 1% !important;
+}
+.kpi-situation{
+	width: 100%;
+	/* margin-left:1%; */
+	height: 80px;
+	overflow: auto;
+}
+.middle-select{
+	margin-top:3%;
+	margin-left:1%;
+	width: 49%;
+	height:25px;
+	display: block;
+	float: left;
+}
+.middle-select > span{
+	width: 71px;
+    height: 25px;
+    line-height: 25px;
+    text-align: right;
+    display: block;
+    float: left;
+}
+.middleSelect{
+	width: 50% !important;
+	height: 25px !important;
+}
+.middle-input {
+	width: 100%;
+    /* margin-left: 1%; */
+    margin-top: 3%;
+    height: 108px;
+    overflow: auto;
+}
+.middle-map{
+	width: 98%;
+    margin-left: 1%;
+    /* margin-top: 7%; */
+    height: 304px;
+    /* border: 1px solid #00E1FD; */
+}
+.rightTop{
+	width: 100%;
+    height: 80px;
+    overflow: auto;
+}
+.right-input {
+	width: 100%;
+    /* margin-left: 1%; */
+    margin-top: 3%;
+    height: 75px;
+    overflow: auto;
+}
+.right-echarts{
+	width: 100%;
+    /* margin-left: 1%; */
+    margin-top: 5%;
+    height: 320px;
+    color: #fff;
+    /* border: 1px solid #00E1FD; */
+}
+hr {
+	border-top: 1px solid #00E1FD !important;
+    margin-top: 2px;
+    margin-bottom: 0px;
+    width: 90%;
+}
+.inputName > i{
+	display: block;
+	float: left;
+	color: red;
+	line-height: 33px;
+	cursor: pointer;
+}
+#right-echarts{
+	width: 100%;
+    height: 100%;
+}
+.modal-dialog/*  > .modal-content */{
+	width: 25% !important;
+}
+.glyphicon-calendar{
+	cursor: pointer;
+    /* margin-left: -20px; */
+    margin-top: 0px;
+}
+
+#gview_kpiResultGrid > .ui-jqgrid-hdiv{
+	height: 20px !important;
+	overflow: hidden;
+}
+#gview_kpiResultGrid > .ui-jqgrid-hdiv > .ui-jqgrid-hbox > table{
+	margin-top: -8px;
+}
+#grid-pager_center > .ui-pg-table > tbody > tr > .ui-pg-button > .ui-icon {
+    display: inline-block !important;
+    padding: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    line-height: 16px !important;
+    text-align: center !important;
+    position: static !important;
+    float: none !important;
+    margin: 0 2px !important !important;
+    border-radius: 100% !important;
+}
+#grid-pager_center > table > tbody > tr > .ui-state-disabled > .ui-separator{
+	height: 12px !important;
+}
+#grid-pager_center > table > tbody > tr > td > input{
+	width: 18px !important;
+    height: 14px !important;
+}
+#grid-pager_center > table > tbody > tr > td > select{
+	display: block;
+    height: 18px;
+    width: 49px;
+    margin: 0;
+    padding: 0px;
+    line-height: normal;
+}
+#kpiResultGrid > tbody > tr{
+	height: 30px !important;
+}
+.jqgfirstrow {
+	display: none;
+}
+.ui-jqgrid .ui-pager-control{
+	height: 30px !important;
+}
+.ui-jqgrid .ui-jqgrid-pager{
+	height: 30px !important;
+}
+.mapTable{
+	width: 100%;
+	height: 100%;
+}
+#smallMap{
+  width: 100%;
+  height: 100%;
+  position:relative;
+  z-index: 0 !important;
+}
+.ui-autocomplete-input{
+	height: 30px !important;
+	width: 250px !important;
+    margin-top: 10px !important;
+}
+.msc_serchBtn{
+	width: 40px !important;
+    height: 30px !important;
+    line-height: 30px !important;
+    margin-top: -1px !important;
+}
+.msc_clearBtn{
+	line-height: 46px !important;
+    right: 110px !important;
+}
+.fa-search{
+	line-height: 11px !important;
+}
+.BMap_stdMpCtrl {
+	bottom: 50px !important;
+}
+ #piecesBtns{
+ 	padding: 0 10px;
+    /* float: right; */
+    margin-top: -175px;
+    margin-left: 6%;
+    z-index: 999;
+    position: absolute;
+    background: url(../../images/frameBg.png) center repeat;
+    width: 18%;
+    color: #fff;
+ }
+ .sbtn {
+	width: 100%;
+	display: inline-block;
+	padding: 3px 0px;
+	line-height: 12px;
+	height: 25px;
+ }
+ .sbtn > div{
+	width: 30px;
+	height:12px;
+    display: inline-block;
+	margin: 5px 10px 0px 10px;
+	border-radius: 4px;
+	cursor: pointer;
+ }
+/*  #smallMap_main{
+ 	margin-top: -125px !important;
+ } */
+ .openMap{
+ 	width: 100%;
+ 	height: 100%;
+ }
+ .middle-line-none{
+ 	width: 80%;
+ 	height: 10px;
+ 	margin-left: 10%;
+ 	border-bottom: 1px solid #00E1FD;
+ }
+ .middle-line-block{
+ 	width: 80%;
+ 	height: 10px;
+ 	margin-left: 10%;
+ }
+ .modal-body{
+ 	padding: 0px !important;
+ }
+ 
+ .ranking{
+    float: right;
+    margin-right: 8px;
+    color: #00bfb2;
+    cursor: pointer;
+    background-color:#1096D2; 
+    border-radius:20%;
+    color: #fff;
+    width: 35px;
+    text-align: center;
+    margin-top:3px;
+ }
+ .trend{
+ 	float: right;
+    margin-right: 16px;
+    color: #00bfb2;
+    cursor: pointer;
+    background-color:#1096D2;
+    border-radius:20%;
+    color: #fff;
+    width: 35px;
+    text-align: center;
+    margin-top:3px;
+ }
+ .echartsRightButton > span:hover{
+ 	background-color:#337ab7; 
+ }
+

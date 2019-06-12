@@ -1,0 +1,1850 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.map.dao.mapper.FirstPageThreeMapper">
+
+	<select id="selectNetResourceList"  resultType="com.bonc.netResources.dao.entity.NetResources">
+		SELECT 
+			t.NET_CODE netCode, 
+			t.P_ID pId, 
+			t.NET_NAME netName, 
+			t.DISPLAY_ORDER displayOrder, 
+			t.NETLEVEL netLevel,
+			t.NET_TYPE netType,
+			t.TYPE type
+		FROM  
+			NET_RESOURCES t 
+		WHERE
+			(
+				(
+					TYPE = 'ORG'
+					OR TYPE = 'NEWORG'
+				)
+		AND
+			NET_CODE IN
+			<foreach collection="orgIds" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>)
+		OR
+			NET_TYPE = 'TYPE'
+		ORDER BY 
+			t.NETLEVEL,
+			t.DISPLAY_ORDER
+	</select>
+	
+	<select id="getZbEchartSum" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<!-- 放号 -->
+			<if test="type != null and type != '' and type == 'FH'.toString()">
+				SUM(TELE_COUNT) AS PUB_DATA
+			</if>
+			<!-- 新增宽带 -->
+			<if test="type != null and type != '' and type == 'XZKD'.toString()">
+				SUM(BRO_ADD_COUNT) AS PUB_DATA
+			</if>
+			<!-- 终端合约 -->
+			<if test="type != null and type != '' and type == 'ZDHY'.toString()">
+				SUM(TERMINAL_COUNT) AS PUB_DATA
+			</if>
+			<!-- 家庭网新增 -->
+			<if test="type != null and type != '' and type == 'JTWXZ'.toString()">
+				SUM(HOMENET_ADD_COUNT) AS PUB_DATA
+			</if>
+			<!-- 高价值低占小区渗透提升-->
+			<if test="type != null and type != '' and type == 'GJZDZXQSTTS'.toString()">
+				SUM(CELLRATE_ADD_SUM) AS PUB_DATA
+			</if>
+			<!--新增价值洼地-->
+			<if test="type != null and type != '' and type == 'XZJZWD'.toString()">
+				SUM(ADD_VALUE_COUNT) AS PUB_DATA
+			</if>
+			<!--头部客户固移融合率 -->
+			<if test="type != null and type != '' and type == 'TBKHGYRHL'.toString()">
+				SUM(FUSE_RATE) AS PUB_DATA
+			</if>
+			<!-- 中小微企业圈地行动 -->
+			<if test="type != null and type != '' and type == 'ZXWQYQDXD'.toString()">
+				SUM(ENCLOSURE_COUNT) AS PUB_DATA
+			</if>
+			<!-- 个人客户总计费收入 -->
+			<if test="type != null and type != '' and type == 'GRKHZJFSR'.toString()">
+				SUM(INCOME) AS PUB_DATA
+			</if>
+			<!-- 新增客户总计费收入-->
+			<if test="type != null and type != '' and type == 'XZKHZJFSR'.toString()">
+				SUM(ADDCUS_INCOME) AS PUB_DATA
+			</if>
+			<!-- 高价低占小区宽带新增*-->
+			<if test="type != null and type != '' and type == 'GJDZXQKDXZ'.toString()">
+				SUM(CELLRATE_ADD_SUM) AS PUB_DATA
+			</if>
+			<!-- 90后客户规模提升*-->
+			<if test="type != null and type != '' and type == '90HKHGMTS'.toString()">
+				SUM(ADD_VALUE_COUNT) AS PUB_DATA 
+			</if>
+			<!-- 头部客户宽带新增-->
+			<if test="type != null and type != '' and type == 'TBKHKDXZ'.toString()">
+				SUM(FUSE_RATE) AS PUB_DATA 
+			</if>
+		FROM
+			GRID_INFO_HOME_PAGE_MAIN
+		WHERE
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '1'.toString()">
+				ORG_LEVEL = 1
+		AND      ORG_ID=#{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '2'.toString()">
+				ORG_LEVEL = 2
+			AND 
+				CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '3'.toString()">
+				ORG_LEVEL = 3
+			AND 
+				CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+	</select>
+	
+	<select id="getZbEchart" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			<!-- 放号 -->
+			<if test="type != null and type != '' and type == 'FH'.toString()">
+				VALUE(TELE_COUNT,0) AS PUB_DATA,
+			</if>
+			<!-- 新增宽带 -->
+			<if test="type != null and type != '' and type == 'XZKD'.toString()">
+				VALUE(BRO_ADD_COUNT,0) AS PUB_DATA,
+			</if>
+			<!-- 终端合约 -->
+			<if test="type != null and type != '' and type == 'ZDHY'.toString()">
+				VALUE(TERMINAL_COUNT,0) AS PUB_DATA,
+			</if>
+			<!-- 家庭网新增 -->
+			<if test="type != null and type != '' and type == 'JTWXZ'.toString()">
+				VALUE(HOMENET_ADD_COUNT,0) AS PUB_DATA,
+			</if>
+			<!-- 高价值低占小区渗透提升-->
+			<if test="type != null and type != '' and type == 'GJZDZXQSTTS'.toString()">
+				VALUE(CELLRATE_ADD_SUM,0) AS PUB_DATA,
+			</if>
+			<!--新增价值洼地-->
+			<if test="type != null and type != '' and type == 'XZJZWD'.toString()">
+				VALUE(ADD_VALUE_COUNT,0) AS PUB_DATA,
+			</if>
+			<!--头部客户固移融合率 -->
+			<if test="type != null and type != '' and type == 'TBKHGYRHL'.toString()">
+				VALUE(FUSE_RATE,0) AS PUB_DATA,
+			</if>
+			<!-- 中小微企业圈地行动 -->
+			<if test="type != null and type != '' and type == 'ZXWQYQDXD'.toString()">
+				VALUE(ENCLOSURE_COUNT,0) AS PUB_DATA,
+			</if>
+			<!-- 个人客户总计费收入 -->
+			<if test="type != null and type != '' and type == 'GRKHZJFSR'.toString()">
+				VALUE(INCOME,0) AS PUB_DATA,
+			</if>
+			<!-- 新增客户总计费收入-->
+			<if test="type != null and type != '' and type == 'XZKHZJFSR'.toString()">
+				VALUE(ADDCUS_INCOME,0) AS PUB_DATA,
+			</if>
+			<!-- 高价低占小区宽带新增*-->
+			<if test="type != null and type != '' and type == 'GJDZXQKDXZ'.toString()">
+				VALUE(CELLRATE_ADD_SUM,0) AS PUB_DATA,
+			</if>
+			<!-- 90后客户规模提升*-->
+			<if test="type != null and type != '' and type == '90HKHGMTS'.toString()">
+				VALUE(ADD_VALUE_COUNT,0) AS PUB_DATA,
+			</if>
+			<!-- 头部客户宽带新增-->
+			<if test="type != null and type != '' and type == 'TBKHKDXZ'.toString()">
+				VALUE(FUSE_RATE,0) AS PUB_DATA,
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '1'.toString()">
+				CITY_NAME AS ORG_NAME
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '2'.toString()">
+				CNTY_NAME AS ORG_NAME
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '3'.toString()">
+				GRID_NAME AS ORG_NAME
+			</if>
+		FROM
+			GRID_INFO_HOME_PAGE_MAIN
+		WHERE
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '1'.toString()">
+				ORG_LEVEL = 2
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '2'.toString()">
+				ORG_LEVEL = 3
+			AND 
+				CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '3'.toString()">
+				ORG_LEVEL = 4
+			AND 
+				CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		GROUP BY
+			<!-- 放号 -->
+			<if test="type != null and type != '' and type == 'FH'.toString()">
+				TELE_COUNT,
+			</if>
+			<!-- 新增宽带 -->
+			<if test="type != null and type != '' and type == 'XZKD'.toString()">
+				BRO_ADD_COUNT,
+			</if>
+			<!-- 终端合约 -->
+			<if test="type != null and type != '' and type == 'ZDHY'.toString()">
+				TERMINAL_COUNT,
+			</if>
+			<!-- 家庭网新增 -->
+			<if test="type != null and type != '' and type == 'JTWXZ'.toString()">
+				HOMENET_ADD_COUNT,
+			</if>
+			<!-- 高价值低占小区渗透提升-->
+			<if test="type != null and type != '' and type == 'GJZDZXQSTTS'.toString()">
+				CELLRATE_ADD_SUM,
+			</if>
+			<!--新增价值洼地-->
+			<if test="type != null and type != '' and type == 'XZJZWD'.toString()">
+				ADD_VALUE_COUNT,
+			</if>
+			<!--头部客户固移融合率 -->
+			<if test="type != null and type != '' and type == 'TBKHGYRHL'.toString()">
+				FUSE_RATE,
+			</if>
+			<!-- 中小微企业圈地行动 -->
+			<if test="type != null and type != '' and type == 'ZXWQYQDXD'.toString()">
+				ENCLOSURE_COUNT,
+			</if>
+			<!-- 个人客户总计费收入 -->
+			<if test="type != null and type != '' and type == 'GRKHZJFSR'.toString()">
+				INCOME,
+			</if>
+			<!-- 新增客户总计费收入-->
+			<if test="type != null and type != '' and type == 'XZKHZJFSR'.toString()">
+				ADDCUS_INCOME,
+			</if>
+			<!-- 高价低占小区宽带新增*-->
+			<if test="type != null and type != '' and type == 'GJDZXQKDXZ'.toString()">
+				CELLRATE_ADD_SUM,
+			</if>
+			<!-- 90后客户规模提升*-->
+			<if test="type != null and type != '' and type == '90HKHGMTS'.toString()">
+				ADD_VALUE_COUNT,
+			</if>
+			<!-- 头部客户宽带新增-->
+			<if test="type != null and type != '' and type == 'TBKHKDXZ'.toString()">
+				FUSE_RATE,
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '1'.toString()">
+				CITY_NAME
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '2'.toString()">
+				CNTY_NAME
+			</if>
+			<if test="orgLevel != null and orgLevel != '' and orgLevel == '3'.toString()">
+				GRID_NAME
+			</if>
+		ORDER BY 
+			<!-- 放号 -->
+			<if test="type != null and type != '' and type == 'FH'.toString()">
+				TELE_COUNT
+			</if>
+			<!-- 新增宽带 -->
+			<if test="type != null and type != '' and type == 'XZKD'.toString()">
+				BRO_ADD_COUNT
+			</if>
+			<!-- 终端合约 -->
+			<if test="type != null and type != '' and type == 'ZDHY'.toString()">
+				TERMINAL_COUNT
+			</if>
+			<!-- 家庭网新增 -->
+			<if test="type != null and type != '' and type == 'JTWXZ'.toString()">
+				HOMENET_ADD_COUNT
+			</if>
+			<!-- 高价值低占小区渗透提升-->
+			<if test="type != null and type != '' and type == 'GJZDZXQSTTS'.toString()">
+				CELLRATE_ADD_SUM
+			</if>
+			<!--新增价值洼地-->
+			<if test="type != null and type != '' and type == 'XZJZWD'.toString()">
+				ADD_VALUE_COUNT
+			</if>
+			<!--头部客户固移融合率 -->
+			<if test="type != null and type != '' and type == 'TBKHGYRHL'.toString()">
+				FUSE_RATE
+			</if>
+			<!-- 中小微企业圈地行动 -->
+			<if test="type != null and type != '' and type == 'ZXWQYQDXD'.toString()">
+				ENCLOSURE_COUNT
+			</if>
+			<!-- 个人客户总计费收入 -->
+			<if test="type != null and type != '' and type == 'GRKHZJFSR'.toString()">
+				INCOME
+			</if>
+			<!-- 新增客户总计费收入-->
+			<if test="type != null and type != '' and type == 'XZKHZJFSR'.toString()">
+				ADDCUS_INCOME 
+			</if>
+				<!-- 高价低占小区宽带新增*-->
+			<if test="type != null and type != '' and type == 'GJDZXQKDXZ'.toString()">
+				CELLRATE_ADD_SUM
+			</if>
+			<!-- 90后客户规模提升*-->
+			<if test="type != null and type != '' and type == '90HKHGMTS'.toString()">
+				ADD_VALUE_COUNT
+			</if>
+			<!-- 头部客户宽带新增-->
+			<if test="type != null and type != '' and type == 'TBKHKDXZ'.toString()">
+				FUSE_RATE
+			</if>
+		DESC
+	</select>
+	
+	
+	<select id="getzbechartInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT * FROM(
+				SELECT
+					<if test="flag != null and flag != '' and flag == 'DAY'.toString()">
+						CAST(INDEX_DETAIL01_VALUE AS DECIMAL)AS PUB_DATA,
+					</if>
+					<if test="flag != null and flag != '' and flag == 'MONTH'.toString()">
+						CAST(INDEX_DETAIL02_VALUE AS DECIMAL)AS PUB_DATA,
+					</if>
+					<if test="orgLevel != null and orgLevel != '' and orgLevel == '1'.toString()">
+						CITY_NAME AS ORG_NAME
+					</if>
+					<if test="orgLevel != null and orgLevel != '' and orgLevel == '2'.toString()">
+						CNTY_NAME AS ORG_NAME
+					</if>
+					<if test="orgLevel != null and orgLevel != '' and orgLevel == '3'.toString()">
+						GRID_NAME AS ORG_NAME
+					</if>
+				FROM
+					grid_head_index_detail
+				WHERE
+					index_status = 1
+				AND INDEX_TYPE = '重点业务'
+				AND INDEX_CODE = #{type}
+					<if test="orgLevel != null and orgLevel != '' and orgLevel == '1'.toString()">
+				AND	
+					ORG_LEVEL = 2
+					</if>
+					<if test="orgLevel != null and orgLevel != '' and orgLevel == '2'.toString()">
+				AND		
+					ORG_LEVEL = 3
+				AND 
+					CITY_CODE = #{orgId,jdbcType=VARCHAR}
+					</if>
+					<if test="orgLevel != null and orgLevel != '' and orgLevel == '3'.toString()">
+				AND
+					ORG_LEVEL = 4
+				AND 
+					CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+					</if>
+					<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+					</if>
+				)
+		ORDER BY
+			PUB_DATA DESC
+	</select>
+	
+	<select id="getJcxxHeader" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			GRID_COUNT GRIDCOUNT,
+			GRID_TYPE1_COUNT GRIDTYPEONECOUNT,
+			GRID_TYPE2_COUNT GRIDTYPETWOCOUNT,
+			GRID_TYPE3_COUNT GRIDTYPETHREECOUNT,
+			DIRECTORS_COUNT DIRECTORSCOUNT,
+			CD_MANAGER_COUNT CDMANAGERCOUNT,
+			CHNL_SH_MANAGER_COUNT CHNLSHMANAGERCOUNT,
+			CHNL_ZX_MANAGER_COUNT CHNLZXMANAGERCOUNT,
+			CHNL_MANAGER_COUNT CHNLMANAGERCOUNT,
+			DIRECT_USER_COUNT DIRECTUSERCOUNT,
+			REPAIR_USER_COUNT REPAIRUSERCOUNT,
+			SALE_MANAGER_COUNT SALEMANAGERCOUNT
+		FROM 
+			GRID_INFO_HOME_PAGE_MAIN
+		WHERE
+			1 = 1
+		AND
+			ORG_ID = #{orgId}
+		AND 
+			ORG_LEVEL = #{orgLevel}
+		ORDER BY
+			STATIS_DATE DESC
+		FETCH FIRST 1 ROWS ONLY
+	</select>
+
+	<select id="getJcxxInfoWGJCXXDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		 SELECT
+				a.city_code, 
+				a.city_name, 
+				a.cnty_code, 
+				a.cnty_name, 
+				a.grid_code, 
+				a.grid_name, 
+	 CASE WHEN
+	     	    a.grid_type1_count <![CDATA[<>]]> 0 then '一类网格'
+	      WHEN 
+	          	a.grid_type2_count <![CDATA[<>]]> 0 then '二类网格'
+	      WHEN 
+	      		a.grid_type3_count <![CDATA[<>]]> 0 then '三类网格'
+	      ELSE 
+	      		'未定义' end as grid_type, 
+		        a.chnl_count, 
+			    a.station_count, 
+				a.direct_user_count, 
+				a.zdcell_count,
+				a.cell_count,		
+				a.ab_jt_count,		
+				a.cd_jt_count		
+	      FROM
+			 	grid_info_home_page_main a
+		 WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND a.GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND a.CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND a.CITY_CODE = #{city}
+				</when>
+			</choose>
+			<if test="statisDate != null and statisDate != ''">
+				   AND a.STATIS_DATE = #{statisDate}
+			</if>
+			AND a.org_level = 4 
+		ORDER BY 
+			<choose>
+				<when test="grid != null and grid != ''">
+					a.GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					a.CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					a.CITY_NAME
+				</when>
+				<otherwise>
+					a.CITY_NAME
+				</otherwise>
+			</choose> 
+	</select>
+	<select id="getJcxxInfoDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_TYPE,
+			GRID_CODE,
+			GRID_NAME,
+			<if test="oneType == 'RYXX'.toString()">
+				USER_TYPE,
+				OA_ID,
+				LOGIN_ID,
+				USER_NAME,
+				SEX,
+				PHONE
+			</if>
+			<if test="oneType == 'WGXX'.toString()">
+				AREA_SIZE,
+				GRID_SIZE,
+				COVER_RATE
+			</if>
+		FROM
+			<if test="oneType == 'RYXX'.toString()">
+				GRID_INFO_USER_DETAIL
+			</if>
+			<if test="oneType == 'WGXX'.toString()">
+				GRID_INFO_BASIC_DETAIL
+			</if>
+		WHERE
+			1 = 1
+			<if test="oneType == 'RYXX'.toString()">
+				<if test="twoType != null and twoType != ''">
+					AND USER_TYPE = #{twoType}
+				</if>
+			</if>
+			<if test="oneType == 'WGXX'.toString()">
+				<if test="twoType != null and twoType != ''">
+					AND GRID_TYPE = #{twoType}
+				</if>
+			</if>
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+		ORDER BY 
+			<choose>
+				<when test="grid != null and grid != ''">
+					GRID_NAME
+				</when>
+				<when test="town != null and town != ''">
+					CNTY_NAME
+				</when>
+				<when test="city != null and city != ''">
+					CITY_NAME
+				</when>
+				<otherwise>
+					CITY_NAME
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getWgjcxxInfoDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_DATE, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME, GRID_MANAGER_CODE, GRID_MANAGER_NAME, GRID_MANAGER_PHONE,
+			CHNL_COUNT, CHNL_ENTITY_COUNT, CHNL_NGBOSS_COUNT, CHNL_DIRECT_COUNT, WORK_BS_COUNT, WORK_BS_NGBOSS_COUNT, GRID_CUS_COUNT, GRID_CUS_COUNT_LAST_M,
+			NEW_CUS_COUNT_M, LOSE_CUS_COUNT_M, GRID_CUS_LASTYEAR_COUNT, NEW_CUS_COUNT_Y, LOSE_CUS_COUNT_Y, FEE_LAST_Y, FEE_M, FEE_LAST_M, FEE_YEAR, 
+			INCOME_RN_RATE, ADD_CUS_FEE_M, ADD_CUS_FEE_M_LAST, ADD_CUS_FEE_Y, CUSINFO_STRATE, CUSINFO_STRATE_LAST_M, FUSION_RATE, FUSION_RATE_LAST_M,
+			TERMINAL_RATE, TERMINAL_RATE_LAST_M, HFHY_RATE, HFHY_RATE_LAST_M, HOMENET_ST_RATE, HOMENET_ST_RATE_LAST_M, CELL_COUNT, ADDR_COUNT_LAST_Y, 
+			ZEROADDR_COUNT_LAST_Y, ADDR_COUNT_LAST_M, ZEROADDR_COUNT_LAST_M, ADDR_COUNT_D, ZEROADDR_COUNT_D, HLCELL_COUNT, HLCELL_CUS_COUNT, 
+			HLCELL_CUS_GRID_COUNT, HLCELL_ADD_CUS_COUNT, HLCELL_LOSE_CUS_COUNT, HLCELL_GRID_COUNT, HLCELL_ADDR_COUNT_LAST_Y, HLCELL_ZEROADDR_COUNT_LAST_Y, 
+			HLCELL_ADDR_COUNT_LAST_M, HLCELL_ZEROADDR_COUNT_LAST_M, HLCELL_ADDR_COUNT_D, HLCELL_ZEROADDR_COUNT_D, DEPADD_COUNT_M, DEPADD_GRID_RATE,
+			DEPADD_COUNT_LAST_M, DEPADD_ADD_COUNT_M, DEPADD_LOSE_COUNT_M, DEPADD_COUNT_LAST_Y, DEPADD_ADD_COUNT_Y, DEPADD_LOSE_COUNT_Y, TBCUS_COUNT_M,
+			TBCUS_RH_COUNT_M, TBCUT_RATE_M, TBCUS_COUNT_LAST_M, TBCUS_RH_COUNT_LAST_M, TBCUT_RATE_M_LAST_M, TBCUS_UP_COUNT_M, TBCUS_DOWN_COUNT_M,
+			TBCUS_OFFLINE_COUNT_M, TBCUS_COUNT_LAST_Y, TBCUS_RH_COUNT_LAST_Y, TBCUT_RATE_LAST_Y, TBCUS_UP_COUNT_Y, TBCUS_DOWN_COUNT_Y, TBCUS_OFFLINE_COUNT_Y
+		FROM 
+			GRID_FORM_INFO_WHOLE_PRO
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+	</select>
+	
+	<select id="getSumInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+		<if test="twoType == 'FH'.toString()">
+			SUM(TARGET_D) AS TARGET_D, sum(TELE_D) AS TELE_D, SUM(TARGET_M) AS TARGET_M, sum(TELE_M) AS TELE_M
+		</if>
+		<if test="twoType == 'XZKD'.toString()">
+			SUM(target_d) AS TARGET_D, sum(order_sum_d) AS ORDER_SUM_D,SUM(target_M) AS TARGET_M, sum(order_sum_M) AS ORDER_SUM_M
+		</if>
+		<if test="twoType == 'ZDHY'.toString()">
+			mobile_contract_d as MOBILE_CONTRACT_D, target_d as TARGET_D, mobile_contract_m as MOBILE_CONTRACT_M, target_m as TARGET_M
+		</if>
+		<if test="twoType == 'JTWXZ'.toString()">
+			sum(target_d) as TARGET_D, sum(homenet_add_d) as HOMENET_ADD_D, sum(target_m) as TARGET_M, sum(homenet_add_m) as HOMENET_ADD_M
+		</if>
+		<if test="twoType == 'GJZDZXQSTTS'.toString()">
+			TARGET AS HZONE, PERMEABILITY AS HZTWO
+		</if>
+		<if test="twoType == 'XZJZWC'.toString()">
+			sum(TARGET) AS HZONE, sum(CELL_SUM) AS HZTWO
+		</if>
+		<if test="twoType == 'TBKHGYRHL'.toString()">
+			target as TARGET, fuse_reta as FUSE_RETA
+		</if>
+		<if test="twoType == 'ZXWQYQDXD'.toString()">
+			sum(target_d) as TARGET_D, sum(complete_d) as COMPLETE_D, sum(target_m) as TARGET_M, sum(complete_m) as COMPLETE_M
+		</if>
+		<if test="twoType == 'GRKHZJFSR'.toString()">
+			SUM(target_d) AS target_d, sum(fee_m) AS fee_m
+		</if>
+		<if test="twoType == 'XZKHZJFSR'.toString()">
+			SUM(target_d) AS target_d, sum(fee_m) AS fee_m
+		</if>
+		FROM
+		<if test="twoType == 'FH'.toString()">
+			FORM_TELE_NO
+		</if>
+		<if test="twoType == 'XZKD'.toString()">
+			FORM_BROADBAND_ADD
+		</if>
+		<if test="twoType == 'ZDHY'.toString()">
+			FORM_TERMINAL_CONTRACT
+		</if>
+		<if test="twoType == 'JTWXZ'.toString()">
+			FORM_HOMENET_ADD
+		</if>
+		<if test="twoType == 'GJZDZXQSTTS'.toString()">
+			FORM_INFILTRATION_CELL
+		</if>
+		<if test="twoType == 'XZJZWC'.toString()">
+			FORM_DEPRESSION_ADD
+		</if>
+		<if test="twoType == 'TBKHGYRHL'.toString()">
+			FORM_CUSTOMER_FUSION
+		</if>
+		<if test="twoType == 'ZXWQYQDXD'.toString()">
+			FORM_ENCLOSURE_SUM
+		</if>
+		<if test="twoType == 'GRKHZJFSR'.toString()">
+			FORM_CUSTOMER_FEE
+		</if>
+		<if test="twoType == 'XZKHZJFSR'.toString()">
+			FORM_CUSTOMER_FEE
+		</if>
+		WHERE
+		1 = 1
+		<choose>
+			<when test="grid != null and grid != ''">
+				AND
+					V_TYPE = 4
+				AND
+					GRID_CODE = #{grid}
+			</when>
+			<when test="town != null and town != ''">
+				AND
+					V_TYPE = 3
+				AND
+					CNTY_CODE = #{town}
+			</when>
+			<when test="city != null and city != ''">
+				AND
+					V_TYPE = 2
+				AND
+					CITY_CODE = #{city}
+			</when>
+			<otherwise>
+				AND 
+					V_TYPE = #{orgLevel}
+			</otherwise>
+		</choose>
+		<if test="statisDate != null and statisDate != ''">
+			AND
+				STATIS_DATE = #{statisDate}
+		</if>
+	</select>
+	
+	<select id="getEchartInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			*
+		FROM
+		<if test="twoType =='FH'">
+			form_tele_no
+		</if>
+		<if test="twoType =='XZKD'">
+			form_broadband_add
+		</if>
+		<if test="twoType =='ZDHY'">
+			form_terminal_contract
+		</if>
+		<if test="twoType =='JTWXZ'">
+			form_homenet_add
+		</if>
+		<if
+			test="twoType =='ZXWQYQDXD'">
+			form_enclosure_sum
+		</if>
+		<if test="twoType =='GJZDZXQSTTS'">
+			form_Infiltration_cell
+		</if>
+		<if test="twoType =='XZJZWC'">
+			form_depression_add
+		</if>
+		<if test="twoType =='TBKHGYRHL'">
+			form_customer_fusion
+		</if>
+		<if test="twoType =='GRKHZJFSR'">
+			form_customer_fee
+		</if>
+		<if test="twoType =='XZKHZJFSR'">
+			form_customer_fee
+		</if>
+		WHERE 1=1
+		<choose>
+			<when test="grid != null and grid != ''">
+				AND
+					V_TYPE = 4
+				AND
+					GRID_CODE = #{grid}
+			</when>
+			<when test="town != null and town != ''">
+				AND
+					V_TYPE = 3
+				AND
+					CNTY_CODE = #{town}
+			</when>
+			<when test="city != null and city != ''">
+				AND
+					V_TYPE = 2
+				AND
+					CITY_CODE = #{city}
+			</when>
+			<otherwise>
+				AND 
+					V_TYPE = #{orgLevel}
+			</otherwise>
+		</choose>
+		<if test="statisDate != null and statisDate != ''">
+			AND
+			STATIS_DATE = #{statisDate}
+		</if>
+	</select>
+	
+	<select id="getKhxxdInfoDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			PERIOD_TYPE,
+			STATIS_DATE,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			CUS_TYPE,
+			CUS_ID,
+			CUS_NAME,
+			CUS_INFO1,
+			CUS_INFO2,
+			CUS_INFO3,
+			CUS_INFO4
+		FROM 
+			GRID_CUSTOMER_INFO_DETAIL
+		WHERE 
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+			<if test="periodType != null and periodType != ''">
+				AND PERIOD_TYPE = #{periodType}
+			</if>
+			<if test="twoType != null and twoType != ''">
+				AND CUS_TYPE = #{twoType}
+			</if>
+	</select>
+	
+	<select id="getKhxxmInfoDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			PERIOD_TYPE,
+			STATIS_DATE,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			CUS_TYPE,
+			CUS_ID,
+			CUS_NAME,
+			CUS_INFO1,
+			CUS_INFO2,
+			CUS_INFO3,
+			CUS_INFO4
+		FROM 
+			GRID_CUSTOMER_INFO_DETAIL
+		WHERE 
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+			<if test="periodType != null and periodType != ''">
+				AND PERIOD_TYPE = #{periodType}
+			</if>
+			<if test="twoType != null and twoType != ''">
+				AND CUS_TYPE = #{twoType}
+			</if>
+	</select>
+	
+	<select id="getSrxxInfoDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			FEE_TYPE,
+			CUS_ID,
+			CUS_NAME,
+			SETMEAL_TYPE,
+			SETMEAL_INFO,
+			FEE,
+			FEE_INFO1,
+			FEE_INFO2,
+			FEE_INFO3,
+			FEE_INFO4
+		FROM 
+			GRID_FEE_DETAIL
+		WHERE 
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="twoType != null and twoType != ''">
+				AND FEE_TYPE = #{twoType}
+			</if>
+	</select>
+	
+	<select id="getZyxxInfoDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			V_TYPE,
+			ORG_ID,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			ENTER_GRID,
+			PHYSIC_CODE,
+			PHYSIC_NAME,
+			PHYSIC_LON,
+			PHYSIC_LAT,
+			PHYSIC_TYPE,
+			PHYSIC_REST
+		FROM 
+			GRID_PHYSIC_DETAIL
+		WHERE
+			1 = 1
+			<if test="oneType != null and oneType != ''">
+				AND V_TYPE = #{oneType}
+			</if>
+			<if test="twoType != null and twoType != ''">
+				AND ENTER_GRID = #{twoType}
+			</if>
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND ORG_ID = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getZdxqInfoDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			V_TYPE,
+			ORG_ID,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			ENTER_GRID,
+			PHYSIC_CODE,
+			PHYSIC_NAME,
+			PHYSIC_LON,
+			PHYSIC_LAT,
+			PHYSIC_TYPE,
+			PHYSIC_REST
+		FROM 
+			GRID_PHYSIC_DETAIL
+		WHERE
+			1 = 1
+			<if test="oneType != null and oneType != ''">
+				AND V_TYPE = #{oneType}
+			</if>
+			<if test="twoType != null and twoType != ''">
+				AND ENTER_GRID = #{twoType}
+			</if>
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getJtdwInfoDetail" parameterType="java.util.Map" resultType="java.util.Map">
+				SELECT
+				    CLASS_ID,
+				    AREA_ID,
+					AREA_NAME,
+					CNTY_ID,
+					CNTY_NAME,
+					GRID_CODE,
+					NAME,
+					GC_CODE,
+					GC_NAME,
+					JING_DU,
+					WEI_DU
+				FROM
+					GROUP_EXPORT_INFO
+				WHERE
+					UPPER( SUBSTR( CLASS_ID, 1, 1 )) IN('A','B')
+				<if test='twoType != null and twoType != "" and twoType == "是"' >
+					AND value(grid_code, '') <![CDATA[ <> ]]> ''
+				</if>
+				<if test='twoType != null and twoType != "" and twoType == "否"' >
+					AND value(grid_code, '') = ''
+				</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 1" >
+				</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+					AND AREA_ID = #{orgId}
+				</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+					AND CNTY_ID = #{orgId}
+				</if>
+				<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+					AND GRID_CODE = #{orgId}
+				</if>
+			ORDER BY
+				AREA_NAME, CNTY_ID, NAME
+	</select>
+	
+	<select id="getYxrwInfoDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			PERIOD,
+			TASK_NAME,
+			TASK_LEV,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			MANAGER_NAME,
+			MANAGER_ID,
+			MANAGER_PHONE,
+			CHNL_CODE,
+			CHNL_NAME,
+			TARGET_CUS_FEE,
+			TARGET_ADD_FEE,
+			TARGET_TELE_NO,
+			TARGET_BROADBAND_ADD,
+			TARGET_TERMINAL_CONTRACT,
+			TARGET_HOMENET_ADD,
+			TARGET_INFILTRATION_CELL,
+			TARGET_DEPRESSION_ADD,
+			TARGET_CUSTOMER_FUSION,
+			TARGET_ENCLOSURE_SUM
+		FROM
+			GRID_MARKETING_TASK
+		WHERE
+			1 = 1
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == 1">
+			AND PROVINCE_CODE = '1'
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == 2">
+			AND CITY_CODE = #{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == 3">
+			AND CNTY_CODE = #{orgId}
+		</if>
+		<if test="orgLevel != null and orgLevel != '' and orgLevel == 4">
+			AND GRID_CODE = #{orgId}
+		</if>
+		<if test="statisDate != null and statisDate != ''">
+			AND PERIOD = #{statisDate}
+		</if>
+	</select>
+	
+	<select id="initMultipleSelectInfo" resultType="java.util.Map">
+		SELECT 
+			t.net_code netCode, 
+			t.net_name netName
+		FROM  
+			NET_RESOURCES t 
+		WHERE 
+			t.P_ID IN (SELECT NET_CODE FROM NET_RESOURCES WHERE NET_NAME='重点业务' )
+		ORDER BY 
+			t.netlevel,
+			t.display_order
+	</select>
+	
+	<select id="initZBinfo" resultType="java.util.Map">
+		SELECT
+			*
+		FROM
+			grid_head_index_detail
+		WHERE
+			index_status = 1
+		AND INDEX_TYPE='重点业务'
+		AND ORG_LEVEL = #{orgLevel,jdbcType=VARCHAR}
+		AND ORG_ID= #{orgId,jdbcType=INTEGER}
+		<if test="statisDate != null and statisDate != ''">
+		AND STATIS_DATE = #{statisDate}
+		</if>
+		ORDER BY
+			index_order ASC
+	</select>
+	
+	<select id="initMaxStatisDate" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			MAX(STATIS_DATE) AS STATISDATE FROM GRID_INFO_HOME_PAGE_MAIN 
+		<!-- WHERE
+			index_status = 1
+		AND 
+			INDEX_TYPE='重点业务'
+		AND 
+			ORG_LEVEL = #{orgLevel,jdbcType=VARCHAR}
+		AND 
+			ORG_ID= #{orgId,jdbcType=INTEGER}
+		FETCH FIRST 1 ROWS ONLY -->
+	</select>
+	
+	<select id="gridBusinessTargetDoneD" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			GRID_MANAGER_CODE, GRID_MANAGER_NAME, GRID_MANAGER_PHONE, CUSTOMER_FEE_WEIGHT, CUSTOMER_FEE_TARGET_D,
+			CUSTOMER_FEE_D, CUSTOMER_FEE_RATE_D, CUSTOMER_FEE_OWE, CUSTOMER_FEE_SCORE, CUSTOMER_ADD_WEIGHT, CUSTOMER_ADD_TARGET_D,
+			CUSTOMER_ADD_D, CUSTOMER_ADD_RATE_D, CUSTOMER_ADD_OWE, CUSTOMER_ADD_SCORE, TELE_WEIGHT, TELE_TARGET_D, TELE_D, TELE_RATE_D,
+			TELE_OWE, TELE_SCORE, BROADADD_WEIGHT, BROADADD_TARGET_D, BROADADD_D, BROADADD_RATE_D, BROADADD_OWE, BROADADD_SCORE, TERMINAL_WEIGHT,
+			TERMINAL_TARGET_D, TERMINAL_COMPLETE_D, MOBILE_CONTRACT_D, TERMINAL_CONTRACT_D, TERMINAL_RATE_D, TERMINAL_OWE, TERMINAL_SCORE,
+			HOMENET_ADD_WEIGHT, HOMENET_ADD_TARGET_D, HOMENET_ADD_D, HOMENET_ADD_RATE_D, HOMENET_ADD_OWE, HOMENET_ADD_SCORE, CELL_WEIGHT,
+			CELL_TARGET, CELL_SUM_LAST_M, CELL_NUM_LAST_M, PERMEABILITY_LAST_M, CELL_SUM, CELL_NUM, CELL_NUM_LAST_D, CELL_TARGET_D, PERMEABILITY_D,
+			CELL_RATE_D, CELL_OWE, CELL_SCORE, DEPADD_WEIGHT, DEPADD_SUM_M, DEPADD_SUM_LAST_M, DEPADD_SUM_D, DEPADD_SUM_LAST_D, DEPADD_TARGET_D,
+			DEPADD_D, DEPADD_RATE_D, DEPADD_OWE, DEPADD_SCORE, FUSION_WEIGHT, FUSION_SUM_M, FUSION_SUM_LAST_M, FUSION_RATE_LAST_M, FUSION_SUM_D,
+			FUSION_SUM_LAST_D, FUSION_TARGET_D, FUSION_D, FUSION_RATE_D, FUSION_OWE, FUSION_SCORE, ENCLOSURE_WEIGHT, ENCLOSURE_TARGET_D, ENCLOSURE_D,
+			MIC_BRO_D, ENTERPRISE_D, ENCLOSURE_RATE_D, ENCLOSURE_OWE, ENCLOSURE_SCORE, DAY_SCORE, PROVINCE_ORDER, CITY_ORDER, CNTY_ORDER
+		FROM
+			GRID_BUSINESS_TARGET_DONE_D
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY ORG_LEVEL,CITY_NAME,CNTY_CODE,GRID_CODE
+	</select>
+	
+	<select id="gridBusinessTargetDoneDay" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE, ORG_ID, ORG_LEVEL, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			GRID_MANAGER_CODE, GRID_MANAGER_NAME, GRID_MANAGER_PHONE, CUSTOMER_FEE_WEIGHT, CUSTOMER_FEE_TARGET_D,
+			CUSTOMER_FEE_D, CUSTOMER_FEE_RATE_D, CUSTOMER_FEE_OWE, CUSTOMER_FEE_SCORE, TELE_WEIGHT, TELE_TARGET_D,
+			TELE_D, TELE_RATE_D, TELE_OWE, TELE_SCORE, BROADADD_WEIGHT, BROADADD_TARGET_D, BROADADD_D, BROADADD_RATE_D,
+			BROADADD_OWE, BROADADD_SCORE, TERMINAL_WEIGHT, TERMINAL_TARGET_D, TERMINAL_COMPLETE_D,
+			MOBILE_CONTRACT_D, TERMINAL_CONTRACT_D, TERMINAL_RATE_D, TERMINAL_OWE, TERMINAL_SCORE, HOMENET_ADD_WEIGHT, 
+			HOMENET_ADD_TARGET_D, HOMENET_ADD_D, HOMENET_ADD_RATE_D, HOMENET_ADD_OWE, HOMENET_ADD_SCORE, CELL_WEIGHT, 
+			CELL_TARGET, CELL_COUNT, CELL_RATE_D, CELL_OWE, CELL_SCORE, CELL_SUM, CELL_NUM, PERMEABILITY_D, CELL_NUM_LAST_D, 
+			CELL_NUM_JZ_D, DEPADD_WEIGHT, DEPADD_TARGET_D, DEPADD_D, DEPADD_RATE_D, DEPADD_OWE, DEPADD_SCORE, DEPADD_SUM_M, DEPADD_SUM_LAST_M, DEPADD_SUM_D,
+			DEPADD_SUM_LAST_D, FUSION_WEIGHT, FUSION_TARGET_D, FUSION_D, FUSION_RATE_D, FUSION_OWE, FUSION_SCORE, FUSION_SUM_LAST_M,
+			FUSION_SUM_D, FUSION_RH_RATE_D, FUSION_SUM_LAST_D, FUSION_SUM_JZ, ENCLOSURE_WEIGHT, ENCLOSURE_TARGET_D, ENCLOSURE_D,
+			MIC_BRO_D, ENTERPRISE_D, ENCLOSURE_RATE_D, ENCLOSURE_OWE, ENCLOSURE_SCORE, DAY_SCORE, PROVINCE_ORDER, CITY_ORDER, CNTY_ORDER
+		FROM
+			GRID_BUSINESS_TARGET_DONE_DAY
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+		<if test="userOrgLevel == 1">
+				AND ORG_LEVEL in (1,2,3,4)
+			</if>
+			<if test="userOrgLevel == 2">
+				AND ORG_LEVEL in (2,3,4)
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 3">
+				AND ORG_LEVEL in (3,4)
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 4">
+				AND ORG_LEVEL in (4)
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY ORG_LEVEL,CITY_NAME,CNTY_CODE,GRID_CODE
+	</select>
+	
+	<select id="gridBusinessTargetDoneW" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE, ORG_ID, ORG_LEVEL, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			GRID_MANAGER_CODE, GRID_MANAGER_NAME, GRID_MANAGER_PHONE, CUSTOMER_FEE_WEIGHT, CUSTOMER_FEE_TARGET,
+			CUSTOMER_FEE, CUSTOMER_FEE_RATE, CUSTOMER_FEE_OWE, CUSTOMER_FEE_SCORE, CUSTOMER_ADD_WEIGHT,
+			CUSTOMER_ADD_TARGET, CUSTOMER_ADD, CUSTOMER_ADD_RATE, CUSTOMER_ADD_OWE, CUSTOMER_ADD_SCORE,
+			TELE_WEIGHT, TELE_TARGET, TELE, TELE_RATE, TELE_OWE, TELE_SCORE, BROADADD_WEIGHT, BROADADD_TARGET,
+			BROADADD, BROADADD_RATE, BROADADD_OWE, BROADADD_SCORE, TERMINAL_WEIGHT, TERMINAL_TARGET, TERMINAL_COMPLETE,
+			MOBILE_CONTRACT, TERMINAL_CONTRACT, TERMINAL_RATE, TERMINAL_OWE, TERMINAL_SCORE, HOMENET_ADD_WEIGHT,
+			HOMENET_ADD_TARGET, HOMENET_ADD, HOMENET_ADD_RATE, HOMENET_ADD_OWE, HOMENET_ADD_SCORE, CELL_WEIGHT,
+			CELL_TARGET, CELL_SUM_LAST_M, CELL_NUM_LAST_M, PERMEABILITY_LAST_M, CELL_SUM, CELL_NUM, CELL_NUM_LAST_W,
+			CELL_TARGET_W, PERMEABILITY_W, CELL_RATE_W, CELL_OWE, CELL_SCORE, DEPADD_WEIGHT, DEPADD_SUM_M,
+			DEPADD_SUM_LAST_M, DEPADD_SUM_D, DEPADD_SUM_LAST_W, DEPADD_TARGET_W, DEPADD_W, DEPADD_RATE_W,
+			DEPADD_OWE, DEPADD_SCORE, FUSION_WEIGHT, FUSION_SUM_M, FUSION_SUM_LAST_M, FUSION_RATE_LAST_M, FUSION_SUM_D, FUSION_SUM_LAST_W,
+			FUSION_TARGET_W, FUSION_W, FUSION_RATE_W, FUSION_OWE, FUSION_SCORE, ENCLOSURE_WEIGHT, ENCLOSURE_TARGET,
+			ENCLOSURE, MIC_BRO, ENTERPRISE, ENCLOSURE_RATE, ENCLOSURE_OWE, ENCLOSURE_SCORE, DAY_SCORE, PROVINCE_ORDER, CITY_ORDER, CNTY_ORDER
+		FROM
+			GRID_BUSINESS_TARGET_DONE_W
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY ORG_LEVEL,CITY_NAME,CNTY_CODE,GRID_CODE
+	</select>
+	
+	<select id="gridBusinessTargetDoneWeek" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE, ORG_ID, ORG_LEVEL, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			GRID_MANAGER_CODE, GRID_MANAGER_NAME, GRID_MANAGER_PHONE, CUSTOMER_FEE_WEIGHT, CUSTOMER_FEE_TARGET,
+			CUSTOMER_FEE, CUSTOMER_FEE_RATE, CUSTOMER_FEE_OWE, CUSTOMER_FEE_SCORE, TELE_WEIGHT, TELE_TARGET,
+			TELE, TELE_RATE, TELE_OWE, TELE_SCORE, BROADADD_WEIGHT, BROADADD_TARGET, BROADADD, BROADADD_RATE, 
+			BROADADD_OWE, BROADADD_SCORE, TERMINAL_WEIGHT, TERMINAL_TARGET, TERMINAL_COMPLETE, MOBILE_CONTRACT,
+			TERMINAL_CONTRACT, TERMINAL_RATE, TERMINAL_OWE, TERMINAL_SCORE, HOMENET_ADD_WEIGHT, HOMENET_ADD_TARGET,
+			HOMENET_ADD, HOMENET_ADD_RATE, HOMENET_ADD_OWE, HOMENET_ADD_SCORE, CELL_WEIGHT, CELL_TARGET_W, PERMEABILITY_W,
+			CELL_RATE_W, CELL_OWE, CELL_SCORE, CELL_SUM, CELL_NUM, PERMEABILITY_D, CELL_NUM_LAST_W, CELL_NUM_JZ_W,
+			DEPADD_WEIGHT, DEPADD_TARGET_W, DEPADD_W, DEPADD_RATE_W, DEPADD_OWE, DEPADD_SCORE, DEPADD_SUM_M, DEPADD_SUM_LAST_M,
+			DEPADD_SUM_D, DEPADD_SUM_LAST_W, FUSION_WEIGHT, FUSION_TARGET_W, FUSION_W, FUSION_RATE_W, FUSION_OWE,
+			FUSION_SCORE, FUSION_SUM_LAST_M, FUSION_SUM_D, FUSION_RH_RATE_D, FUSION_SUM_LAST_W, FUSION_SUM_JZ,
+			ENCLOSURE_WEIGHT, ENCLOSURE_TARGET, ENCLOSURE, MIC_BRO, ENTERPRISE, ENCLOSURE_RATE, ENCLOSURE_OWE, ENCLOSURE_SCORE,
+			DAY_SCORE, PROVINCE_ORDER, CITY_ORDER, CNTY_ORDER
+		FROM
+			GRID_BUSINESS_TARGET_DONE_WEEK
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 1">
+				AND ORG_LEVEL in (1,2,3,4)
+			</if>
+			<if test="userOrgLevel == 2">
+				AND ORG_LEVEL in (2,3,4)
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 3">
+				AND ORG_LEVEL in (3,4)
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 4">
+				AND ORG_LEVEL in (4)
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY ORG_LEVEL,CITY_NAME,CNTY_CODE,GRID_CODE
+	</select>
+	
+	<select id="gridBusinessTargetDoneM" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE, ORG_ID, ORG_LEVEL, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			GRID_MANAGER_CODE, GRID_MANAGER_NAME, GRID_MANAGER_PHONE, CUSTOMER_FEE_WEIGHT,
+			CUSTOMER_FEE_TARGET, CUSTOMER_FEE, CUSTOMERFEE_TIME_RATE, CUSTOMERFEE_TIME_OWE,
+			CUSTOMER_FEE_SCORE, CUSTOMER_ADD_WEIGHT, CUSTOMER_ADD_TARGET, CUSTOMER_ADD,
+			CUSTOMERADD_TIME_RATE, CUSTOMERADD_TIME_OWE, CUSTOMER_ADD_SCORE, TELE_WEIGHT, TELE_TARGET,
+			TELE, TELE_TIME_RATE, TELE_TIME_OWE, TELE_SCORE, BROADADD_WEIGHT, BROADADD_TARGET, BROADADD,
+			BROADADD_TIME_RATE, BROADADD_TIME_OWE, BROADADD_SCORE, TERMINAL_WEIGHT, TERMINAL_TARGET,
+			TERMINAL_COMPLETE, MOBILE_CONTRACT, TERMINAL_CONTRACT, TERMINAL_TIME_RATE, TERMINAL_TIME_OWE,
+			TERMINAL_SCORE, HOMENET_ADD_WEIGHT, HOMENET_ADD_TARGET, HOMENET_ADD, HOMENETADD_TIME_RATE,
+			HOMENETADD_TIME_OWE, HOMENET_ADD_SCORE, CELL_WEIGHT, CELL_TARGET, CELL_SUM_LAST_M, CELL_NUM_LAST_M,
+			PERMEABILITY_LAST_M, CELL_SUM, CELL_NUM, PERMEABILITY_D, CELL_NUM_LAST_D, TARGET_M, CELL_COUNT,
+			CELL_TIME_RATE, CELL_TIME_OWE, CELL_RATE_UP, CELL_SCORE, DEPADD_WEIGHT, DEPADD_SUM_M, DEPADD_SUM_LAST_M,
+			DEPADD_SUM_D, DEPADD_TARGET_M, DEPADD_M, DEPADD_TIME_RATE, DEPADD_TIME_OWE, DEPADD_SCORE, FUSION_WEIGHT,
+			FUSION_SUM_M, FUSION_SUM_LAST_M, FUSION_RATE_LAST_M, FUSION_SUM_D, FUSION_TARGET_M, FUSION_M, FUSION_TIME_RATE,
+			FUSION_TIME_OWE, FUSION_SCORE, ENCLOSURE_WEIGHT, ENCLOSURE_TARGET, ENCLOSURE, MIC_BRO, ENTERPRISE, ENCLOSURE_TIME_RATE,
+			ENCLOSURE_TIME_OWE, ENCLOSURE_SCORE, DAY_SCORE, PROVINCE_ORDER, CITY_ORDER, CNTY_ORDER
+		FROM
+			GRID_BUSINESS_TARGET_DONE_M
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY ORG_LEVEL,CITY_NAME,CITY_CODE,GRID_CODE
+	</select>
+	
+	<select id="gridBusinessTargetDoneMonth" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE, ORG_ID, ORG_LEVEL, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			GRID_MANAGER_CODE, GRID_MANAGER_NAME, GRID_MANAGER_PHONE, CUSTOMER_FEE_WEIGHT, CUSTOMER_FEE_TARGET,
+			CUSTOMER_FEE, CUSTOMERFEE_TIME_RATE, CUSTOMERFEE_TIME_OWE, CUSTOMER_FEE_SCORE, TELE_WEIGHT, TELE_TARGET,
+			TELE, TELE_TIME_RATE, TELE_TIME_OWE, TELE_SCORE, BROADADD_WEIGHT, BROADADD_TARGET, BROADADD,
+			BROADADD_TIME_RATE, BROADADD_TIME_OWE, BROADADD_SCORE, TERMINAL_WEIGHT, TERMINAL_TARGET, TERMINAL_COMPLETE,
+			 MOBILE_CONTRACT,  TERMINAL_TARGET, TERMINAL_CONTRACT,  TERMINAL_TIME_RATE,
+			TERMINAL_TIME_OWE, TERMINAL_SCORE, HOMENET_ADD_WEIGHT, HOMENET_ADD_TARGET, HOMENET_ADD, HOMENETADD_TIME_RATE,
+			HOMENETADD_TIME_OWE, HOMENET_ADD_SCORE, CELL_WEIGHT, TARGET_M, CELL_COUNT, CELL_TIME_RATE, CELL_TIME_OWE,
+			CELL_SCORE, CELL_SUM, CELL_NUM, PERMEABILITY_D, CELL_NUM_LAST_D, CELL_NUM_JZ_COUNT, DEPADD_WEIGHT, DEPADD_TARGET_M,
+			DEPADD_M, DEPADD_TIME_RATE, DEPADD_TIME_OWE, DEPADD_SCORE, DEPADD_SUM_M, DEPADD_SUM_LAST_M, DEPADD_SUM_D,
+			DEPADD_SUM_JZ_COUNT, FUSION_WEIGHT, FUSION_TARGET_M, FUSION_M, FUSION_TIME_RATE, FUSION_TIME_OWE, FUSION_SCORE,
+			FUSION_SUM_LAST_M, FUSION_SUM_D, FUSION_RH_RATE, FUSION_RATE_LAST_M, FUSION_JZ_COUNT, ENCLOSURE_WEIGHT,
+			ENCLOSURE_TARGET, ENCLOSURE, MIC_BRO, ENTERPRISE, ENCLOSURE_TIME_RATE, ENCLOSURE_TIME_OWE, ENCLOSURE_SCORE,
+			DAY_SCORE, PROVINCE_ORDER, CITY_ORDER, CNTY_ORDER
+		FROM
+		<!-- MOBILE_RATE,MOBILE_TARGET,TERMINAL_RATE, -->
+			GRID_BUSINESS_TARGET_DONE_MON
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 1">
+				AND ORG_LEVEL in (1,2,3,4)
+			</if>
+			<if test="userOrgLevel == 2">
+				AND ORG_LEVEL in (2,3,4)
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 3">
+				AND ORG_LEVEL in (3,4)
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 4">
+				AND ORG_LEVEL in (4)
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY ORG_LEVEL,CITY_NAME,CNTY_CODE,GRID_CODE
+	</select>
+	
+	<select id="getCityCode" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT OLD_ORG_ID FROM DIM_AREA_ORG WHERE NEW_ORG_ID = #{orgId}
+	</select>
+	
+	<select id="getCntyCode" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT ORG_ID FROM SYS_ORG WHERE PID= #{orgId}
+	</select>
+	
+	<select id="getCjybDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			AREA_ID, AREA_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			CHNL_ID, CHNL_CODE, CHNL_NAME, OPEN_REWARD, KD_REWARD,
+			UNLIMIT_REWARD, DISC_REWARD, BUSI_REWARD, ADJUST_FEE, STATIS_MONTH
+		FROM 
+			WG_REWORK
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+			</if>
+			<if test="orgLevel == 2">
+				AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_MONTH = #{statisDate}
+			</if>
+	</select>
+	<!-- 酬金月报信息导出 -->
+	<select id="getCjybDetailExport" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			AREA_ID, AREA_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME,
+			CHNL_ID, CHNL_CODE, CHNL_NAME, OPEN_REWARD, KD_REWARD,
+			UNLIMIT_REWARD, DISC_REWARD, BUSI_REWARD, ADJUST_FEE, STATIS_MONTH
+		FROM 
+			WG_REWORK
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+			</if>
+			<if test="orgLevel == 2">
+				AND AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_MONTH = #{statisDate}
+			</if>
+	</select>
+	
+	<select id="getZwxxDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			AREA_ID,
+			AREA_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			REPAIR_USER_ID,
+			REPAIR_USER_NAME
+		FROM 
+			WG_REPAIR_USER
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND AREA_ID = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+		 ORDER BY
+			 AREA_NAME, CNTY_CODE, GRID_NAME 
+	</select>
+	
+	<select id="getRwybDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			TASK_ID, TASK_PID, TASK_PERIOD, TASK_NAME, TASK_LEVEL, PROVINCE_CODE, PROVINCE_NAME,
+			CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME, MANAGER_NAME,
+			MANAGER_ID, MANAGER_PHONE, CHNL_CODE, CHNL_NAME, TARGET_CUS_FEE, TARGET_ADD_FEE,
+			TARGER_TELE_NO, TARGET_BROADBAND_ADD, TARGET_TERMINAL_CONTRACT, TARGET_HOMENET_ADD,
+			TARGET_INFILTRATION_CELL, TARGET_DEPRESSION_ADD, TARGET_CUSTOMER_FUSION, TARGET_ENCLOSURE_SUM
+		FROM 
+			FORM_TASK_SPLIT
+		WHERE
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<when test="statisDate != null and statisDate  != ''">
+					AND TASK_PERIOD = #{statisDate}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getTsxxDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			WORKFORM_ID, P_WORKFORM_ID, SIGN_STS, WORKFORM_TITLE, WORKFORM_STS, WORKFORM_STS_SHARE, LIST_TYP, CURR_NODE_CODE,
+			TOPIC_TYP_CODE, TOPIC_TYP_NAME, CALL_PHONE_CODE, MSISDN, CUST_NAME, LINK_PHONE_CODE, OTH_PHONE_CODE, TB_FALG,
+			CUST_DATAOPEN_CHNL, CUST_CNTY_ID, CUST_AREA_ID, CUST_CLASS, ACCEPT_TIME, ACCEPT_CNTY_ID, ACCEPT_DEPART_ID, ACCEPT_AREA_CODE,
+			ACCEPT_STAFF_ID, UPDATE_TIME, UPDATE_CNTY_CODE, UPDATE_DEPART_ID, UPDATE_STAFF_ID, TIME_LIMIT, URGENT_DEGREE, HOPE_DEAL_TIME,
+			HOPE_FEEDBACK_TYP, HOPE_DEAL_RESULT, PARTITION_MONTH
+		FROM 
+			RP_COMPLAINT_WK_ORDER
+		WHERE 
+			1 = 1
+			<choose>
+				<when test="town != null and town != ''">
+					AND ACCEPT_CNTY_ID = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND ACCEPT_AREA_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+	   ORDER BY
+			 CUST_AREA_ID, CUST_CNTY_ID
+	</select>
+	
+	<select id="getXxrwDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME, CHNL_CODE, CHNL_NAME, VAL, SALES_COUNT
+		FROM 
+			RP_MARKETING_TASK
+		WHERE 
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+	</select>
+	
+	<select id="getRyljbbDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			STATIS_DATE, KPI_CODE, KPI_NAME, ORG_LEVEL, ORG_ID, ORG_NAME, CITY_CODE, CITY_NAME, CNTY_CODE, 
+			CNTY_NAME, GRID_CODE, GRID_NAME, CHNL_CODE, CHNL_NAME, TARGET, COMPLETE_D, COMPLETE_M, RATE, RATIO, RANK       
+		FROM 
+			RP_GRID_KPI_ADD_D
+		WHERE 
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<select id="customerDevelopDay" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE,
+			ORG_LEVEL,
+			ORG_INFO,
+			ORG_ID,
+			ORG_NAME,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			CHNL_CODE,
+			CHNL_NAME,
+			TELENO_TARGET_D,
+			TELENO_COMPETE_D,
+			TELENO_OWE_D,
+			TELENO_RATE_D,
+			ORDER_TELENO_01,
+			ORDER_TELENO_02,
+			CUS_COUNT_D,
+			CUS_COUNT_LAST_D,
+			CUS_COUNT_JZ_D,
+			AFTER90_TARGET_D,
+			AFTER90_COMPLETE_D,
+			AFTER90_OWE_D,
+			AFTER90_RATE_D,
+			ORDER_90_01,
+			ORDER_90_02,
+			AFTER90_COUNT_D,
+			AFTER90_COUNT_LAST_D,
+			AFTER90_COUNT_JZ_D,
+			CARD_TARGET_D,
+			CARD_COMPLETE_D,
+			CARD_ADD_D,
+			CARD_STOCK_D,
+			CARD_OWE_D,
+			CARD_RATE_D,
+			ORDER_CARD_01,
+			ORDER_CARD_02,
+			CARD_COUNT_D,
+			CARD_COUNT_LAST_D,
+			CARD_JZ_D
+		FROM 
+			FORM_CUS_DVP_DAY
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 1">
+				AND ORG_LEVEL in (1,2,3,4)
+			</if>
+			<if test="userOrgLevel == 2">
+				AND ORG_LEVEL in (2,3,4)
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 3">
+				AND ORG_LEVEL in (3,4)
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 4">
+				AND ORG_LEVEL in (4)
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<select id="customerDevelopWeek" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE,
+			ORG_LEVEL,
+			ORG_INFO,
+			ORG_ID,
+			ORG_NAME,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			CHNL_CODE,
+			CHNL_NAME,
+			TELENO_TARGET_W,
+			TELENO_COMPETE_W,
+			TELENO_OWE_W,
+			TELENO_RATE_W,
+			ORDER_TELENO_01,
+			ORDER_TELENO_02,
+			CUS_COUNT_D,
+			CUS_COUNT_LAST_W,
+			CUS_COUNT_JZ_W,
+			AFTER90_TARGET_W,
+			AFTER90_COMPLETE_W,
+			AFTER90_OWE_W,
+			AFTER90_RATE_W,
+			ORDER_90_01,
+			ORDER_90_02,
+			AFTER90_COUNT_W,
+			AFTER90_COUNT_LAST_W,
+			AFTER90_COUNT_JZ_W,
+			CARD_TARGET_W,
+			CARD_COMPLETE_W,
+			CARD_ADD_W,
+			CARD_STOCK_W,
+			CARD_OWE_W,
+			CARD_RATE_W,
+			ORDER_CARD_01,
+			ORDER_CARD_02,
+			CARD_COUNT_D,
+			CARD_COUNT_LAST_W,
+			CARD_JZ_W
+		FROM 
+			FORM_CUS_DVP_WEEK
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 1">
+				AND ORG_LEVEL in (1,2,3,4)
+			</if>
+			<if test="userOrgLevel == 2">
+				AND ORG_LEVEL in (2,3,4)
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 3">
+				AND ORG_LEVEL in (3,4)
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 4">
+				AND ORG_LEVEL in (4)
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<select id="customerDevelopMonth" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			STATIS_DATE,
+			ORG_LEVEL,
+			ORG_INFO,
+			ORG_ID,
+			ORG_NAME,
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			CHNL_CODE,
+			CHNL_NAME,
+			TELENO_TARGET_M,
+			TELENO_COMPETE_M,
+			TELENO_OWE_TIME,
+			TELENO_RATE_TIME,
+			ORDER_TELENO_01,
+			ORDER_TELENO_02,
+			CUS_COUNT_M,
+			CUS_COUNT_LAST_M,
+			CUS_COUNT_JZ_M,
+			AFTER90_TARGET_M,
+			AFTER90_COMPLETE_M,
+			AFTER90_OWE_TIME,
+			AFTER90_RATE_TIME,
+			ORDER_90_01,
+			ORDER_90_02,
+			AFTER90_COUNT_M,
+			AFTER90_COUNT_LAST_M,
+			AFTER90_COUNT_JZ_M,
+			CARD_TARGET_M,
+			CARD_COMPLETE_M,
+			CARD_ADD_M,
+			CARD_STOCK_M,
+			CARD_OWE_TIME,
+			CARD_RATE_TIME,
+			ORDER_CARD_01,
+			ORDER_CARD_02,
+			CARD_COUNT_M,
+			CARD_COUNT_LAST_M,
+			CARD_JZ_M
+		FROM 
+			FORM_CUS_DVP_MON
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+				AND ORG_LEVEL = 1
+			</if>
+			<if test="orgLevel == 2">
+				AND ORG_LEVEL = 2
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND ORG_LEVEL = 3
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND ORG_LEVEL = 4
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 1">
+				AND ORG_LEVEL in (1,2,3,4)
+			</if>
+			<if test="userOrgLevel == 2">
+				AND ORG_LEVEL in (2,3,4)
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 3">
+				AND ORG_LEVEL in (3,4)
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="userOrgLevel == 4">
+				AND ORG_LEVEL in (4)
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+		ORDER BY
+			ORG_LEVEL, CITY_NAME, CNTY_CODE, GRID_NAME
+	</select>
+	
+	<select id="getBenchmarkingAnalysis" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			VTYPE, ORG_ID, CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME, 
+			INCOME, INCOME_SCORE, ADDCUS_INCOME, ADDCUS_SCORE, TELE_COUNT, TELE_SCORE, BRO_ADD_COUNT, BRO_ADD_SCORE,
+			TERMINAL_COUNT, TERMINAL_SCORE, HOMENET_ADD_COUNT, HOMENET_ADD_SCORE, CELLRATE_ADD_SUM, CELLRATE_ADD_SCORE,
+			ADD_VALUE_COUNT, ADD_VALUE_SCORE, FUSE_RATE, FUSE_SOCRE, ENCLOSURE_COUNT, ENCLOSURE_SCORE, SCORE, STATIS_DATE
+		FROM 
+			GRID_COMPARE_ANALYSIS_INDEX
+		WHERE
+			VTYPE = #{type}
+			<choose>
+				<when test="type == 1">
+					AND CITY_CODE IN
+					<foreach collection="orgIds" item="orgId" open="(" separator="," close=")">
+						#{orgId}
+					</foreach>
+				</when>
+				<when test="type == 2">
+					AND CNTY_CODE IN
+					<foreach collection="orgIds" item="orgId" open="(" separator="," close=")">
+						#{orgId}
+					</foreach>
+				</when>
+				<when test="type == 3">
+					AND GRID_CODE IN
+					<foreach collection="orgIds" item="orgId" open="(" separator="," close=")">
+						#{orgId}
+					</foreach>
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="statisDate != null and statisDate != ''">
+				AND STATIS_DATE = #{statisDate}
+			</if>
+	</select>
+	
+	<select id="getMaxBenchmarkingsnAlysisStatisDate" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			MAX(STATIS_DATE) STATIS_DATE
+		FROM 
+			GRID_COMPARE_ANALYSIS_INDEX
+		WHERE
+			VTYPE = #{type}
+	</select>
+	
+	<select id="getSelfHelpReportInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT * FROM FORM_SELF_HELP_REPORT_T WHERE NET_CODE = #{netCode}
+	</select>
+	
+	<select id="selectHelpReportConditionList" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT * FROM FORM_SELF_HELP_REPORT_CONDITION_T WHERE NET_CODE = #{netCode}
+	</select>
+	
+	<select id="selectHelpReportContentList" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT * FROM FORM_SELF_HELP_REPORT_CONDTION_CONTENT_T WHERE NET_CODE = #{netCode}
+	</select>
+</mapper>

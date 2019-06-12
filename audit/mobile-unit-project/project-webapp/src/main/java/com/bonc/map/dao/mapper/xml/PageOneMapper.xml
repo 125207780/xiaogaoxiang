@@ -1,0 +1,1770 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.map.dao.mapper.PageOneMapper">
+	
+	<select id="getTopFive" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgCode=='CITY_ID'.toString()">
+				CITY_ID AS PUB_ORG_ID,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AREA_ID AS PUB_ORG_ID,
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				GRID_CODE AS PUB_ORG_ID,
+			</if>
+			<if test="orgCode=='PHYSICAL_ID'.toString()">
+				PHYSICAL_ID AS PUB_ORG_ID,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				CITY_NAME AS PUB_ORG_NAME,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				AREA_NAME AS PUB_ORG_NAME, 
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				GRID_NAME AS PUB_ORG_NAME,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				PHYSICAL_NAME AS PUB_ORG_NAME,
+			</if>
+			SUM(${scale}) AS PUB_DATA 
+		FROM 
+			WG_HF_SCALE 
+		WHERE 
+			1=1
+		AND 
+			PHYSICAL_TYPE = '0'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+		<if test="orgCode=='CITY_ID'.toString()">
+			CITY_ID,
+		</if>
+		<if test="orgCode=='AREA_ID'.toString()">
+			AREA_ID,
+		</if>
+		<if test="orgCode=='GRID_CODE'.toString()">
+			GRID_CODE,
+		</if>
+		<if test="orgCode=='PHYSICAL_ID'.toString()">
+			PHYSICAL_ID,
+		</if>
+		<if test="orgName=='CITY_NAME'.toString()">
+			CITY_NAME
+		</if>
+		<if test="orgName=='AREA_NAME'.toString()">
+			AREA_NAME
+		</if>
+		<if test="orgName=='GRID_NAME'.toString()">
+			GRID_NAME
+		</if>
+		<if test="orgName=='PHYSICAL_NAME'.toString()">
+			PHYSICAL_NAME
+		</if>
+		ORDER BY 
+			PUB_DATA DESC
+	</select>
+	
+	<select id="getFiveInfo" parameterType="java.lang.String" resultType="com.bonc.map.dao.entity.WgHfScale">
+		SELECT 
+			SUM(INCOME)/10000 AS INCOME, 
+			cast(SUM(DOUBLE(CUSTOMER))/10000 AS DECIMAL(10,2)) AS CUSTOMER,
+			cast(SUM(DOUBLE(CELL_NUM)) /10000 AS DECIMAL(10,2)) AS CELL_NUM,
+			cast(SUM(DOUBLE(GROUP_NUM))/10000 AS DECIMAL(10,2)) AS GROUP_NUM,
+			cast(SUM(DOUBLE(CHNL_NUM))/10000 AS DECIMAL(10,2)) AS CHNL_NUM 
+		FROM 
+			wg_hf_scale 
+		WHERE 
+			1=1
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getFiveBarInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgCode=='CITY_ID'.toString()">
+				CITY_ID AS PUB_ORG_ID,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AREA_ID AS PUB_ORG_ID,
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				GRID_CODE AS PUB_ORG_ID,
+			</if>
+			<if test="orgCode=='PHYSICAL_ID'.toString()">
+				PHYSICAL_ID AS PUB_ORG_ID,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				CITY_NAME AS PUB_ORG_NAME,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				AREA_NAME AS PUB_ORG_NAME,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				PHYSICAL_NAME AS PUB_ORG_NAME,
+			</if>
+			SUM(INCOME) AS INCOME,
+			SUM(CUSTOMER) AS CUSTOMER,
+			SUM(CELL_NUM) AS CELL_NUM,
+			SUM(GROUP_NUM) AS GROUP_NUM,
+			SUM(CHNL_NUM) AS CHNL_NUM 
+		FROM 
+			WG_HF_SCALE 
+		WHERE 
+			1=1 
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			<if test="orgCode=='CITY_ID'.toString()">
+				CITY_ID,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AREA_ID,
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				GRID_CODE,
+			</if>
+			<if test="orgCode=='PHYSICAL_ID'.toString()">
+				PHYSICAL_ID,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				AREA_NAME
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				PHYSICAL_NAME
+			</if>
+		FETCH FIRST 14 ROWS ONLY
+	</select>
+	
+	<select id="getTaskByFiveDay" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			statis_date,
+		   	SUM(NEW_USER) NEW_USER,
+		   	SUM(KD_NEW) KD_NEW,
+		   	SUM(TERMINAL_NUM) TERMINAL_NUM
+		FROM 
+			WG_SY_TASK_MONITOR_D
+		WHERE 
+			1=1
+		<if test="orgCode != null and orgCode !=''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			statis_date
+		ORDER BY 
+			to_date(statis_date, 'yyyymmdd')
+	</select>
+	
+	<select id="getTaskByFiveMonth" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			STATIS_MONTH,
+			SUM(QZ_NUM) QZ_NUM
+		FROM 
+			WG_SY_TASK_MONITOR_M
+		WHERE 
+			1=1 
+		<if test="orgCode != null and orgCode !=''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			STATIS_MONTH
+		ORDER BY 
+			to_date(STATIS_MONTH,'yyyymm')
+	</select>
+	
+	<select id="getIncome" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			c.LIST_VALUE pub_name,
+			SUM(CASE WHEN b.income IS NOT NULL THEN b.income ELSE 0 END ) pub_data
+		FROM 
+			WG_HF_SCALE a 
+		JOIN 
+			Grid_income_detail b ON a.PHYSICAL_id = b.PHYSICAL_id
+		JOIN 
+			TB_LIST_VALUE c ON char(b.BUSI_TYPE) = c.LIST_TYPE AND c."TYPE" = 'BUSI_TYPE'
+		WHERE 
+			a.PHYSICAL_id IS NOT NULL 
+		AND 
+			a.PHYSICAL_id != ''
+		<if test="orgCode != null and orgCode !=''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			c.LIST_VALUE
+	</select>
+	
+	<select id="getIncomeTable" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME ORG_NAME,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME ORG_NAME,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME ORG_NAME,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME ORG_NAME,
+			</if>
+			sum(CASE WHEN b.BUSI_TYPE = 1 THEN NVL(b.income,0) ELSE 0 END ) data_23g,
+			sum(CASE WHEN b.BUSI_TYPE = 2 THEN NVL(b.income,0) ELSE 0 END ) data_4G,
+			sum(CASE WHEN b.BUSI_TYPE = 3 THEN NVL(b.income,0) ELSE 0 END ) data_kd,
+			CASE WHEN sum(nvl(last_INCOME,0)) = 0 THEN 0 ELSE sum(nvl(a.INCOME,0))/sum(nvl(last_INCOME,0)) END data_tb,
+			CASE WHEN sum(nvl(yesterday_INCOME,0)) = 0 THEN 0 ELSE sum(nvl(a.INCOME,0))/sum(nvl(yesterday_INCOME,0)) END data_hb
+		FROM 
+			WG_HF_SCALE a 
+		JOIN 
+			Grid_income_detail b ON a.PHYSICAL_id = b.PHYSICAL_id
+		WHERE 
+			LENGTH(a.PHYSICAL_id) > 0 
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND a.CITY_ID = #{orgId} 
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND a.AREA_ID = #{orgId} AND a.GRID_CODE IS NOT NULL
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND a.GRID_CODE = #{orgId} 
+			</if>
+		</if>
+		GROUP BY 
+		<if test="orgName=='CITY_NAME'.toString()">
+			a.CITY_NAME
+		</if>
+		<if test="orgName=='AREA_NAME'.toString()">
+			a.AREA_NAME
+		</if>
+		<if test="orgName=='GRID_NAME'.toString()">
+			a.GRID_NAME
+		</if>
+		<if test="orgName=='PHYSICAL_NAME'.toString()">
+			a.PHYSICAL_NAME
+		</if>
+	</select>
+	
+	<select id="getIncomeBar" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgCode=='CITY_ID'.toString()">
+				a.CITY_ID pub_org_code,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				a.AREA_ID pub_org_code,
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				a.GRID_CODE pub_org_code,
+			</if>
+			<if test="orgCode=='PHYSICAL_ID'.toString()">
+				a.PHYSICAL_ID pub_org_code,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME pub_org_name,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME pub_org_name,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME pub_org_name,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME pub_org_name,
+			</if>
+			sum(CASE WHEN b.BUSI_TYPE = 1 AND b.income IS NOT NULL THEN b.income ELSE 0 END ) pub_data1,
+			sum(CASE WHEN b.BUSI_TYPE = 2 AND b.income IS NOT NULL THEN b.income ELSE 0 END ) pub_data2,
+			sum(CASE WHEN b.BUSI_TYPE = 3 AND b.income IS NOT NULL THEN b.income ELSE 0 END ) pub_data3
+		FROM 
+			WG_HF_SCALE a 
+		JOIN 
+			Grid_income_detail b ON a.PHYSICAL_id = b.PHYSICAL_id
+		JOIN 
+			TB_LIST_VALUE c ON char(b.BUSI_TYPE) = c.LIST_TYPE AND c."TYPE" = 'BUSI_TYPE'
+		WHERE 
+			a.PHYSICAL_id IS NOT NULL 
+		AND 
+			a.PHYSICAL_id != ''
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			<if test="orgCode=='CITY_ID'.toString()">
+				a.CITY_ID,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				a.AREA_ID,
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				a.GRID_CODE,
+			</if>
+			<if test="orgCode=='PHYSICAL_ID'.toString()">
+				a.PHYSICAL_ID,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME
+			</if>
+		FETCH FIRST 10 ROWS ONLY
+	</select>
+	
+	<select id="getCustomer" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			c.LIST_VALUE pub_NAME,
+			sum(CASE WHEN b.cust_num IS NOT NULL THEN b.cust_num ELSE 0 END) pub_data
+		FROM 
+			WG_HF_SCALE a 
+		JOIN 
+			grid_customer_detail b ON a.PHYSICAL_id = b.PHYSICAL_id
+		JOIN 
+			TB_LIST_VALUE c ON char(b.cust_belong) = c.LIST_TYPE AND c."TYPE" = 'CUST_BELONG'
+		WHERE 
+			a.PHYSICAL_id IS NOT NULL 
+		AND 
+			a.PHYSICAL_id != ''
+		<if test="orgCode != null and orgCode !=''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				CITY_ID = #{orgId}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AREA_ID = #{orgId}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			c.LIST_VALUE
+	</select>
+	
+	<select id="getCustomerTable" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME org_name,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME org_name,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME org_name,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME org_name,
+			</if>
+			SUM( CASE WHEN b.CUST_BELONG = 1 AND b.cust_num IS NOT NULL THEN b.cust_num ELSE 0 END) pub_data1,
+			SUM( CASE WHEN b.CUST_BELONG = 2 AND b.cust_num IS NOT NULL THEN b.cust_num ELSE 0 END) pub_data2,
+			SUM( CASE WHEN b.CUST_BELONG = 3 AND b.cust_num IS NOT NULL THEN b.cust_num ELSE 0 END) pub_data3,
+			CASE WHEN SUM(nvl(last_customer, 0))=0 THEN 0 ELSE SUM(nvl(a.customer, 0))/SUM(nvl(last_customer, 0)) END data_tb,
+			CASE WHEN SUM(nvl(yesterday_customer, 0))=0 THEN 0 ELSE SUM(nvl(a.customer, 0))/SUM(nvl(yesterday_customer, 0)) END data_hb
+		FROM
+			WG_HF_SCALE a
+		LEFT JOIN 
+			grid_customer_detail b ON a.PHYSICAL_id = b.PHYSICAL_id
+		WHERE
+			a.PHYSICAL_id IS NOT NULL
+		AND 
+			a.PHYSICAL_id != ''
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME
+			</if>
+	</select>
+	
+	<select id="getCustomerBar" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgCode=='CITY_ID'.toString()">
+				a.CITY_ID pub_org_code,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				a.AREA_ID pub_org_code,
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				a.GRID_CODE pub_org_code,
+			</if>
+			<if test="orgCode=='PHYSICAL_ID'.toString()">
+				a.PHYSICAL_ID pub_org_code,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME pub_org_name,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME pub_org_name,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME pub_org_name,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME pub_org_name,
+			</if>
+			sum(CASE WHEN b.CUST_BELONG = 1 AND b.cust_num IS NOT NULL THEN b.cust_num ELSE 0 END) pub_data1,
+			sum(CASE WHEN b.CUST_BELONG = 2 AND b.cust_num IS NOT NULL THEN b.cust_num ELSE 0 END) pub_data2,
+			sum(CASE WHEN b.CUST_BELONG = 3 AND b.cust_num IS NOT NULL THEN b.cust_num ELSE 0 END) pub_data3
+		FROM 
+			WG_HF_SCALE a 
+		JOIN grid_customer_detail b ON a.PHYSICAL_id = b.PHYSICAL_id
+		JOIN TB_LIST_VALUE c ON char(b.CUST_BELONG) = c.LIST_TYPE AND c."TYPE" = 'CUST_BELONG'
+		WHERE 
+			a.PHYSICAL_id IS NOT NULL 
+		AND 
+			a.PHYSICAL_id != ''
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			<if test="orgCode=='CITY_ID'.toString()">
+				a.CITY_ID,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				a.AREA_ID,
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				a.GRID_CODE,
+			</if>
+			<if test="orgCode=='PHYSICAL_ID'.toString()">
+				a.PHYSICAL_ID,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME
+			</if>
+		FETCH FIRST 10 ROWS ONLY
+	</select>
+	
+	<select id="getCell" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			B.SMALL_TYPE pub_NAME,
+			SUM(CASE WHEN B.PHYSICAL_ID IS NOT NULL THEN 1 ELSE 0 END ) pub_data
+		FROM 
+			(SELECT 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME 
+			FROM 
+				WG_HF_SCALE 
+			WHERE 
+				GRID_CODE IS NOT NULL 
+			GROUP BY 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME) a , 
+			PHYSICAL_GRID_INFO b
+		WHERE 
+			a.GRID_CODE = b.GRID_CODE 
+		AND 
+			b.BIG_TYPE = '家居小区' 
+		AND 
+			LENGTH(B.SHAPE) > 0 
+		<if test="orgCode != null and orgCode !=''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				CITY_ID = #{orgId}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AREA_ID = #{orgId}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			B.SMALL_TYPE
+	</select>
+	
+	<select id="getCellTable" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME org_name,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME org_name,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME org_name,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME org_name,
+			</if>
+			sum(CASE WHEN b.SMALL_TYPE = '住宅小区' AND b.PHYSICAL_ID IS NOT NULL THEN 1 ELSE 0 END)  AS pub_data1,
+			sum(CASE WHEN b.SMALL_TYPE = '别墅' AND b.PHYSICAL_ID IS NOT NULL THEN 1 ELSE 0 END) AS pub_data2,
+			sum(CASE WHEN b.SMALL_TYPE = '宿舍' AND b.PHYSICAL_ID IS NOT NULL THEN 1 ELSE 0 END) AS pub_data3,
+			1 data_tb,
+			1 data_hb
+		FROM 
+			(SELECT 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME 
+			FROM 
+				WG_HF_SCALE 
+			GROUP BY 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME ) a, 
+			PHYSICAL_GRID_INFO b
+		WHERE 
+			A.GRID_CODE = B.GRID_CODE
+		AND 
+			b.BIG_TYPE = '家居小区' 
+		AND 
+			LENGTH(B.SHAPE) > 0 
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME
+			</if>
+	</select>
+	
+	<select id="getCellBar" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgCode=='CITY_ID'.toString()">
+				a.CITY_ID pub_org_code,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				a.AREA_ID pub_org_code,
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				a.GRID_CODE pub_org_code,
+			</if>
+			<if test="orgCode=='PHYSICAL_ID'.toString()">
+				a.PHYSICAL_ID pub_org_code,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME pub_org_name,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME pub_org_name,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME pub_org_name,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME pub_org_name,
+			</if>
+			sum(CASE WHEN b.SMALL_TYPE = '住宅小区' AND b.PHYSICAL_ID IS NOT NULL THEN 1 ELSE 0 END) AS pub_data1,
+			sum(CASE WHEN b.SMALL_TYPE = '别墅' AND b.PHYSICAL_ID IS NOT NULL THEN 1 ELSE 0 END) AS pub_data2,
+			sum(CASE WHEN b.SMALL_TYPE = '宿舍' AND b.PHYSICAL_ID IS NOT NULL THEN 1 ELSE 0 END) AS pub_data3
+		FROM 
+			(SELECT 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME 
+			FROM 
+				WG_HF_SCALE 
+			GROUP BY 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME) a,
+			PHYSICAL_GRID_INFO b
+		WHERE 
+			A.GRID_CODE = B.GRID_CODE
+		AND 
+			b.BIG_TYPE = '家居小区' 
+		AND 
+			LENGTH(B.SHAPE) > 0 
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+		<if test="orgCode=='CITY_ID'.toString()">
+			a.CITY_ID,
+		</if>
+		<if test="orgCode=='AREA_ID'.toString()">
+			a.AREA_ID,
+		</if>
+		<if test="orgCode=='GRID_CODE'.toString()">
+			a.GRID_CODE,
+		</if>
+		<if test="orgCode=='PHYSICAL_ID'.toString()">
+			a.PHYSICAL_ID,
+		</if>
+		<if test="orgName=='CITY_NAME'.toString()">
+			a.CITY_NAME
+		</if>
+		<if test="orgName=='AREA_NAME'.toString()">
+			a.AREA_NAME
+		</if>
+		<if test="orgName=='GRID_NAME'.toString()">
+			a.GRID_NAME
+		</if>
+		<if test="orgName=='PHYSICAL_NAME'.toString()">
+			a.PHYSICAL_NAME
+		</if>
+		FETCH FIRST 10 ROWS ONLY
+	</select>
+	
+	<select id="getGroup" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			C.LIST_VALUE pub_NAME,
+			sum(CASE WHEN b.group_num IS NOT NULL THEN b.group_num ELSE 0 END) pub_data
+		FROM 
+			(SELECT 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME 
+			FROM 
+				WG_HF_SCALE 
+			WHERE 
+				GRID_CODE IS NOT NULL 
+			GROUP BY 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME) a 
+		JOIN grid_vip_customer_detail b ON a.GRID_CODE = b.GRID_CODE 
+		JOIN TB_LIST_VALUE c ON b.group_type = c.LIST_TYPE AND c."TYPE" = 'VIP_CUST_TYPE'
+		WHERE 
+			b.GRID_CODE IS NOT NULL
+		<if test="orgCode != null and orgCode !=''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				CITY_ID = #{orgId}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AREA_ID = #{orgId}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY C.LIST_VALUE
+	</select>
+	
+	<select id="getGroupTable" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME org_name,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME org_name,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME org_name,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME org_name,
+			</if>
+			sum(CASE WHEN b.GROUP_TYPE = '1' AND b.group_num IS NOT NULL THEN b.group_num ELSE 0 END) pub_data1,
+			sum(CASE WHEN b.GROUP_TYPE = '2' AND b.group_num IS NOT NULL THEN b.group_num ELSE 0 END) pub_data2,
+			0 data_tb,
+			0 data_hb
+		FROM 
+			(SELECT 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME 
+			FROM 
+				WG_HF_SCALE 
+			WHERE 
+				GRID_CODE IS NOT NULL 
+			GROUP BY 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME) a 
+		LEFT JOIN grid_vip_customer_detail b ON a.GRID_CODE = b.GRID_CODE 
+		WHERE 
+			b.GRID_CODE IS NOT NULL
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+		<if test="orgName=='CITY_NAME'.toString()">
+			a.CITY_NAME
+		</if>
+		<if test="orgName=='AREA_NAME'.toString()">
+			a.AREA_NAME
+		</if>
+		<if test="orgName=='GRID_NAME'.toString()">
+			a.GRID_NAME
+		</if>
+		<if test="orgName=='PHYSICAL_NAME'.toString()">
+			a.PHYSICAL_NAME
+		</if>
+	</select>
+	
+	<select id="getGroupBar" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgCode=='CITY_ID'.toString()">
+				a.CITY_ID pub_org_code,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				a.AREA_ID pub_org_code,
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				a.GRID_CODE pub_org_code,
+			</if>
+			<if test="orgCode=='PHYSICAL_ID'.toString()">
+				a.PHYSICAL_ID pub_org_code,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME pub_org_name,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME pub_org_name,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME pub_org_name,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME pub_org_name,
+			</if>
+			sum(CASE WHEN b.GROUP_TYPE = '1' AND b.group_num IS NOT NULL THEN b.group_num ELSE 0 END) pub_data1,
+			sum(CASE WHEN b.GROUP_TYPE = '2' AND b.group_num IS NOT NULL THEN b.group_num ELSE 0 END) pub_data2
+		FROM 
+			(SELECT 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME 
+			FROM 
+				WG_HF_SCALE 
+			WHERE 
+				GRID_CODE IS NOT NULL 
+			GROUP BY 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME) a 
+		JOIN grid_vip_customer_detail b ON a.GRID_CODE = b.GRID_CODE 
+		JOIN TB_LIST_VALUE c ON b.group_type = c.LIST_TYPE AND c."TYPE" = 'VIP_CUST_TYPE'
+		WHERE 
+			b.GRID_CODE IS NOT NULL
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+		<if test="orgCode=='CITY_ID'.toString()">
+			a.CITY_ID,
+		</if>
+		<if test="orgCode=='AREA_ID'.toString()">
+			a.AREA_ID,
+		</if>
+		<if test="orgCode=='GRID_CODE'.toString()">
+			a.GRID_CODE,
+		</if>
+		<if test="orgCode=='PHYSICAL_ID'.toString()">
+			a.PHYSICAL_ID,
+		</if>
+		<if test="orgName=='CITY_NAME'.toString()">
+			a.CITY_NAME
+		</if>
+		<if test="orgName=='AREA_NAME'.toString()">
+			a.AREA_NAME
+		</if>
+		<if test="orgName=='GRID_NAME'.toString()">
+			a.GRID_NAME
+		</if>
+		<if test="orgName=='PHYSICAL_NAME'.toString()">
+			a.PHYSICAL_NAME
+		</if>
+		FETCH FIRST 10 ROWS ONLY
+	</select>
+	
+	<select id="getChnl" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			b.CHNL_TYPE_LEVEL1 pub_NAME,
+			sum(CASE WHEN b.CHNL_CODE IS NOT NULL THEN 1 ELSE 0 END) pub_data
+		FROM 
+			(SELECT 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME 
+			FROM 
+				WG_HF_SCALE 
+			WHERE 
+				GRID_CODE IS NOT NULL 
+			GROUP BY 
+				CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, GRID_CODE, GRID_NAME) a 
+		JOIN CHANNEL_INFO b ON a.GRID_CODE = b.GRID_CODE <!--AND b.CHNL_TYPE != '直销渠道' -->
+		<if test="orgCode != null and orgCode !=''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				CITY_ID = #{orgId}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AREA_ID = #{orgId}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				GRID_CODE = #{orgId}
+			</if>
+		</if>
+		AND 
+			CHNL_TYPE_LEVEL1 IS NOT NULL
+		GROUP BY 
+			b.CHNL_TYPE_LEVEL1
+	</select>
+	
+	<select id="getChnlTable" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME ORG_NAME,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME ORG_NAME,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME ORG_NAME,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME ORG_NAME,
+			</if>
+			sum(CASE WHEN b.CHNL_TYPE = '分销渠道' THEN 1 ELSE 0 END) FX_data,
+			sum(CASE WHEN b.CHNL_TYPE = '实体渠道' THEN 1 ELSE 0 END) ST_data,
+			sum(CASE WHEN b.CHNL_TYPE = '直销渠道' THEN 1 ELSE 0 END) ZX_data,
+			CASE WHEN sum(nvl(last_chnl_num,0)) = 0 THEN 0 ELSE sum(nvl(a.chnl_num,0))/sum(nvl(last_chnl_num,0)) END data_tb,
+			CASE WHEN sum(nvl(yesterday_chnl_num,0)) = 0 THEN 0 ELSE sum(nvl(a.chnl_num,0))/sum(nvl(yesterday_chnl_num,0)) END data_hb
+		FROM 
+			WG_HF_SCALE a
+		LEFT JOIN CHANNEL_INFO b ON a.PHYSICAL_ID = b.CHNL_CODE 
+		WHERE  1=1
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		AND 
+			LENGTH(B.CHNL_TYPE) > 0 
+		AND 
+			B.CHNL_TYPE != '电子渠道'
+		GROUP BY 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME
+			</if>
+	</select>
+	
+	<select id="getChnlBar" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgCode=='CITY_ID'.toString()">
+				a.CITY_ID pub_org_code,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				a.AREA_ID pub_org_code,
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				a.GRID_CODE pub_org_code,
+			</if>
+			<if test="orgCode=='PHYSICAL_ID'.toString()">
+				a.PHYSICAL_ID pub_org_code,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME pub_org_name,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME pub_org_name,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME pub_org_name,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME pub_org_name,
+			</if>
+			sum(CASE WHEN b.CHNL_TYPE = '实体渠道' AND b.CHNL_code IS NOT NULL THEN 1 ELSE 0 END) AS PUB_DATA1,
+			sum(CASE WHEN b.CHNL_TYPE = '分销渠道' AND b.CHNL_code IS NOT NULL THEN 1 ELSE 0 END) AS PUB_DATA2,
+			sum(CASE WHEN b.CHNL_TYPE = '直销渠道' AND b.CHNL_code IS NOT NULL THEN 1 ELSE 0 END) AS PUB_DATA3
+		FROM 
+			WG_HF_SCALE a, CHANNEL_INFO b
+		WHERE 
+			a.PHYSICAL_ID = b.CHNL_CODE
+		AND 
+			CHNL_TYPE IS NOT NULL 
+		AND 
+			a.PHYSICAL_ID IS NOT NULL 
+		AND 
+			a.PHYSICAL_ID != '' 
+		AND 
+			a.PHYSICAL_TYPE='0'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+		<if test="orgCode=='CITY_ID'.toString()">
+			a.CITY_ID,
+		</if>
+		<if test="orgCode=='AREA_ID'.toString()">
+			a.AREA_ID,
+		</if>
+		<if test="orgCode=='GRID_CODE'.toString()">
+			a.GRID_CODE,
+		</if>
+		<if test="orgCode=='PHYSICAL_ID'.toString()">
+			a.PHYSICAL_ID,
+		</if>
+		<if test="orgName=='CITY_NAME'.toString()">
+			a.CITY_NAME
+		</if>
+		<if test="orgName=='AREA_NAME'.toString()">
+			a.AREA_NAME
+		</if>
+		<if test="orgName=='GRID_NAME'.toString()">
+			a.GRID_NAME
+		</if>
+		<if test="orgName=='PHYSICAL_NAME'.toString()">
+			a.PHYSICAL_NAME
+		</if>
+		FETCH FIRST 10 ROWS ONLY
+	</select>
+	
+	<select id="getSexPortrait" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(A.MALE_NUM) MALE_NUM,
+			SUM(A.FAMALE_NUM) FAMALE_NUM
+		FROM 
+			WG_SY_USER_IMG A
+		LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+			AND 
+				B.PHYSICAL_ID IS NOT NULL 
+			AND 
+				B.PHYSICAL_ID != '' 
+			AND 
+				B.PHYSICAL_TYPE='0'
+		WHERE 
+			A.USER_TYPE = #{userType,jdbcType=VARCHAR}
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getNestingPie" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(A.YOUNG_NUM) YOUNG_NUM,
+			SUM(A.TEENAGERS_NUM) TEENAGERS_NUM,
+			SUM(A.MIDDLE_NUM) MIDDLE_NUM,
+			SUM(A.OLD_NUM) OLD_NUM,
+			SUM(A.HIGH_EDU_NUM) HIGH_EDU_NUM,SUM(A.MIDDLE_EDU_NUM) MIDDLE_EDU_NUM,SUM(A.LOW_EDU_NUM) LOW_EDU_NUM
+		FROM 
+			WG_SY_USER_IMG A
+		LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+			AND 
+				B.PHYSICAL_ID IS NOT NULL AND B.PHYSICAL_ID != ''
+		WHERE 
+			A.USER_TYPE = '1'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getNestingBar" parameterType="java.lang.String" resultType="java.util.Map">
+	SELECT 
+		SUM(A.NEWS_APP_NUM) NEWS_APP_NUM,
+		SUM(A.COMM_APP_NUM) COMM_APP_NUM,
+		SUM(A.ENJOY_APP_NUM) ENJOY_APP_NUM,
+		SUM(A.LIFE_APP_NUM) LIFE_APP_NUM,SUM(A.QT_APP_NUM) QT_APP_NUM
+	FROM 
+		WG_SY_USER_IMG A
+	LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+		AND 
+			B.PHYSICAL_ID IS NOT NULL AND B.PHYSICAL_ID != '' AND B.PHYSICAL_TYPE='0'
+	WHERE 
+		A.USER_TYPE = '1'
+	<if test="parentId != null and parentId !=''">
+		<if test="parentId=='CITY_ID'.toString()">
+			AND CITY_ID = #{orgId}
+		</if>
+		<if test="parentId=='AREA_ID'.toString()">
+			AND AREA_ID = #{orgId}
+		</if>
+		<if test="parentId=='GRID_CODE'.toString()">
+			AND GRID_CODE = #{orgId}
+		</if>
+	</if>
+	</select>
+	
+	<select id="getInterestFeatures" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(A.INTEREST_NUM1) INTEREST_NUM1,
+			SUM(A.INTEREST_NUM2) INTEREST_NUM2,
+			SUM(A.INTEREST_NUM1) INTEREST_NUM3,
+			SUM(A.INTEREST_NUM4) INTEREST_NUM4,SUM(A.INTEREST_NUM5) INTEREST_NUM5
+		FROM 
+			WG_SY_USER_IMG A
+		LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+			AND 
+				B.PHYSICAL_ID IS NOT NULL AND B.PHYSICAL_ID != '' AND B.PHYSICAL_TYPE='0'
+		WHERE 
+			A.USER_TYPE = '1'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getConsumeFeatures" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(A.ARPU_LAST1) ARPU_LAST1,
+			SUM(A.ARPU_LAST2) ARPU_LAST2,
+			SUM(A.ARPU_LAST3) ARPU_LAST3,
+			SUM(A.ARPU_LAST4) ARPU_LAST4,SUM(A.ARPU_LAST5) ARPU_LAST5
+		FROM 
+			WG_SY_USER_IMG A
+		LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+			AND 
+				B.PHYSICAL_ID IS NOT NULL AND B.PHYSICAL_ID != '' AND B.PHYSICAL_TYPE='0'
+		WHERE 
+			A.USER_TYPE = '1'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getFirstLevel" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT CONDITION_CODE, CONDITION_NAME FROM CONDITION_SCREEN WHERE "TYPE" = 'SY_USER_IMG' AND CONDITION_LEVEL = 1
+	</select>
+	<select id="getSecondLevel" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			CONDITION_CODE, CONDITION_NAME, PARENT_ID 
+		FROM 
+			CONDITION_SCREEN 
+		WHERE 
+			"TYPE" = 'SY_USER_IMG' 
+		AND 
+			CONDITION_LEVEL = 2 
+		AND 
+			PARENT_ID = 'SUI101'
+	</select>
+	
+	<select id="getSelectChildren" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			CONDITION_CODE, CONDITION_NAME, PARENT_ID 
+		FROM 
+			CONDITION_SCREEN 
+		WHERE 
+			"TYPE" = 'SY_USER_IMG' 
+		AND 
+			CONDITION_LEVEL = 2 
+		AND 
+			PARENT_ID = #{portraitCode,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getAreaAge" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(A.male_num) male_num,
+		   	SUM(A.famale_num) famale_num,
+		   	SUM(A.young_num) young_num,
+		   	SUM(A.teenagers_num) teenagers_num,
+		   	SUM(A.middle_num) middle_num,
+		   	SUM(A.middle_old_num) middle_old_num,
+		   	SUM(A.old_num) old_num
+		FROM 
+			WG_SY_USER_IMG A
+		LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+			AND 
+				B.PHYSICAL_ID IS NOT NULL AND B.PHYSICAL_ID != ''
+		WHERE 
+			A.USER_TYPE = #{userType}
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getArpuBar" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(A.arpu1_num) arpu1_num,
+		   	SUM(A.arpu2_num) arpu2_num,
+		   	SUM(A.arpu3_num) arpu3_num,
+		   	SUM(A.arpu4_num) arpu4_num,
+		  	 SUM(A.arpu5_num) arpu5_num,
+		   	SUM(A.arpu6_num) arpu6_num
+		FROM 
+			WG_SY_USER_IMG A
+		LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+			AND 
+				B.PHYSICAL_ID IS NOT NULL AND B.PHYSICAL_ID != ''
+		WHERE 
+			A.USER_TYPE = #{userType}
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getDouEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(A.dou1_num) dou1_num,
+		   	SUM(A.dou2_num) dou2_num,
+		   	SUM(A.dou3_num) dou3_num,
+		   	SUM(A.dou4_num) dou4_num,
+		   	SUM(A.dou5_num) dou5_num,
+		   	SUM(A.dou6_num) dou6_num
+		FROM 
+			WG_SY_USER_IMG A
+		LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+			AND 
+				B.PHYSICAL_ID IS NOT NULL AND B.PHYSICAL_ID != ''
+		WHERE 
+			A.USER_TYPE = #{userType}
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getMouEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(A.mou1_num) mou1_num,
+		 	SUM(A.mou2_num) mou2_num,
+		   	SUM(A.mou3_num) mou3_num,
+		   	SUM(A.mou4_num) mou4_num,
+		   	SUM(A.mou5_num) mou5_num,
+		   	SUM(A.mou6_num) mou6_num
+		FROM 
+			WG_SY_USER_IMG A
+		LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+			AND 
+				B.PHYSICAL_ID IS NOT NULL AND B.PHYSICAL_ID != ''
+		WHERE 
+			A.USER_TYPE = #{userType}
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getPreferenceEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM(A.terminal_brand_num1) terminal_brand_num1,
+		   	SUM(A.terminal_brand_num2) terminal_brand_num2,
+		   	SUM(A.terminal_brand_num3) terminal_brand_num3,
+		  	SUM(A.terminal_brand_num4) terminal_brand_num4,
+		  	SUM(A.terminal_brand_num5) terminal_brand_num5,
+		   	SUM(A.terminal_brand_num6) terminal_brand_num6,
+		   	SUM(A.terminal_brand_num7) terminal_brand_num7,
+		   	SUM(A.terminal_brand_num8) terminal_brand_num8,
+		   	SUM(A.terminal_brand_num9) terminal_brand_num9,
+		   	SUM(A.terminal_brand_num10) terminal_brand_num10
+		FROM 
+			WG_SY_USER_IMG A
+		LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+			AND 
+				B.PHYSICAL_ID IS NOT NULL AND B.PHYSICAL_ID != ''
+		WHERE 
+			A.USER_TYPE = #{userType}
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getAppEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			SUM( A.app_type_user_01 ) app_type_user_01,
+			SUM( A.app_type_user_02 ) app_type_user_02,
+			SUM( A.app_type_user_03 ) app_type_user_03,
+			SUM( A.app_type_user_04 ) app_type_user_04,
+			SUM( A.app_type_user_05 ) app_type_user_05,
+			SUM( A.app_type_user_06 ) app_type_user_06,
+			SUM( A.app_type_user_07 ) app_type_user_07,
+			SUM( A.app_type_user_08 ) app_type_user_08,
+			SUM( A.app_type_user_09 ) app_type_user_09,
+			SUM( A.app_type_user_10 ) app_type_user_10
+		FROM 
+			WG_SY_USER_IMG A
+		LEFT JOIN WG_HF_SCALE B ON B.PHYSICAL_ID = A.USER_BELONG
+			AND 
+				B.PHYSICAL_ID IS NOT NULL AND B.PHYSICAL_ID != ''
+		WHERE 
+			A.USER_TYPE = #{userType}
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<!-- 家宽用户 -->
+	<select id="getThreearpuEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME ORGNAME,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME ORGNAME,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME ORGNAME,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME ORGNAME,
+			</if>
+			AVG(PRE3_AVG_ARPU) PRE3_AVG_ARPU
+		FROM
+			WG_HF_SCALE A, WG_SY_KD_USER_IMG B
+		WHERE
+			A.PHYSICAL_ID = B.CHNL_CODE
+		AND 
+			A.PHYSICAL_TYPE = '0'
+		AND 
+			A.PHYSICAL_ID IS NOT NULL
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME
+			</if>
+		FETCH FIRST 14 ROWS ONLY
+	</select>
+	
+	<select id="getBroadbandEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			SUM(BANDWIDTH_2M_NUM) BANDWIDTH_2M_NUM,
+			SUM(BANDWIDTH_4M_NUM) BANDWIDTH_4M_NUM,
+			SUM(BANDWIDTH_6M_NUM) BANDWIDTH_6M_NUM,
+			SUM(BANDWIDTH_8M_NUM) BANDWIDTH_8M_NUM,
+			SUM(BANDWIDTH_10M_NUM) BANDWIDTH_10M_NUM,
+			SUM(BANDWIDTH_20M_NUM) BANDWIDTH_20M_NUM,
+			SUM(BANDWIDTH_50M_NUM) BANDWIDTH_50M_NUM,
+			SUM(BANDWIDTH_100M_NUM) BANDWIDTH_100M_NUM,
+			SUM(BANDWIDTH_999M_NUM) BANDWIDTH_999M_NUM,
+			SUM(BANDWIDTH_QT_NUM) BANDWIDTH_QT_NUM
+		FROM
+			WG_HF_SCALE A, WG_SY_KD_USER_IMG B
+		WHERE
+			A.PHYSICAL_ID = B.CHNL_CODE
+		AND 
+			A.PHYSICAL_TYPE = '0'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+		AND 
+			A.PHYSICAL_ID IS NOT NULL
+	</select>
+	
+	<select id="getFlowEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+		    AVG(VOL_TREND_LAST1) VOL_TREND_LAST1,
+			AVG(VOL_TREND_LAST2) VOL_TREND_LAST2,
+			AVG(VOL_TREND_LAST3) VOL_TREND_LAST3,
+			AVG(VOL_TREND_LAST4) VOL_TREND_LAST4,
+			AVG(VOL_TREND_LAST5) VOL_TREND_LAST5,
+			AVG(VOL_TREND_LAST6) VOL_TREND_LAST6,
+			AVG(VOL_TREND_LAST7) VOL_TREND_LAST7,
+			AVG(VOL_TREND_LAST8) VOL_TREND_LAST8,
+			AVG(VOL_TREND_LAST9) VOL_TREND_LAST9,
+			AVG(VOL_TREND_LAST10) VOL_TREND_LAST10,
+			AVG(VOL_TREND_LAST11) VOL_TREND_LAST11,
+			AVG(VOL_TREND_LAST12) VOL_TREND_LAST12
+		FROM
+			WG_HF_SCALE A, WG_SY_KD_USER_IMG B
+		WHERE
+			A.PHYSICAL_ID = B.CHNL_CODE
+		AND 
+			A.PHYSICAL_TYPE = '0'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+		AND 
+			A.PHYSICAL_ID IS NOT NULL
+	</select>
+	
+	<select id="getUserScale" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+		    SUM(MBH_SERV_NUM) MBH_SERV_NUM,
+			SUM(ONNET_NUM) ONNET_NUM,
+			SUM(LOSS_NUM) LOSS_NUM
+		FROM
+			WG_HF_SCALE A, WG_SY_KD_USER_IMG B
+		WHERE
+			A.PHYSICAL_ID = B.CHNL_CODE
+		AND 
+			A.PHYSICAL_TYPE = '0'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+		AND 
+			A.PHYSICAL_ID IS NOT NULL
+	</select>
+	
+	<select id="getInNet" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+		    SUM(ONNET_DATE_NUM1) ONNET_DATE_NUM1,
+			SUM(ONNET_DATE_NUM2) ONNET_DATE_NUM2,
+			SUM(ONNET_DATE_NUM3) ONNET_DATE_NUM3
+		FROM
+			WG_HF_SCALE A, WG_SY_KD_USER_IMG B
+		WHERE
+			A.PHYSICAL_ID = B.CHNL_CODE
+		AND 
+			A.PHYSICAL_TYPE = '0'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+		AND 
+			A.PHYSICAL_ID IS NOT NULL
+	</select>
+	
+	<select id="getAccessEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+		     SUM(ACESS_TYPE1_NUM) ACESS_TYPE1_NUM,
+		     SUM(ACESS_TYPE2_NUM) ACESS_TYPE2_NUM,
+		     SUM(ACESS_TYPE3_NUM) ACESS_TYPE3_NUM
+		FROM
+			WG_HF_SCALE A, WG_SY_KD_USER_IMG B
+		WHERE
+			A.PHYSICAL_ID = B.CHNL_CODE
+		AND 
+			A.PHYSICAL_TYPE = '0'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+		AND 
+			A.PHYSICAL_ID IS NOT NULL
+	</select>
+	
+	<select id="getWarningEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+		    SUM(END_MONTH1_NUM) END_MONTH1_NUM
+			,SUM(END_MONTH2_NUM) END_MONTH2_NUM
+			,SUM(END_MONTH3_NUM) END_MONTH3_NUM
+			,SUM(END_MONTH4_NUM) END_MONTH4_NUM
+			,SUM(END_MONTH5_NUM) END_MONTH5_NUM
+			,SUM(END_MONTH6_NUM) END_MONTH6_NUM
+			,SUM(END_MONTH7_NUM) END_MONTH7_NUM
+			,SUM(END_MONTH8_NUM) END_MONTH8_NUM
+			,SUM(END_MONTH9_NUM) END_MONTH9_NUM
+			,SUM(END_MONTH10_NUM) END_MONTH10_NUM
+			,SUM(END_MONTH11_NUM) END_MONTH11_NUM
+			,SUM(END_MONTH12_NUM) END_MONTH12_NUM
+			,SUM(END_MONTH1_TIME) END_MONTH1_TIME
+			,SUM(END_MONTH2_TIME) END_MONTH2_TIME
+			,SUM(END_MONTH3_TIME) END_MONTH3_TIME
+			,SUM(END_MONTH4_TIME) END_MONTH4_TIME
+			,SUM(END_MONTH5_TIME) END_MONTH5_TIME
+			,SUM(END_MONTH6_TIME) END_MONTH6_TIME
+			,SUM(END_MONTH7_TIME) END_MONTH7_TIME
+			,SUM(END_MONTH8_TIME) END_MONTH8_TIME
+			,SUM(END_MONTH9_TIME) END_MONTH9_TIME
+			,SUM(END_MONTH10_TIME) END_MONTH10_TIME
+			,SUM(END_MONTH11_TIME) END_MONTH11_TIME
+			,SUM(END_MONTH12_TIME) END_MONTH12_TIME
+		FROM
+			WG_HF_SCALE A,
+			WG_SY_KD_USER_IMG B
+		WHERE
+			A.PHYSICAL_ID = B.CHNL_CODE
+		AND 
+			A.PHYSICAL_TYPE = '0'
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+		AND 
+			A.PHYSICAL_ID IS NOT NULL
+	</select>
+	<!-- 家宽用户结束 -->
+		
+	<!-- 渠道用户结束 -->
+	<select id="getChnlnumEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			count(1) AS COUNT_DATA,
+			sum(CASE WHEN b.chnl_type = '实体渠道' THEN 1 ELSE 0 END ) SDATA,
+			sum(CASE WHEN b.chnl_type = '直销渠道' THEN 1 ELSE 0 END) ZDATA,
+			sum(CASE WHEN b.chnl_type IS null THEN 1 ELSE 0 END) QDATA
+		FROM 
+			WG_HF_SCALE a, CHANNEL_INFO b 
+		WHERE 
+			a.PHYSICAL_ID = b.CHNL_CODE 
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getChnlstarEcharts" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			b.CHNL_STAR pub_name, COUNT(1) pub_data
+		FROM 
+			WG_HF_SCALE a, CHANNEL_INFO b 
+		WHERE 
+			a.PHYSICAL_ID = b.CHNL_CODE 
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			b.CHNL_STAR
+	</select>
+	
+	<select id="getChnlNumFull" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME org_name,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME org_name,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME org_name,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME org_name,
+			</if>
+			COUNT(1) chnl_data
+		FROM 
+			WG_HF_SCALE a, CHANNEL_INFO b 
+		WHERE 
+			a.PHYSICAL_ID = b.CHNL_CODE 
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME
+			</if>
+		FETCH FIRST 14 ROWS ONLY
+	</select>
+	
+	<select id="getChnlShare" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgName=='CITY_NAME'.toString()">
+				a.CITY_NAME org_name,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				a.AREA_NAME org_name,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				a.GRID_NAME org_name,
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				a.PHYSICAL_NAME org_name,
+			</if>
+		   	SUM(mobile_chnl_num) mobile_chnl_num,
+		   	SUM(unicom_chnl_num) unicom_chnl_num,
+		   	SUM(telecom_chnl_num) telecom_chnl_num
+		FROM 
+			WG_SY_CHANNEL_YW_IMG a
+		WHERE 
+			1=1
+		<if test="parentId != null and parentId !=''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND CITY_ID = #{orgId}
+			</if>
+			<if test="parentId=='AREA_ID'.toString()">
+				AND AREA_ID = #{orgId}
+			</if>
+			<if test="parentId=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId}
+			</if>
+		</if>
+		GROUP BY
+			<if test="orgName=='CITY_NAME'.toString()">
+				CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				AREA_NAME
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				GRID_NAME
+			</if>
+			<if test="orgName=='PHYSICAL_NAME'.toString()">
+				PHYSICAL_NAME
+			</if>
+		FETCH FIRST 14 ROWS ONLY
+	</select>
+	<!-- 渠道用户结束 -->
+</mapper>

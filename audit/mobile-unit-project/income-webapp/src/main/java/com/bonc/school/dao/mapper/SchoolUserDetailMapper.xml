@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.school.dao.mapper.SchoolUserDetailMapper">
+	
+	<select id="findSchoolUserDetailInfo"  parameterType="java.util.Map" resultType = "com.bonc.school.dao.entity.SchoolUserDetail" >
+	SELECT a.STATIS_MONTH, a.AREA_ID, a.AREA_NAME, a.CNTY_ID, a.CNTY_NAME, a.SCH_AREA_ID, 
+	a.SCH_AREA_NAME, a.SCH_ID, a.SCH_NAME, a.USR_ID, a.TAOCAN_ID, a.TAOCAN_NAME,
+	a.ONLINE_MONTH, a.OPEN_DATE, a.SEX, a.AGE, a.IS_4G, a.IS_UNLIMIT, a.IS_VNET, a.IS_KD, a.IS_DISCNT, 
+	a.DISCNT_ID, a.DISCNT_NAME, a.ACTVI_TYPE_ID, a.ACTVI_TYPE, a.ACTVI_PROD, a.ACTVI_PROD_NAME, 
+	a.ACTVI_EFF_DATE, a.ACTVI_EXP_DATE, a.ARPU, a.MOU, a.DOU, a.CALL_FREQ, a.GPRS_LEVEL_ID, a.GPRS_LEVEL,
+	a.VOICE_LEVEL_ID, a.VOICE_LEVEL, a.FEE_LEVEL_ID, a.FEE_LEVEL, a.FEE_DISCNT, a.TERM_BRND||a.TERM_TYP AS  termInfo,
+  	a.APP_TYPE_ID,
+    a.APP_TYPE_NAME,
+    a.DISC_FEE_ID,
+    a.DISC_FEE_NAME
+	FROM BONC03.RP_SCH_USER_LABEL_M a
+	 JOIN BONC03.DIM_SCH_ID_INFO b ON a.SCH_ID=b.SCH_ID
+	 where a.STATIS_MONTH =#{schoolUserDetail.statisMonth}
+	 AND b.UID= #{schoolUserDetail.schoolId} 
+	<if test="schoolUserDetail.actviTypeId != null and schoolUserDetail.actviTypeId != ''">
+			and a.ACTVI_TYPE_ID like '%'||#{schoolUserDetail.actviTypeId}||'%'
+	</if>
+	<if test="schoolUserDetail.usrType != null and schoolUserDetail.usrType != ''">
+			and a.USR_TYPE like '%'||#{schoolUserDetail.usrType}||'%'
+	</if>
+	<if test="schoolUserDetail.feeLevelId != null and schoolUserDetail.feeLevelId != ''">
+			and a.FEE_LEVEL_ID like '%'||#{schoolUserDetail.feeLevelId}||'%'
+	</if>
+	<if test="schoolUserDetail.gprsLevelId != null and schoolUserDetail.gprsLevelId != ''">
+			and a.GPRS_LEVEL_ID like '%'||#{schoolUserDetail.gprsLevelId}||'%'
+	</if>
+	<if test="schoolUserDetail.voiceLevelId != null and schoolUserDetail.voiceLevelId != ''">
+			and a.VOICE_LEVEL_ID like '%'||#{schoolUserDetail.voiceLevelId}||'%'
+	</if>
+	
+	<if test="AppTypeIdList != null and AppTypeIdList.size()>0">
+	and
+		<foreach collection="AppTypeIdList" item="AppTypeIdList"  index="index" open="("  separator="or" close=")">
+			 a.APP_TYPE_ID  =#{AppTypeIdList}
+			</foreach> 
+	</if>
+	<if test="schoolUserDetail.discFeeId != null and schoolUserDetail.discFeeId != ''">
+			and a.DISC_FEE_ID like '%'||#{schoolUserDetail.discFeeId}||'%'
+	</if>
+	order by a.SVC_CODE
+	</select>
+	
+	<select id="findUserInfo"  parameterType="java.lang.Integer" resultType = "com.bonc.school.dao.entity.SchoolUserDetail" >
+	SELECT STATIS_MONTH, AREA_ID, AREA_NAME, CNTY_ID, CNTY_NAME, SCH_AREA_ID, 
+	SCH_AREA_NAME, SCH_ID, SCH_NAME, USR_ID, SVC_CODE, TAOCAN_ID, TAOCAN_NAME,
+	ONLINE_MONTH, OPEN_DATE,USR_TYPE, SEX, AGE, IS_4G, IS_UNLIMIT, IS_VNET, IS_KD, IS_DISCNT, 
+	DISCNT_ID, DISCNT_NAME, ACTVI_TYPE_ID, ACTVI_TYPE, ACTVI_PROD, ACTVI_PROD_NAME, 
+	ACTVI_EFF_DATE, ACTVI_EXP_DATE, ARPU, MOU, DOU, CALL_FREQ, GPRS_LEVEL_ID, GPRS_LEVEL,
+	VOICE_LEVEL_ID, VOICE_LEVEL, FEE_LEVEL_ID, FEE_LEVEL, FEE_DISCNT, TERM_BRND||TERM_TYP AS  termInfo
+	FROM BONC03.RP_SCH_USER_LABEL_M where STATIS_MONTH =#{statisMonth} and USR_ID= #{usrId}
+	</select>
+
+	
+	<select id="selectAll"  parameterType="java.util.Map" resultType = "com.bonc.school.dao.entity.SchoolUserDetail" >
+		SELECT a.STATIS_MONTH, a.AREA_ID, a.AREA_NAME, a.CNTY_ID, a.CNTY_NAME, a.SCH_AREA_ID, 
+	a.SCH_AREA_NAME, a.SCH_ID, a.SCH_NAME, a.USR_ID,  a.TAOCAN_ID, a.TAOCAN_NAME,
+	a.ONLINE_MONTH, a.OPEN_DATE, a.SEX, a.AGE, a.IS_4G, a.IS_UNLIMIT, a.IS_VNET, a.IS_KD, a.IS_DISCNT, 
+	a.DISCNT_ID, a.DISCNT_NAME, a.ACTVI_TYPE_ID, a.ACTVI_TYPE, a.ACTVI_PROD, a.ACTVI_PROD_NAME, 
+	a.ACTVI_EFF_DATE, a.ACTVI_EXP_DATE, a.ARPU, a.MOU, a.DOU, a.CALL_FREQ, a.GPRS_LEVEL_ID, a.GPRS_LEVEL,
+	a.VOICE_LEVEL_ID, a.VOICE_LEVEL, a.FEE_LEVEL_ID, a.FEE_LEVEL, a.FEE_DISCNT, a.TERM_BRND||a.TERM_TYP AS  termInfo,
+	a.APP_TYPE_ID,
+    a.APP_TYPE_NAME,
+    a.DISC_FEE_ID,
+    a.DISC_FEE_NAME
+	FROM BONC03.RP_SCH_USER_LABEL_M a
+	 JOIN BONC03.DIM_SCH_ID_INFO b ON a.SCH_ID=b.SCH_ID
+	 where a.STATIS_MONTH =#{statisMonth}
+	 AND b.UID= #{schoolId} 
+	<if test="actviTypeId != null and actviTypeId != ''">
+			and a.ACTVI_TYPE_ID like '%'||#{actviTypeId}||'%'
+	</if>
+	<if test="usrType != null and usrType != ''">
+			and a.USR_TYPE like '%'||#{usrType}||'%'
+	</if>
+	<if test="feeLevelId != null and feeLevelId != ''">
+			and a.FEE_LEVEL_ID like '%'||#{feeLevelId}||'%'
+	</if>
+	<if test="gprsLevelId != null and gprsLevelId != ''">
+			and a.GPRS_LEVEL_ID like '%'||#{gprsLevelId}||'%'
+	</if>
+	<if test="voiceLevelId != null and voiceLevelId != ''">
+			and a.VOICE_LEVEL_ID like '%'||#{voiceLevelId}||'%'
+	</if>
+	<if test="AppTypeIdList != null and AppTypeIdList.size()>0">
+	and
+		<foreach collection="AppTypeIdList" item="AppTypeIdList" index="index" open="("  separator="or" close=")">
+			 a.APP_TYPE_ID  =#{AppTypeIdList}
+			</foreach> 
+	</if>
+	<if test="discFeeId != null and discFeeId != ''">
+			and a.DISC_FEE_ID like '%'||#{discFeeId}||'%'
+	</if>
+	order by a.SVC_CODE
+	</select>
+	
+	<select id="findContractType" resultType="java.util.Map">
+		SELECT ACTVI_TYPE_ID, ACTVI_TYPE FROM BONC03.DIM_SCH_USER_LABEL_CONTRACT
+	</select>
+	
+	<select id="findStockAdditions" resultType="java.util.Map">
+		SELECT TYPE_ID, USR_TYPE FROM BONC03.DIM_SCH_USER_LABEL_ISNEW
+	</select>
+	
+	<select id="findIncomeFiling" resultType="java.util.Map">
+		SELECT FEE_LEVEL_ID, FEE_LEVEL FROM BONC03.DIM_SCH_USER_LABEL_ARPU
+	</select>
+	
+	<select id="findAPPFiling" resultType="java.util.Map">
+		SELECT APP_TYPE_ID, APP_TYPE_NAME FROM BONC03.DIM_SCH_USER_LABEL_APP
+	</select>
+	
+	<select id="findTaocanFiling" resultType="java.util.Map">
+		SELECT DISC_FEE_ID,DISC_FEE_NAME FROM  BONC03.DIM_SCH_USER_LABEL_DISC_FEE
+	</select>
+	
+	<select id="findFlowFiling" resultType="java.util.Map">
+		SELECT GPRS_LEVEL_ID, GPRS_LEVEL FROM BONC03.DIM_SCH_USER_LABEL_DOU
+	</select>
+	
+	<select id="findPhoneticFiling" resultType="java.util.Map">
+		SELECT VOICE_LEVEL_ID, VOICE_LEVEL FROM BONC03.DIM_SCH_USER_LABEL_MOU
+	</select>
+</mapper>

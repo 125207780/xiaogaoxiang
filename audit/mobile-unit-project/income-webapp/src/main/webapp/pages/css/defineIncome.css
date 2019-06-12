@@ -1,0 +1,81 @@
+/* 背景颜色渐变 */
+.linear{
+	background-image: linear-gradient(to top,#030c1d,#131977,#071436);
+}
+/*  按钮的格式 */
+.income-btn{
+	height: 28px;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 75px;
+    font-family: Regular;
+    border:none;
+    background:#1D308E;
+    color: #ffffff;
+}
+
+
+/*标签*/
+.income_Lable{
+	  font-size: 14px;
+	  font-family: Regular;
+	  color:#ffffff;
+}
+/**/
+.income_span{
+		font-size: 12px;
+		font-family: Regular;
+		color:#ffffff;
+}
+.income_p{
+		font-size: 14px;
+		font-family: Regular;
+		color:#38def0;
+}
+.second{
+		font-size: 14px;
+		font-family: Regular;
+		color:#38def0;
+}
+.third{
+		font-size: 14px;
+		font-family: Regular;
+		color:#38def0;
+}
+.nav-tabs{
+		background-color:#09153E;
+	
+}
+.income_a{
+	color:#fff !important;
+	border:none;
+	background-color:#014E83 !important;
+}
+.infoDetail .active .income_a{
+	
+	border:none !important;
+	background-color:#1BC9E2 !important;
+	color :#fff !important;
+}
+
+.title_font{
+	margin-left:15px;
+	font-size: 17px;
+	color: #ffffff;
+}
+.title_img{
+	 background: url("../images/img_title.png")  no-repeat ;
+	width: 322px;
+	height: 19px;
+	padding: 0px;
+	margin: 0px;
+	display: inline-block;
+}
+.frameDiv {
+	border: 1px solid #4e7fd3;
+	margin: 5px;
+
+}
+ .ui-jqgrid .ui-jqgrid-labels{
+	  background-color: #014e83;
+	 }

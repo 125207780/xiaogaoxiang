@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.login.dao.mapper.LoginMapper">
+	<select id="selectUserByLoginId" resultType="com.bonc.system.dao.entity.SysUser" parameterType="java.lang.String">
+		select 
+			USER_ID,CREATE_ID,LOGIN_ID,PASSWORD,ORG_ID,USER_NAME,USER_SEX,USER_MOBILE,USER_TELEPHONE,USER_MAIL,PWD_STATE,CREATE_TIME,UPDATE_TIME,USER_LEVEL,MEMO,EMP_NO,USER_STATE
+		from 
+			SYS_USER
+		where 
+			LOGIN_ID = #{loginId,jdbcType=VARCHAR}
+	</select>
+</mapper>

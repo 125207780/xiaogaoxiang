@@ -1,0 +1,374 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.GridUsrInfoMapper">
+
+	<select id="initDirectInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			CITY_CODE, CITY_NAME, CNTY_CODE, CNTY_NAME, GRID_CODE, GRID_NAME, JB_ID, LOGIN_ID, NAME, PHONE
+		FROM 
+			GRID_DIRECTOR_INFO_REPAIR
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+			</if>
+			<if test="orgLevel == 2">
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+		ORDER BY
+			CITY_NAME, CNTY_CODE, GRID_CODE
+	</select>
+	
+	<select id="initGridUsrInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			*
+		FROM 
+			GRID_USR_INFO_REPAIR
+		WHERE
+			1 = 1
+			<if test="orgLevel == 1">
+			</if>
+			<if test="orgLevel == 2">
+				AND CITY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 3">
+				AND CNTY_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgLevel == 4">
+				AND	GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+		ORDER BY
+			CITY_NAME, CNTY_CODE, GRID_CODE
+	</select>
+	
+	<delete id="deleteGridDirectorInfoRepair" parameterType="java.util.Map">
+		DELETE FROM GRID_DIRECTOR_INFO_REPAIR WHERE ORG_ID = #{ORG_ID} AND LOGIN_ID = #{LOGIN_ID}
+	</delete>
+	
+	<insert id="insertGridDirectorInfoRepair" parameterType="java.util.Map">
+		INSERT INTO 
+			GRID_DIRECTOR_INFO_REPAIR(
+				CITY_CODE, 
+				CITY_NAME, 
+				CNTY_CODE, 
+				CNTY_NAME, 
+				GRID_CODE,
+				GRID_NAME, 
+				JB_ID, 
+				LOGIN_ID, 
+				NAME, 
+				PHONE)
+		VALUES(
+			#{CITY_CODE,jdbcType=VARCHAR},
+			#{CITY_NAME,jdbcType=VARCHAR},
+			#{CNTY_CODE,jdbcType=VARCHAR},
+			#{CNTY_NAME,jdbcType=VARCHAR},
+			#{GRID_CODE,jdbcType=VARCHAR},
+			#{GRID_NAME,jdbcType=VARCHAR},
+			#{JB_ID,jdbcType=VARCHAR},
+			#{LOGIN_ID,jdbcType=VARCHAR},
+			#{NAME,jdbcType=VARCHAR},
+			#{PHONE,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<insert id="insertGridDirectorInfoRecord" parameterType="java.util.Map">
+		INSERT INTO 
+			GRID_DIRECTOR_INFO_RECORD(
+				CITY_CODE, 
+				CITY_NAME, 
+				CNTY_CODE, 
+				CNTY_NAME, 
+				GRID_CODE,
+				GRID_NAME, 
+				JB_ID, 
+				LOGIN_ID, 
+				NAME, 
+				PHONE,
+				CREATE_ID,
+				CREATE_DATE)
+		VALUES(
+			#{CITY_CODE,jdbcType=VARCHAR},
+			#{CITY_NAME,jdbcType=VARCHAR},
+			#{CNTY_CODE,jdbcType=VARCHAR},
+			#{CNTY_NAME,jdbcType=VARCHAR},
+			#{GRID_CODE,jdbcType=VARCHAR},
+			#{GRID_NAME,jdbcType=VARCHAR},
+			#{JB_ID,jdbcType=VARCHAR},
+			#{LOGIN_ID,jdbcType=VARCHAR},
+			#{NAME,jdbcType=VARCHAR},
+			#{PHONE,jdbcType=VARCHAR},
+			#{CREATE_ID,jdbcType=VARCHAR},
+			#{CREATE_DATE,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="getDirectDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			JB_ID
+			LOGIN_ID,
+			NAME,
+			PHONE
+		FROM 
+			GRID_DIRECTOR_INFO_REPAIR
+		WHERE 
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="getGridUsrDetail" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			DIRECTOR_NAME,
+			USR_NAME,
+			USR_TYPE,
+			USR_BOSS_CODE,
+			USR_PHONE,
+			USR_SEX,
+			USR_AGE,
+			USR_POUTLOOK,
+			USR_IDENTITY,
+			USR_RANK,
+			USR_BOSS_CHNL,
+			CHNL_TYPE,
+			MANA_MODEL,
+			ID_NUMBER,
+			GRID_ATTRIBUTE,
+			USR_MOLD
+		FROM 
+			GRID_USR_INFO_REPAIR
+		WHERE 
+			1 = 1
+			<choose>
+				<when test="grid != null and grid != ''">
+					AND GRID_CODE = #{grid}
+				</when>
+				<when test="town != null and town != ''">
+					AND CNTY_CODE = #{town}
+				</when>
+				<when test="city != null and city != ''">
+					AND CITY_CODE = #{city}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+	</select>
+	
+	<select id="selectGridUsrInfoRepairByUsrBoosCode" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			CITY_CODE,
+			CITY_NAME,
+			CNTY_CODE,
+			CNTY_NAME,
+			GRID_CODE,
+			GRID_NAME,
+			DIRECTOR_NAME,
+			USR_NAME,
+			USR_TYPE,
+			USR_BOSS_CODE,
+			USR_PHONE
+		FROM 
+			GRID_USR_INFO_REPAIR
+		WHERE 
+			USR_BOSS_CODE = #{bossCode}
+	</select>
+	
+	<insert id="insertGridUsrInfoRepair" parameterType="java.util.Map">
+		INSERT INTO 
+			GRID_USR_INFO_REPAIR(
+				CITY_CODE,
+				CITY_NAME,
+				CNTY_CODE,
+				CNTY_NAME,
+				GRID_CODE,
+				GRID_NAME,
+				DIRECTOR_NAME,
+				USR_NAME,
+				USR_TYPE,
+				USR_BOSS_CODE,
+				USR_PHONE,
+				USR_SEX,
+				USR_AGE,
+				USR_POUTLOOK,
+				USR_IDENTITY,
+				USR_RANK,
+				USR_BOSS_CHNL,
+				CHNL_TYPE,
+				MANA_MODEL,
+				ID_NUMBER,
+				GRID_ATTRIBUTE,
+				USR_MOLD)
+		VALUES(
+			#{CITY_CODE,jdbcType=VARCHAR},
+			#{CITY_NAME,jdbcType=VARCHAR},
+			#{CNTY_CODE,jdbcType=VARCHAR},
+			#{CNTY_NAME,jdbcType=VARCHAR},
+			#{GRID_CODE,jdbcType=VARCHAR},
+			#{GRID_NAME,jdbcType=VARCHAR},
+			#{DIRECTOR_NAME,jdbcType=VARCHAR},
+			#{USR_NAME,jdbcType=VARCHAR},
+			#{USR_TYPE,jdbcType=VARCHAR},
+			#{USR_BOSS_CODE,jdbcType=VARCHAR},
+			#{USR_PHONE,jdbcType=VARCHAR},
+			#{USR_SEX,jdbcType=INTEGER},
+			#{USR_AGE,jdbcType=VARCHAR},
+			#{USR_POUTLOOK,jdbcType=VARCHAR},
+			#{USR_IDENTITY,jdbcType=VARCHAR},
+			#{USR_RANK,jdbcType=VARCHAR},
+			#{USR_BOSS_CHNL,jdbcType=VARCHAR},
+			#{CHNL_TYPE,jdbcType=VARCHAR},
+			#{MANA_MODEL,jdbcType=VARCHAR},
+			#{ID_NUMBER,jdbcType=VARCHAR},
+			#{GRID_ATTRIBUTE,jdbcType=INTEGER},
+			#{USR_MOLD,jdbcType=INTEGER}
+		)
+	</insert>
+	
+	<select id="selectGridDirectorInfoRepairByOrgId" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT 
+			NAME
+		FROM 
+			GRID_DIRECTOR_INFO_REPAIR
+		WHERE 
+			GRID_CODE = #{orgId}
+	</select>
+	
+	<update id="updateGridUsrInfoRepair" parameterType="java.util.Map">
+		UPDATE 
+			GRID_USR_INFO_REPAIR
+		SET 
+			CITY_CODE = #{CITY_CODE,jdbcType=VARCHAR},
+			CITY_NAME = #{CITY_NAME,jdbcType=VARCHAR},
+			CNTY_CODE = #{CNTY_CODE,jdbcType=VARCHAR},
+			CNTY_NAME = #{CNTY_NAME,jdbcType=VARCHAR},
+			GRID_CODE = #{GRID_CODE,jdbcType=VARCHAR},
+			GRID_NAME = #{GRID_NAME,jdbcType=VARCHAR},
+			DIRECTOR_NAME = #{DIRECTOR_NAME,jdbcType=VARCHAR},
+			USR_NAME = #{USR_NAME,jdbcType=VARCHAR},
+			USR_TYPE = #{USR_TYPE,jdbcType=VARCHAR},
+			USR_PHONE = #{USR_PHONE,jdbcType=VARCHAR},
+			USR_SEX = #{USR_SEX,jdbcType=INTEGER},
+			USR_AGE = #{USR_AGE,jdbcType=VARCHAR},
+			USR_POUTLOOK = #{USR_POUTLOOK,jdbcType=VARCHAR},
+			USR_IDENTITY = #{USR_IDENTITY,jdbcType=VARCHAR},
+			USR_RANK = #{USR_RANK,jdbcType=VARCHAR},
+			USR_BOSS_CHNL = #{USR_BOSS_CHNL,jdbcType=VARCHAR},
+			CHNL_TYPE = #{CHNL_TYPE,jdbcType=VARCHAR},
+			MANA_MODEL = #{MANA_MODEL,jdbcType=VARCHAR},
+			ID_NUMBER = #{ID_NUMBER,jdbcType=VARCHAR},
+			GRID_ATTRIBUTE = #{GRID_ATTRIBUTE,jdbcType=INTEGER},
+			USR_MOLD = #{USR_MOLD,jdbcType=INTEGER}
+		WHERE
+			USR_BOSS_CODE = #{USR_BOSS_CODE,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="selectOrgnization" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			 c.ORG_ID AS city_code,
+			 c.NAME AS city_name,
+			 b.ORG_ID AS cnty_code,
+			 b.NAME AS cnty_name,
+			 a.ORG_ID AS grid_code,
+			 a.NAME AS grid_name 
+		FROM
+			grid.sys_org a
+		INNER JOIN grid.sys_org b ON
+			a.PID = b.ORG_ID
+		INNER JOIN grid.sys_org c ON
+			b.PID = c.ORG_ID
+		WHERE
+			a.ORGLEVEL = 4
+			AND b.ORGLEVEL = 3
+			AND c.ORGLEVEL = 2
+			AND c.ORG_ID = #{orgId}
+			ORDER BY city_name, cnty_name, grid_name
+	</select>
+	
+	<insert id="insertGridUsrInfoRecord" parameterType="java.util.Map">
+		INSERT INTO 
+			GRID_USR_INFO_RECORD(
+				CITY_CODE,
+				CITY_NAME,
+				CNTY_CODE,
+				CNTY_NAME,
+				GRID_CODE,
+				GRID_NAME,
+				DIRECTOR_NAME,
+				USR_NAME,
+				USR_TYPE,
+				USR_BOSS_CODE,
+				USR_PHONE,
+				USR_SEX,
+				USR_AGE,
+				USR_POUTLOOK,
+				USR_IDENTITY,
+				USR_RANK,
+				USR_BOSS_CHNL,
+				CHNL_TYPE,
+				MANA_MODEL,
+				ID_NUMBER,
+				CREATE_ID,
+				CREATE_DATE)
+		VALUES(
+			#{CITY_CODE,jdbcType=VARCHAR},
+			#{CITY_NAME,jdbcType=VARCHAR},
+			#{CNTY_CODE,jdbcType=VARCHAR},
+			#{CNTY_NAME,jdbcType=VARCHAR},
+			#{GRID_CODE,jdbcType=VARCHAR},
+			#{GRID_NAME,jdbcType=VARCHAR},
+			#{DIRECTOR_NAME,jdbcType=VARCHAR},
+			#{USR_NAME,jdbcType=VARCHAR},
+			#{USR_TYPE,jdbcType=VARCHAR},
+			#{USR_BOSS_CODE,jdbcType=VARCHAR},
+			#{USR_PHONE,jdbcType=VARCHAR},
+			#{USR_SEX,jdbcType=VARCHAR},
+			#{USR_AGE,jdbcType=INTEGER},
+			#{USR_POUTLOOK,jdbcType=VARCHAR},
+			#{USR_IDENTITY,jdbcType=VARCHAR},
+			#{USR_RANK,jdbcType=VARCHAR},
+			#{USR_BOSS_CHNL,jdbcType=VARCHAR},
+			#{CHNL_TYPE,jdbcType=VARCHAR},
+			#{MANA_MODEL,jdbcType=VARCHAR},
+			#{ID_NUMBER,jdbcType=VARCHAR},
+			#{CREATE_ID,jdbcType=VARCHAR},
+			#{CREATE_DATE,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="selectGridUsrChnlInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			USR_BOSS_CHNL,
+			USR_BOSS_CHNL_TYPE
+		FROM 
+			GRID_USR_INFO_BOSS_CHNL
+		WHERE 
+			USR_BOSS_CODE = #{bossCode}
+	</select>
+</mapper>

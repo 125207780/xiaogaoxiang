@@ -1,0 +1,27 @@
+@CHARSET "UTF-8";
+body{margin:0;padding:0;font-size:14px;background:#fff;}
+.img{
+	background:url(../img/cs.png) left no-repeat;
+	position:relative;
+	z-index:2;
+	width:540px;
+	height:0;
+	margin:110px auto 15px;
+	padding:230px 0 0;
+	overflow:hidden;
+	xxxxborder:1px solid;
+	
+}
+
+.tit {
+	text-align: center; 
+	font-size: 15px; 
+	color: #666; 
+	margin-top:-170px;
+	margin-left:165px;
+}
+.num{
+	font-size:18px; 
+	font-weight:bold;
+	color:#7cc228;
+}

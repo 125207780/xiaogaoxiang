@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.OfficeBuildingAndGovernmentUnitMapper">
+
+	<!-- 写字楼基础信息 -->
+	<select id="getOfficeBuildingInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			*
+		FROM 
+			station_info_detail	
+		WHERE 
+			STATION_CODE = #{stationId,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 政府单位基础信息 -->
+	<select id="getGovernmentUnitInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			*
+		FROM 
+			station_info_detail	
+		WHERE 
+			STATION_CODE = #{stationId,jdbcType=VARCHAR}
+	</select>
+	
+</mapper>

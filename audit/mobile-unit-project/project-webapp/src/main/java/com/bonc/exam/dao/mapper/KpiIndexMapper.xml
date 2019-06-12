@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bonc.exam.dao.mapper.KpiIndexMapper">
+	<resultMap id="KpiIndex" type="com.bonc.exam.dao.entity.KpiIndex">
+		<result column="kpi_id" jdbcType="VARCHAR" property="kpiId" />
+		<result column="kpi_type" jdbcType="VARCHAR" property="kpiType" />
+		<result column="kpi_name" jdbcType="VARCHAR" property="kpiName" />
+		<result column="kpi_weight" jdbcType="INTEGER" property="kpiWeight" />
+		<result column="kpi_define" jdbcType="VARCHAR" property="kpiDefine" />
+		<result column="cycle_type" jdbcType="VARCHAR" property="cycleType" />
+	</resultMap>
+	
+	<resultMap id="examModelKpi" type="com.bonc.exam.dao.entity.ExamModelKpi">
+		<result column="id" jdbcType="VARCHAR" property="id" />
+		<result column="kpi_id" jdbcType="VARCHAR" property="kpiId" />
+		<result column="kpi_rolejson" jdbcType="VARCHAR" property="kpiRoleJson" />
+		<result column="kpi_type" jdbcType="VARCHAR" property="kpiType" />
+		<result column="kpi_name" jdbcType="VARCHAR" property="kpiName" />
+		<result column="kpi_weight" jdbcType="VARCHAR" property="kpiWeight" />
+		<result column="kpi_define" jdbcType="VARCHAR" property="kpiDefine" />
+		<result column="cycle_type" jdbcType="VARCHAR" property="cycleType" />
+		<result column="kpi_rolestr" jdbcType="VARCHAR" property="kpiRoleStr" />
+		<result column="exam_id" jdbcType="VARCHAR" property="examId" />
+	</resultMap>
+	
+	<resultMap id="examModelObj" type="com.bonc.exam.dao.entity.ExamModelObj">
+		<result column="exam_id" jdbcType="VARCHAR" property="examId" />
+		<result column="object_id" jdbcType="VARCHAR" property="objectId" />
+		<result column="object_type" jdbcType="VARCHAR" property="objectType" />
+	</resultMap>
+	
+	
+	<select id="selectKpiGrid" parameterType="java.util.Map" resultType="java.util.Map" >
+		select KPI_TYPE,KPI_NAME,KPI_WEIGHT,KPI_DEFINE 
+			,CYCLE_TYPE,KPI_ID,TARGET_VALUE
+			from EVALUATION_KPI
+			where cycle_type = #{cycle}
+			AND STATUS = 'S'
+			AND ORG_ID = #{orgId}
+			<if test="index != null">
+				AND kpi_type = #{index}	
+			</if>	
+			
+	</select>
+	
+	<insert id="insertExamKpi" parameterType="java.util.List">
+		
+			 INSERT INTO  EVALUATION_MODEL_KPI
+				(ID,KPI_ID,KPI_ROLEJSON,KPI_TYPE,KPI_NAME, 
+				KPI_WEIGHT,KPI_DEFINE,CYCLE_TYPE,KPI_ROLESTR,EXAM_ID,TARGET_VALUE)
+			VALUES 
+			<if test="list != null and list.size != ''">
+				<foreach item="item" index="index" collection="list" separator=",">  
+				(#{item.id,jdbcType=VARCHAR},#{item.KPI_ID,jdbcType=VARCHAR},#{item.KPI_ROLEJSON,jdbcType=VARCHAR},
+				#{item.KPI_TYPE,jdbcType=VARCHAR},#{item.KPI_NAME,jdbcType=VARCHAR},#{item.KPI_WEIGHT,jdbcType=VARCHAR},
+				#{item.KPI_DEFINE,jdbcType=VARCHAR},#{item.CYCLE_TYPE,jdbcType=VARCHAR},#{item.KPI_ROLESTR,jdbcType=VARCHAR},
+				#{item.examId,jdbcType=VARCHAR},#{item.TARGET_VALUE,jdbcType=DOUBLE})
+				</foreach>  
+			</if>
+	</insert>
+	
+	<insert id="insertObj" parameterType="java.util.List">
+			insert into EVALUATION_MODEL_OBJ
+			(EXAM_ID, OBJECT_ID, OBJECT_TYPE)
+			values	
+			<if test="list != null and list.size != ''">
+			<foreach item="item" index="index" collection="list" separator=",">  												     
+			(#{item.examId,jdbcType=VARCHAR},#{item.objNameStr,jdbcType=VARCHAR},#{item.objectType,jdbcType=VARCHAR})
+			</foreach>
+			</if>
+	</insert>
+
+	<insert id="insertExamModel" parameterType="java.util.Map">
+			insert into EXAM_MODEL
+				(ID, CYCLETYPE, CREATETIME, CREATEPERSON, TEMPLATEDESCRIPTION, 
+				CREATEOBJECT, STARTDATE, ENDDATE, GRIDNAME,ORG_ID)
+			values
+				(#{examId,jdbcType=VARCHAR},#{cycleType,jdbcType=VARCHAR},#{currentDate,jdbcType=VARCHAR},#{createPerson,jdbcType=VARCHAR},
+				#{desc,jdbcType=VARCHAR},#{objectType,jdbcType=VARCHAR},#{startDate,jdbcType=VARCHAR},
+				#{endDate,jdbcType=VARCHAR},#{gridNameCode,jdbcType=VARCHAR},#{orgId,jdbcType=VARCHAR}) 
+	</insert>
+	
+	<insert id="insertObjType" parameterType="java.util.Map">
+		insert into EVALUATION_MODEL_OBJ
+			(EXAM_ID, OBJECT_ID, OBJECT_TYPE)
+			values													     
+			(#{examId,jdbcType=VARCHAR},#{objNameStr,jdbcType=VARCHAR},#{objectType,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="selectKpiTypeByOrgId" parameterType="java.lang.String"
+				resultType="java.util.Map">
+			SELECT  DISTINCT(KPI_TYPE) 
+				FROM EVALUATION_KPI WHERE ORG_ID =  #{orgId}
+	</select>
+	
+
+</mapper>

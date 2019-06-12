@@ -1,0 +1,58 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="com.bonc.income.dao.mapper.Page6Mapper" >
+ 
+	<select id="selectDay" resultType="java.util.Map" parameterType="java.util.Map">
+   			SELECT 
+  			T.CREATE_TIME, T.AREA_ID, T.AREA_NAME, T.FEE_DATE, 
+			CAST(T.REAL_FEE/10000 AS DECIMAL(15,2)) AS REAL_FEE, 
+			CAST(T.FORE_FEE/10000 AS DECIMAL(15,2)) AS FORE_FEE, 
+			CAST((T.FORE_FEE-nvl(T.REAL_FEE,0))/10000 AS DECIMAL(15,2)) as fee_fx,
+	   		CASE WHEN NVL(T.REAL_FEE,0) = 0 AND NVL(T.FORE_FEE,0) = 0 THEN 0 
+			WHEN NVL(T.REAL_FEE,0) = 0 AND NVL(T.FORE_FEE,0) > 0 THEN -1 
+			WHEN NVL(T.REAL_FEE,0) != 0 THEN (NVL(T.FORE_FEE,0) - NVL(T.REAL_FEE,0)) * 1.0000 / NVL(T.REAL_FEE,0) ELSE 0 END fee_fx_ra   
+  		FROM 
+  			BONC03.MK_ACCT_FEE_PORTRAIT_D T
+ 		WHERE 
+ 			T.STATIS_DATE = (SELECT MAX(STATIS_DATE) FROM BONC03.MK_ACCT_FEE_PORTRAIT_D)
+			<if test="areaId!=null and areaId!=''">
+				AND T.AREA_ID = #{areaId}
+			</if>
+		   <if test="feeDate!=null and feeDate!=''">
+				AND T.FEE_DATE =#{feeDate}
+		   </if>
+   		ORDER BY 
+   			T.FEE_DATE
+
+   			
+ 	</select>
+	<select id="selectMonth"  resultType="java.util.Map" parameterType="java.util.Map">   		
+    SELECT 
+			T.CREATE_DATE, T.AREA_ID, T.AREA_NAME, T.FEE_DATE, T.FEE_TYPE_CODE, T.FEE_TYPE_NAME,   
+       		CAST(NVL(T.REAL_FEE,0)/10000 AS DECIMAL(15,2)) REAL_FEE,
+			CAST(NVL(T.FORE_FEE,0)/10000 AS DECIMAL(15,2)) FORE_FEE, 
+			CAST((NVL(T.FORE_FEE,0) - NVL(T.REAL_FEE,0))/10000 AS DECIMAL(15,2)) as fee_fx ,  
+	   		CASE WHEN NVL(T.REAL_FEE,0) = 0 AND NVL(T.FORE_FEE,0) = 0 THEN 0 
+			WHEN NVL(T.REAL_FEE,0) = 0 AND NVL(T.FORE_FEE,0) > 0 THEN -1 
+			WHEN NVL(T.REAL_FEE,0) != 0 THEN (NVL(T.FORE_FEE,0)-NVL(T.REAL_FEE,0))*1.0000/NVL(T.REAL_FEE,0) ELSE 0 END fee_fx_ra   
+  		FROM 
+  			BONC03.MK_ACCT_FEE_PORTRAIT_M T
+ 		WHERE 
+ 			T.STATIS_MONTH = (SELECT MAX(STATIS_MONTH) FROM BONC03.MK_ACCT_FEE_PORTRAIT_M)
+ 			<if test="areaId!=null and areaId!=''">
+ 				AND T.AREA_ID = #{areaId}
+ 			</if>
+   		AND 
+   			<![CDATA[t.FEE_DATE >= concat(TRIM(char(STATIS_MONTH/100)) , '01' )]]>
+	   <if test="feeType!=null and feeType!=''">
+	       AND T.FEE_TYPE_CODE =#{feeType}
+	   </if>
+	   <if test="feeDate!=null and feeDate!=''">
+		   AND T.FEE_DATE =#{feeDate}
+	   </if>
+    	ORDER BY 
+    		T.FEE_DATE
+	</select>
+	<select id="getFreeType"  resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT FEE_TYPE_CODE, FEE_TYPE_NAME FROM BONC03.DIM_FEE_TYPE ORDER BY FEE_TYPE_CODE
+	</select>
+ </mapper>

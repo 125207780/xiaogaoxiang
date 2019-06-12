@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.login.dao.mapper.IndexMapper">
+	<!-- <select id="selectTrend" resultType="java.util.Map" parameterType="java.lang.String">
+		select
+			MONTH_ID as "month",to_char(nvl(sum(COLUMN1),0)) as "count",to_char(nvl(sum(COLUMN2),0)) as "val"
+		from
+			${tableName} 
+		where
+			<![CDATA[ to_number(MONTH_ID)<=]]> to_number(#{date})
+		and
+			to_number(MONTH_ID)>= to_number(#{oleDate})
+		and 
+			INDEX_LVL_1 in (${auditTypes})
+		<if test="orgId!=null and orgId!=''">
+			and AREA_ID=#{orgId}
+		</if>
+		<if test="where!=null and where!=''">
+			and ${where}
+		</if>
+		group by 
+			MONTH_ID
+		order by 
+			to_number(MONTH_ID)
+	</select> -->
+	<!-- <select id="selectOrgCount" resultType="java.util.Map" parameterType="java.lang.String">
+		select
+    		to_char(count(distinct AREA_ID)) "countOrg"
+    	from
+     		${tableName} 
+    	where
+      		MONTH_ID = #{date}
+      	<if test="where!=null and where!=''">
+			and ${where}
+		</if>
+	</select> -->
+	<!-- <select id="selectAuditByCule" resultType="java.util.Map" parameterType="java.lang.String">
+		select t1."add",t1."cule",t2.name "name" from(
+			select 
+				AREA_ID "add",
+				to_char(nvl(sum(COLUMN1),0)) "cule"
+			from 
+				${tableName}  
+			where 
+				MONTH_ID = #{date}
+			and 
+				INDEX_LVL_1 in (${auditTypes})
+			<if test="where!=null and where!=''">
+				and ${where}
+			</if>
+			group by 
+				AREA_ID 
+		) t1 join sys_org t2 on t1."add"=t2.ORG_ID
+		order by 
+			to_number("cule") desc
+	</select> -->
+	<!-- <select id="selectAuditByAmount" resultType="java.util.Map" parameterType="java.lang.String">
+		select t1."add",t1."amount",t2.name "name" from(
+			select 
+				AREA_ID "add",
+				to_char(nvl(sum(COLUMN2),0)) "amount"
+			from 
+				${tableName} 
+			where 
+				MONTH_ID = #{date}
+			and 
+				INDEX_LVL_1 in (${auditTypes})
+			<if test="where!=null and where!=''">
+				and ${where}
+			</if>
+			group by 
+				AREA_ID 
+		) t1 join sys_org t2 on t1."add"=t2.ORG_ID
+		order by 
+			to_number("amount") desc
+	</select> -->
+	<!-- <select id="selectMapData" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			t1.org_id "add",to_number(nvl(t2."value",0)) "value",to_number(nvl(t2."number",0)) "number",t1.name "name" 
+		from
+			(select 
+				org_id,name from sys_org_area where org_id in (${citys}))t1
+			left join(
+				select 
+					AREA_ID "add",
+					to_char(nvl(sum(COLUMN1),0)) "value",
+					to_char(nvl(sum(COLUMN2),0)) "number"
+				from 
+					${tableName} 
+				where 
+					MONTH_ID = #{date}
+				and
+					AREA_ID in (${citys})
+				and 
+					INDEX_LVL_1 in (${auditTypes})
+				<if test="where!=null and where!=''">
+					and ${where}
+				</if>
+				group by 
+					AREA_ID 
+			)t2 on t1.org_id = t2."add"
+		order by 
+			to_number("value") desc
+	</select> -->
+	<!-- <select id="selectTopModel" resultType="java.util.Map" parameterType="java.lang.String">
+		select * from (
+			select  
+				a."model",a."cule",a."name",to_char((a."cule"-b."cule")/b."cule") "mom" 
+			from (
+				select 
+					t1."model",t1."cule",t2.MODEL_DESC "name" 
+				from(
+					select 
+						* 
+					from(
+						select 
+							INDEX_LVL_1 "model",to_char(nvl(sum(COLUMN1),0)) "cule"
+        				from 
+          					${tableName} 
+        				where 
+          					MONTH_ID =#{date}
+        				and 
+          					INDEX_LVL_1 in (${auditTypes})
+          				<if test="where!=null and where!=''">
+							and ${where}
+						</if>
+						<if test="orgId!=null and orgId!=''">
+							and AREA_ID=#{orgId}
+						</if>
+         				group by 
+							INDEX_LVL_1 
+					)
+				) t1 
+				join 
+					aud_audit_model t2 
+				on 
+					t1."model" = t2.MODEL_ID 
+				where 
+					t2.AUDIT_TYPE=#{auditType} 
+				and 
+					t2.model_status='3'
+			) a left join(
+				select 
+					t1."model",t1."cule",t2.MODEL_DESC "name" 
+				from(
+      				select 
+      					* 
+      				from(
+        				select 
+          					INDEX_LVL_1 "model",to_char(nvl(sum(COLUMN1),0)) "cule"
+        				from 
+          					${tableName} 
+        				where 
+          					MONTH_ID =#{oleDate}
+       					and 
+          					INDEX_LVL_1 in (${auditTypes})
+          				<if test="where!=null and where!=''">
+							and ${where}
+						</if>
+						<if test="orgId!=null and orgId!=''">
+							and AREA_ID=#{orgId}
+						</if>
+        				group by 
+							INDEX_LVL_1 
+					)
+    			) t1 
+    			join 
+    				aud_audit_model t2
+    			on 
+    				t1."model" = t2.MODEL_ID
+				where 
+					t2.AUDIT_TYPE=#{auditType}
+				and 
+					t2.model_status='3'
+    		) b 
+    		on 
+    			a. "model" = b."model" 
+    		order by  
+    			to_number("mom") desc,to_number("cule")desc 
+    	)where rownum = 1
+	</select> -->
+	<!-- <select id="selectUpTopModel" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			INDEX_LVL_1 "model",
+			to_char(nvl(sum(COLUMN1),0)) "cule"
+		from 
+			${tableName} 
+		where 
+			MONTH_ID = #{date}
+		and 
+			INDEX_LVL_1 = #{conType}
+		and 
+			INDEX_LVL_1 in (${auditTypes})
+		<if test="where!=null and where!=''">
+			and ${where}
+		</if>
+		<if test="orgId!=null and orgId!=''">
+			and AREA_ID=#{orgId}
+		</if>
+		group by 
+			INDEX_LVL_1 
+	</select> -->
+	<!-- <select id="selectYearTopModel" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			MONTH_ID "date",
+			to_char(nvl(sum(COLUMN1),0))  "cule"
+		from 
+			${tableName} 
+		where 
+			<![CDATA[ to_number(MONTH_ID)<=]]> to_number(#{date})
+		and
+			to_number(MONTH_ID)>= to_number(#{oleDate})
+		and 
+			INDEX_LVL_1 = #{conType}
+		and 
+			INDEX_LVL_1 in (${auditTypes})
+		<if test="where!=null and where!=''">
+			and ${where}
+		</if>
+		<if test="orgId!=null and orgId!=''">
+			and AREA_ID=#{orgId}
+		</if>
+		group by 
+			MONTH_ID 
+		order by
+			to_number(MONTH_ID)
+	</select> -->
+	<!-- <select id="selectTopOrg" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			* 
+		from(
+			select 
+				a."add",a."cule",a."name" ,to_char((a."cule"-b."cule")/b."cule") "mom"
+			from(
+				select 
+					t1."add",t1."cule",t2.name "name" 
+				from(
+					select 
+						* 
+					from(
+						select 
+							AREA_ID "add",to_char(nvl(sum(COLUMN1),0)) "cule"
+						from 
+							${tableName} 
+						where 
+							MONTH_ID = #{date}
+						and 
+							INDEX_LVL_1 in (${auditTypes})
+						<if test="where!=null and where!=''">
+							and ${where}
+						</if>
+						group by 
+							AREA_ID 
+					)
+				) t1 
+				join 
+					sys_org t2
+				on
+					t1."add"=t2.ORG_ID
+			)a left join(
+				select 
+					t1."add",t1."cule",t2.name "name" 
+				from(
+					select 
+						* 
+					from(
+						select 
+							AREA_ID "add",to_char(nvl(sum(COLUMN1),0)) "cule"
+						from 
+							${tableName} 
+						where 
+							MONTH_ID = #{oleDate}
+						and 
+							INDEX_LVL_1 in (${auditTypes})
+						<if test="where!=null and where!=''">
+							and ${where}
+						</if>
+						group by 
+							AREA_ID 
+					)
+				) t1 
+				join 
+					sys_org t2
+				on 
+					t1."add"=t2.ORG_ID
+			)b 
+			on 
+				a."add"=b."add"
+			order by 
+				to_number("mom") desc,to_number("cule")desc
+		)
+		<choose>
+	        <when test="orgId!=null and orgId!=''">
+	        	where  "add"=#{orgId}
+	        </when>
+	        <otherwise>
+	        	where rownum = 1
+	        </otherwise>
+    	</choose>
+	</select> -->
+	<!-- <select id="selectUpTopOrg" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			AREA_ID "add",
+			to_char(nvl(sum(COLUMN1),0)) "cule"
+		from 
+			${tableName} 
+		where 
+			MONTH_ID = #{date}
+		and 
+			AREA_ID = #{add}
+		and 
+			INDEX_LVL_1 in (${auditTypes})
+		<if test="where!=null and where!=''">
+			and ${where}
+		</if>
+		group by 
+			AREA_ID 
+	</select> -->
+	<!-- <select id="selectYearTopOrg" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			MONTH_ID "date",
+			to_char(nvl(sum(COLUMN1),0))  "cule"
+		from 
+			${tableName} 
+		where 
+			<![CDATA[ to_number(MONTH_ID)<=]]> to_number(#{date})
+		and
+			to_number(MONTH_ID)>= to_number(#{oleDate})
+		and 
+			AREA_ID = #{add}
+		and 
+			INDEX_LVL_1 in (${auditTypes})
+		<if test="where!=null and where!=''">
+			and ${where}
+		</if>
+		group by 
+			MONTH_ID 
+		order by
+			to_number(MONTH_ID)
+	</select> -->
+	<select id="selectAuditModel" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			MODEL_ID as "modelId" , 
+			MODEL_DESC as "modelName"
+		from 
+			aud_audit_model
+		where 
+			MODEL_STATUS != '-1'
+		and
+			AUDIT_TYPE =  #{auditType}
+	</select>
+	<select id="selectAuditTypes" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			distinct  MODEL_TYPE "modelType",
+			MODEL_TYPE_DESC "modelDesc"
+		from 
+			dim_index_type  
+		order by 
+			to_number("modelType")
+	</select>
+	<select id="selectInefficiencyOrg" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+		t1."orgId",t2.name "name" 
+		from(
+			select "orgId" from (
+				select 
+					a.DATA_AREA_ID "orgId",nvl(( b.numb/a.numb),0) "nu"
+				from(
+					select 
+						DATA_AREA_ID ,count(1) numb 
+					from 
+						WF_WORKORDER
+					where 
+						AUDIT_CYCLE = #{date}
+					<if test="orgId!=null and orgId!=''">
+						and DATA_AREA_ID=#{orgId}
+					</if>
+					group by 
+						DATA_AREA_ID 
+				) a Left  join(
+					select 
+						DATA_AREA_ID ,count(1) numb 
+					from 
+						WF_WORKORDER
+					where 
+						AUDIT_CYCLE = #{date}
+					and 
+						status ='3' 
+					<if test="orgId!=null and orgId!=''">
+						and DATA_AREA_ID=#{orgId}
+					</if>
+					group by 
+						DATA_AREA_ID 
+				) b 
+				on 
+					a.DATA_AREA_ID = b.DATA_AREA_ID
+				order by 
+					to_number("nu") 
+			)
+			<choose>
+		        <when test="orgId!=null and orgId!=''">
+		        	where  "orgId"=#{orgId}
+		        </when>
+		        <otherwise>
+		        	where rownum = 1
+		        </otherwise>
+    		</choose>
+		)t1 join sys_org t2 on t1."orgId" = t2.ORG_ID
+	</select>
+	<select id="selectInefficiencyOrgUntreatedWorkorder" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			DATA_AREA_ID "org_id",to_char(nvl(count(1),0)) "count" 
+		from 
+			WF_WORKORDER
+		where
+			AUDIT_CYCLE = #{date} 
+		and 
+			DATA_AREA_ID=#{orgId} 
+		and 
+     		status!='3'
+		group by 
+			DATA_AREA_ID 
+	</select>
+	<select id="selectYearTopOrder" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+	      AUDIT_CYCLE "date",to_char(nvl(count(1),0)) "count" 
+	    from 
+	      WF_WORKORDER
+	    where
+	      <![CDATA[ to_number(AUDIT_CYCLE)<=]]> to_number(#{date})
+		and
+			to_number(AUDIT_CYCLE)>= to_number(#{oleDate})
+	    and 
+	      DATA_AREA_ID=#{orgId}
+	    and 
+	      status!='3'
+	    group by 
+	      AUDIT_CYCLE 
+     </select>
+     <!-- <select id="selectAuditModelCule" resultType="java.lang.Integer" parameterType="java.lang.String">
+     	select
+			sum(COLUMN1)
+		from
+			${tableName} 
+		where
+			MONTH_ID= #{date,jdbcType=VARCHAR}
+		and 
+			INDEX_LVL_1 in (${auditTypes})
+		<if test="where!=null and where!=''">
+			and ${where}
+		</if>
+		group by 
+			MONTH_ID
+     </select> -->
+</mapper>

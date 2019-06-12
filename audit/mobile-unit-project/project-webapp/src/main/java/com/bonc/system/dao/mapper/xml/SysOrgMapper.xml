@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.system.dao.mapper.SysOrgMapper">
+
+	<select id="selectList" parameterType="com.bonc.system.dao.entity.SysOrg" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT
+			t.org_id orgId, 
+			t.pid pid, 
+			t.name name, 
+			t.memo memo, 
+			t.display_order displayOrder, 
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		FROM 
+			SYS_ORG t 
+		WHERE 
+			1=1
+		<if test="name != null and name != ''">
+			AND t.name like '%'||#{name}||'%'
+		</if>			
+		<if test="orgId != null and orgId != ''">
+			AND t.org_id = #{orgId}
+		</if>
+		<if test="pid != null and pid != ''">
+			AND t.pid = #{pid}
+		</if>
+		<!-- <if test="orgLevel != null and orgLevel != ''">
+			AND t.orglevel = #{orgLevel}
+		</if> -->
+	
+		<if test="treeCode != null and treeCode != ''">
+			AND t.tree_code like '%'||#{treeCode}||'%'
+		</if>
+		ORDER BY 
+			t.orglevel, t.display_order
+	</select>
+	
+	<select id="selectSysOrgById" parameterType="java.lang.String" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT 
+			t.org_id orgId, 
+			t.pid pid, 
+			t.tenant_id tenantId, 
+			t.name name, 
+			t.memo memo, 
+			t.display_order displayOrder, 
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		FROM 
+			SYS_ORG t 
+		WHERE 
+			t.org_id = #{orgId}
+		ORDER BY 
+			DISPLAY_ORDER
+	</select>
+	
+	<!-- 根据网格名称查询组织水平为4的网格组织信息 -->
+	<select id="checkGridName" parameterType="java.util.List" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT 
+			* 
+		FROM 
+			SYS_ORG 
+		WHERE 
+			name IN 
+			<foreach collection="gridNames" item="name" open="(" close=")" separator="," index="index">
+   				#{name}
+			</foreach>
+		AND 
+			orglevel = 4
+	</select>
+	
+	<insert id="insertSysOrg" parameterType="com.bonc.system.dao.entity.SysOrg">
+			INSERT INTO 
+				sys_org(ORG_ID, pid, tenant_id, name, memo, display_order, orglevel, tree_code) 
+			values(
+				#{orgId}, #{pid}, #{tenantId,jdbcType=VARCHAR}, #{name}, #{memo,jdbcType=VARCHAR}, 
+				#{displayOrder,jdbcType=INTEGER}, #{orgLevel,jdbcType=INTEGER}, #{treeCode})
+	</insert>
+	
+	<update id="updateSysOrg" parameterType="com.bonc.system.dao.entity.SysOrg">
+		UPDATE sys_org SET name = #{name}, display_order = #{displayOrder} WHERE org_id = #{orgId}
+	</update>
+	
+	<delete id="deleteSysOrgByTreeCode" parameterType="java.lang.String">
+		DELETE FROM sys_org WHERE tree_code LIKE '%'||#{treeCode}||'%'
+	</delete>
+	
+	<select id="selectSysOrgUserOne" resultType="java.lang.String" parameterType="java.lang.String" >
+	    SELECT USER_ID FROM SYS_USER WHERE ORG_ID = #{orgId}
+	</select>
+	
+	<delete id="deleteSysOrgUser" parameterType="java.lang.String">
+	    DELETE FROM SYS_USER WHERE ORG_ID = #{orgId}
+  	</delete>
+  	
+  	<delete id="deleteSysOrgUserRole" parameterType="java.lang.String">
+	    DELETE FROM SYS_ROLE_USER WHERE USER_ID = #{userId}
+  	</delete>
+  	
+  	<!-- 根据组织编码，查询该组织下基站最大排序号的组织信息 -->
+  	<select id="selectMaxDisplayOrderSysOrgInfo" parameterType="java.lang.String"  resultType="com.bonc.system.dao.entity.SysOrg">
+  		SELECT 
+			org_id orgId, pid pid, tenant_id tenantId, name name, memo memo, display_order displayOrder, orglevel orgLevel, tree_code treeCode 
+		FROM 
+			SYS_ORG 
+		WHERE 
+			PID = #{orgId} 
+		AND 
+			ORGLEVEL = 4 
+		ORDER BY 
+			DISPLAY_ORDER DESC 
+		FETCH FIRST 1 ROWS ONLY
+  	</select>
+  	
+  	<!-- 查询orgId下一级的子节点信息 -->
+  	<select id="selectNextChildrenSysOrg" parameterType="java.lang.String" resultType="com.bonc.system.dao.entity.SysOrg">
+  		SELECT 
+  			org_id orgId
+  		FROM 
+  			SYS_ORG
+  		WHERE
+  			PID = #{orgId,jdbcType=VARCHAR}
+  	</select>
+  	
+  	<!-- 查询市一级的组织信息 -->
+  	<select id="selectCityInfo" resultType="com.bonc.system.dao.entity.SysOrg">
+  		SELECT
+  			ORG_ID orgId, MEMO memo
+  		FROM
+  			SYS_ORG
+  		WHERE 
+  			<![CDATA[ ORGLEVEL = 3 ]]>
+  		AND 
+  			(MEMO IS NOT NULL AND <![CDATA[ MEMO <> '' ]]>)
+  		AND
+  			PID = '19127'
+  	</select>
+  	
+  	<!-- SYS_ORG_POLYGON表中，根据根据orgid更新shape字段 -->
+	<update id="updateSysOrgDetail" parameterType="com.bonc.gridinfo.dao.entity.StationInfo">
+		UPDATE
+			SYS_ORG_DETAIL
+		SET 
+			SHAPE = #{shape}
+		WHERE 
+			ORG_ID = #{orgId}
+	</update>
+	
+	<!-- 根据orgId删除对应的行政边界区域信息 -->
+	<delete id="deleteSysOrgDetailByOrgId" parameterType="java.lang.String">
+		DELETE FROM SYS_ORG_DETAIL WHERE ORG_ID = #{orgId}
+	</delete>
+	
+	<!-- 新增SYS_ORG_DETAIL信息 -->
+	<insert id="insertSysOrgDetail" parameterType="java.lang.String">
+		INSERT INTO 
+			SYS_ORG_DETAIL(
+				ORG_ID, 
+				SHAPE, 
+				MAXLNG, 
+				MINLNG, 
+				MAXLAT, 
+				MINLAT, 
+				CPLNG, 
+				CPLAT, 
+				COLOR)
+		VALUES(
+			#{orgId},
+			#{shape},
+			#{maxlng},
+			#{minlng},
+			#{maxlat},
+			#{minlat},
+			#{cplng},
+			#{cplat},
+			#{color}
+		)
+	</insert>
+	<!-- selectSysOrgDetailByOrgId -->
+	<select id="selectSysOrgDetailByOrgId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT ORG_ID, SHAPE FROM SYS_ORG_DETAIL WHERE ORG_ID = #{orgId}
+	</select>
+	
+	<!-- selectAllSysOrg -->
+	<select id="selectAllSysOrg" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT 
+			org_id orgId, pid pid, tenant_id tenantId, name name, memo memo, display_order displayOrder, orglevel orgLevel, tree_code treeCode 
+		FROM
+			SYS_ORG
+	</select>
+	
+	<select id="getChildrenSysOrgByOrgId" parameterType="java.lang.String" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT ORG_ID orgId, NAME name, ORGLEVEL orgLevel FROM SYS_ORG WHERE PID = #{orgId} ORDER BY DISPLAY_ORDER
+	</select>
+	
+	<select id="getParentSysOrgByOrgId" parameterType="java.lang.String" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT
+			ORG_ID orgId, NAME name, ORGLEVEL orgLevel
+		FROM 
+			SYS_ORG
+		WHERE 
+			ORG_ID = #{pid}
+		ORDER BY
+			DISPLAY_ORDER
+	</select>
+	
+	<select id="selectCntySysOrg" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT ORG_ID orgId, NAME name, ORGLEVEL orgLevel FROM SYS_ORG WHERE ORGLEVEL = 3 ORDER BY PID
+	</select>
+	
+	<select id="getChildrenSysOrgByOrgIds" parameterType="java.util.Map" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT 
+			s.ORG_ID orgId, s.NAME name, s.ORGLEVEL orgLevel 
+		FROM 
+			SYS_ORG s
+		<if test="gridType != null and gridType != ''">
+		, GRID_DETAIL g
+		</if>
+		WHERE
+			1 = 1
+		AND 
+			s.PID IN
+			<foreach collection="orgIds" item="orgId" open="(" separator="," close=")">
+				#{orgId}
+			</foreach>
+		<if test="gridType != null and gridType != ''">
+		 AND 
+		 	s.ORG_ID = g.ORG_ID 
+		 AND 
+		 	g.TYPE_ID = #{gridType}
+		</if>
+	</select>
+</mapper>

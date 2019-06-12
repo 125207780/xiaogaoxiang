@@ -1,0 +1,221 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.exam.dao.mapper.showObjMapper">
+
+	<update id="updateGridRank" parameterType="java.util.Map">
+		UPDATE 
+			GRID_RANK_DETAIL 
+		SET 
+			KPI_SCORE = #{score,jdbcType=DOUBLE}, 
+			STATUS = #{status,jdbcType=VARCHAR} 
+		WHERE 
+			RANK_ID = #{rankID,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateGridRankO" parameterType="java.util.Map">
+		UPDATE 
+			GRID_RANK_DETAIL 
+		SET 
+			KPI_SCORE = #{score,jdbcType=DOUBLE},
+			STATUS = #{status,jdbcType=VARCHAR} 
+		WHERE 
+			RANK_ID = #{rankID,jdbcType=VARCHAR}
+	</update>
+
+	<select id="initPerformaceTable" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			RANK_ID, KPI_TYPE, KPI_NAME, KPI_WEIGHT, KPI_DEFINE, OBJECT_NAME, OBJECT_TYPE, EVALUATE_CYCLE_TYPE, KPI_VALUE, TARGET_VALUE, KPI_ROLEJSON, KPI_SCORE
+		FROM 
+			GRID_RANK_DETAIL 
+		WHERE 
+			status != '3' 
+		AND 
+			EXAM_ID=#{modelID}
+		<if test="status != ''  ">
+			AND STATUS =#{status}
+		</if>
+	</select>
+
+	<select id="showObj" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT
+			ID, KPI_ID, KPI_ROLEJSON, KPI_TYPE, KPI_NAME, KPI_WEIGHT, KPI_DEFINE, CYCLE_TYPE, KPI_ROLESTR, EXAM_ID
+		FROM 
+			EVALUATION_MODEL_KPI
+		WHERE 
+			EXAM_ID = #{examidS}
+	</select>
+
+	<select id="initGrid" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT
+			ID, KPI_ID, KPI_ROLEJSON, KPI_TYPE, KPI_NAME, KPI_WEIGHT, KPI_DEFINE, CYCLE_TYPE, KPI_ROLESTR, TARGET_VALUE
+		FROM 
+			EVALUATION_MODEL_KPI
+		WHERE 
+			EXAM_ID = #{examidS}
+	</select>
+
+	<select id="editObj" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			ID, CYCLETYPE, EXAMCYCLE, CREATETIME, CREATEPERSON, TEMPLATEDESCRIPTION, CREATEOBJECT, STARTDATE, ENDDATE, GRIDNAME
+		FROM 
+			EXAM_MODEL
+		WHERE 
+			ID = #{examidS}
+	</select>
+	
+	<select id="editObjectTypeNoPeople" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			OBJECT_ID 
+		FROM
+			EVALUATION_MODEL_OBJ 
+		WHERE 
+			EXAM_ID = #{id,jdbcType=VARCHAR} 
+		AND
+			OBJECT_TYPE = #{type,jdbcType=VARCHAR}
+	</select>
+
+	<select id="editObjectTypePeopleS" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT 
+			s.LOGIN_ID AS MANAGERNAME, g.ORG_ID AS GRIDNAME 
+		FROM 
+			GRID_USER s, SYS_ORG g 
+		WHERE 
+			USER_TYPE = #{type} 
+		AND 
+			s.ORG_ID = (
+				SELECT 
+					GRIDNAME
+				FROM 
+					EXAM_MODEL 
+				WHERE 
+					ID = #{id})
+		AND 
+			s.ORG_ID = g.ORG_ID
+	</select>
+
+	<update id="insertJson" parameterType="java.util.Map">
+		INSERT INTO
+			EVALUATION_MODEL_KPI(
+				ID, KPI_ID, KPI_ROLEJSON, KPI_TYPE, KPI_NAME, KPI_WEIGHT, KPI_DEFINE, CYCLE_TYPE, EXAM_ID, KPI_ROLESTR, TARGET_VALUE)
+		VALUES(
+			#{ID,jdbcType=VARCHAR}, #{KPI_ID,jdbcType=VARCHAR}, #{KPI_ROLEJSON,jdbcType=VARCHAR}, #{KPI_TYPE,jdbcType=VARCHAR}, 
+			#{KPI_NAME,jdbcType=VARCHAR}, #{KPI_WEIGHT,jdbcType=VARCHAR}, #{KPI_DEFINE,jdbcType=VARCHAR}, #{CYCLE_TYPE,jdbcType=VARCHAR}, 
+			#{examidS,jdbcType=VARCHAR}, #{KPI_ROLESTR,jdbcType=VARCHAR}, #{target_value,jdbcType=VARCHAR})
+	</update>
+
+	<update id="UpdateObjExamInput" parameterType="java.util.Map">
+		UPDATE 
+			EXAM_MODEL 
+		SET
+			CYCLETYPE = #{cycleType,jdbcType=VARCHAR},
+			TEMPLATEDESCRIPTION = #{desc,jdbcType=VARCHAR},
+			CREATEOBJECT = #{objectType,jdbcType=VARCHAR},
+			STARTDATE=#{startDate,jdbcType=VARCHAR},
+			ENDDATE = #{endDate,jdbcType=VARCHAR},
+			GRIDNAME = #{gridNameCode,jdbcType=VARCHAR},
+			CREATEPERSON = #{createPerson,jdbcType=VARCHAR},
+			ORG_ID = #{orgId,jdbcType=VARCHAR}
+		WHERE 
+			ID = #{examId,jdbcType=VARCHAR}
+	</update>
+
+	<update id="insertObjObjInput" parameterType="java.util.Map">
+		INSERT INTO
+			EVALUATION_MODEL_OBJ(
+				EXAM_ID,OBJECT_ID,OBJECT_TYPE)
+			VALUES(
+				#{examId,jdbcType=VARCHAR}, #{objectId,jdbcType=VARCHAR}, #{objectType,jdbcType=VARCHAR})
+	</update>
+
+	<delete id="deleteJson" parameterType="java.util.Map">
+		DELETE FROM 
+			EVALUATION_MODEL_KPI 
+		WHERE 
+			EXAM_ID = #{examidS} 
+		AND 
+			KPI_ID = #{kpiId}
+	</delete>
+
+	<update id="updateJson" parameterType="java.util.Map">
+		UPDATE 
+			EVALUATION_MODEL_KPI 
+		SET
+			KPI_ROLEJSON = #{KPI_ROLEJSON,jdbcType=VARCHAR}, 
+			KPI_TYPE = #{KPI_TYPE,jdbcType=VARCHAR},
+			KPI_NAME = #{KPI_NAME,jdbcType=VARCHAR},
+			KPI_WEIGHT = #{KPI_WEIGHT,jdbcType=VARCHAR},
+			KPI_DEFINE = #{KPI_DEFINE,jdbcType=VARCHAR},
+			CYCLE_TYPE = #{CYCLE_TYPE,jdbcType=VARCHAR}, 
+			KPI_ROLESTR = #{KPI_ROLESTR,jdbcType=VARCHAR}, 
+			TARGET_VALUE = #{target_value,jdbcType=VARCHAR}
+		WHERE 
+			EXAM_ID = #{examidS,jdbcType=VARCHAR} 
+		AND
+			KPI_ID = #{KPI_ID,jdbcType=VARCHAR}
+	</update>
+
+	<select id="selectKpiById" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT KPI_ID FROM EVALUATION_MODEL_KPI WHERE EXAM_ID=#{id}
+	</select>
+
+	<delete id="deleteObject" parameterType="java.lang.String">
+		DELETE FROM EVALUATION_MODEL_OBJ WHERE EXAM_ID=#{id}
+	</delete>
+
+	<select id="getIndicator" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT KPI_ID, KPI_TYPE, KPI_NAME, KPI_WEIGHT, KPI_DEFINE, CYCLE_TYPE FROM EVALUATION_KPI
+	</select>
+
+	<select id="selectSysOrgById" parameterType="java.lang.String" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT
+			t.org_id orgId,
+			t.pid pid,
+			t.tenant_id tenantId,
+			t.name name,
+			t.memo memo,
+			t.display_order displayOrder,
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		FROM
+			SYS_ORG t
+		WHERE 
+			t.org_id = #{orgId}
+	</select>
+
+	<select id="selectList" parameterType="com.bonc.system.dao.entity.SysOrg" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT
+			t.org_id orgId,
+			t.pid pid,
+			t.name name,
+			t.memo memo,
+			t.display_order displayOrder,
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		FROM
+			SYS_ORG t
+		WHERE 
+			1=1
+		<if test="name != null and name != ''">
+			AND t.name like '%'||#{name}||'%'
+		</if>
+		<if test="orgId != null and orgId != ''">
+			AND t.org_id = #{orgId}
+		</if>
+		<if test="pid != null and pid != ''">
+			AND t.pid = #{pid}
+		</if>
+		AND 
+			t.orglevel != 5
+		<if test="treeCode != null and treeCode != ''">
+			AND t.tree_code like #{treeCode}||'%'
+		</if>
+		ORDER BY
+			t.orglevel, t.display_order
+	</select>
+
+	<delete id="deleteKpiByExamId" parameterType="java.lang.String">
+		DELETE FROM
+			EVALUATION_MODEL_KPI
+		WHERE
+			EXAM_ID = #{id}
+	</delete>
+</mapper>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.datamodel.dao.mapper.DataModelDtlMapper">
+	<resultMap id="DataModelDtlMap"
+		type="com.bonc.datamodel.dao.entity.DataModelDtl">
+		<result column="id" jdbcType="VARCHAR" property="id" />
+		<result column="data_model_id" jdbcType="VARCHAR" property="dataModelId" />
+		<result column="model_c_name" jdbcType="VARCHAR" property="modelChineseName" />
+		<result column="model_e_name" jdbcType="VARCHAR" property="modelEnglishName" />
+		<result column="show_flag" jdbcType="VARCHAR" property="showFlag" />
+		<result column="show_format" jdbcType="VARCHAR" property="showFormat" />
+		<result column="query_flag" jdbcType="VARCHAR" property="queryFlag" />
+		<result column="pk_flag" jdbcType="VARCHAR" property="pkFlag" />
+		<result column="fk_flag" jdbcType="VARCHAR" property="fkFlag" />
+		<result column="code_type" jdbcType="VARCHAR" property="codeKey" />
+		<result column="sort_by" jdbcType="VARCHAR" property="sortBy" />
+	</resultMap>
+	
+	<resultMap id="DataModelMap"
+		type="com.bonc.datamodel.dao.entity.DataModel">
+		<result column="id" jdbcType="VARCHAR" property="id" />
+		<result column="data_model_name" jdbcType="VARCHAR" property="dataModelName" />
+		<result column="data_model_desc" jdbcType="VARCHAR" property="dataModelDesc" />
+	</resultMap>
+
+	<select id="selectDataModelDtlList" parameterType="com.bonc.datamodel.dao.entity.DataModelDtl"
+		resultMap="DataModelDtlMap">
+		SELECT *
+		FROM data_model_dtl t
+		WHERE 1=1
+		<if test="dataModelId != null and dataModelId != ''">
+			AND t.data_model_id  = #{dataModelId}
+		</if>
+		<if test="id != null and id != ''">
+			AND t.id  = #{id}
+		</if>
+		ORDER BY data_model_id, (sort_by +0) ASC  
+	</select>
+
+	<select id="selectDataModelDtlByDataModel" parameterType="com.bonc.datamodel.dao.entity.DataModel" resultMap="DataModelDtlMap">
+		SELECT 
+			d.*
+		FROM 
+			data_model_dtl d, data_model m, information_schema.COLUMNS i
+		WHERE 
+			1=1
+		AND 
+			i.column_name = d.model_e_name
+		AND 
+			i.table_name = m.data_model_name
+		AND 
+			i.table_schema = DATABASE()
+		AND 
+			d.data_model_id = m.id
+		<if test="dataModelName != null and dataModelName != ''">
+			AND m.data_model_name  = #{dataModelName}
+		</if>
+		<if test="dataModelDesc != null and dataModelDesc != ''">
+			AND m.data_model_desc  = #{dataModelDesc}
+		</if>
+		<if test="id != null and id != ''">
+			AND m.id  = #{id}
+		</if>
+		ORDER BY (d.sort_by +0) ASC  
+	</select>
+
+	<select id="selectDataModelDtlById" parameterType="com.bonc.datamodel.dao.entity.DataModelDtl" resultType="com.bonc.datamodel.dao.entity.DataModelDtl">
+		SELECT * FROM data_model_dtl WHERE id = #{id}
+	</select>
+
+	<update id="updateDataModelDtl" parameterType="com.bonc.datamodel.dao.entity.DataModelDtl">
+		UPDATE 
+			data_model_dtl 
+		SET 
+			data_model_id = #{dataModelId},
+			model_c_name = #{modelChineseName},
+			model_e_name = #{modelEnglishName},
+			show_flag = #{showFlag},
+			show_format = #{showFormat},
+			query_flag = #{queryFlag},
+			pk_flag = #{pkFlag},
+			fk_flag = #{fkFlag},
+			code_type = #{codeKey},
+			sort_by = #{sortBy}
+		WHERE 
+			id = #{id}
+	</update>
+
+	<insert id="insertDataModelDtl" useGeneratedKeys="true" keyProperty="id" parameterType="com.bonc.datamodel.dao.entity.DataModelDtl">
+		INSERT INTO
+			data_model_dtl(
+				id,data_model_id,model_c_name,model_e_name,show_flag,
+				show_format,query_flag,pk_flag,fk_flag,code_type,sort_by)
+		VALUE(
+			null,#{dataModelId},#{modelChineseName},#{modelEnglishName},#{showFlag},
+			#{showFormat},#{queryFlag},#{pkFlag},#{fkFlag},#{codeKey},#{sortBy})
+	</insert>
+
+	<delete id="deleteDataModelDtl" parameterType="com.bonc.datamodel.dao.entity.DataModelDtl">
+		DELETE FROM data_model_dtl WHERE id = #{id}
+	</delete>
+
+	<select id="selectDataModelList" parameterType="com.bonc.datamodel.dao.entity.DataModel" resultMap="DataModelMap">
+		SELECT 
+			*
+		FROM 
+			data_model t
+		WHERE 
+			1=1
+		<if test="dataModelName != null and dataModelName != ''">
+			AND t.data_model_name  like concat('%',#{dataModelName},'%')
+		</if>
+		<if test="dataModelDesc != null and dataModelDesc != ''">
+			AND t.data_model_desc  like concat('%',#{dataModelDesc},'%')
+		</if>
+	</select>
+
+	<select id="selectDataModelById" parameterType="com.bonc.datamodel.dao.entity.DataModel" resultType="com.bonc.datamodel.dao.entity.DataModel">
+		SELECT * FROM data_model WHERE id = #{id}
+	</select>
+
+	<update id="updateDataModel" parameterType="com.bonc.datamodel.dao.entity.DataModel">
+		UPDATE 
+			data_model 
+		SET
+			data_model_name = #{dataModelName},
+			data_model_desc = #{dataModelDesc}
+		WHERE 
+			id = #{id}
+	</update>
+
+	<insert id="insertDataModel" useGeneratedKeys="true" keyProperty="id" parameterType="com.bonc.datamodel.dao.entity.DataModel">
+		INSERT INTO
+			data_model(id,data_model_name,data_model_desc)
+		VALUES(null,#{dataModelName},#{dataModelDesc})
+	</insert>
+	
+	<delete id="deleteByDataModelId" parameterType="java.lang.String">
+		DELETE FROM data_model_dtl WHERE data_model_id = #{dataModelId}
+	</delete>
+
+	<delete id="deleteDataModel" parameterType="com.bonc.datamodel.dao.entity.DataModel">
+		DELETE FROM data_model WHERE id = #{id}
+	</delete>
+</mapper>

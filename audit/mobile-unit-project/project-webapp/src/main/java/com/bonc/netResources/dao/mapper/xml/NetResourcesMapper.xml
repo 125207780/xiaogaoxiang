@@ -1,0 +1,77 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.netResources.dao.mapper.NetResourcesMapper">
+  
+	<select id="selectList"  resultType="com.bonc.netResources.dao.entity.NetResources">
+		SELECT 
+			t.net_code netCode, 
+			t.p_id pId, 
+			t.net_name netName, 
+			t.display_order displayOrder, 
+			t.netlevel netLevel,
+			t.net_type netType
+		FROM  
+			NET_RESOURCES t 
+		ORDER BY 
+			t.netlevel,
+			t.display_order
+	</select>
+	<!-- 一级类型 -->
+	<select id="getFirstType" resultType="java.util.Map">
+		SELECT * FROM NET_RESOURCES WHERE TYPE = 'NET_NEW' AND NETLEVEL = 1 
+	</select>
+	<!-- 二级类型 -->
+	<select id="getSecondType" parameterType="java.lang.String" resultType="java.util.Map">
+	SELECT * FROM NET_RESOURCES WHERE TYPE = 'NET_NEW' AND NETLEVEL = 2 AND P_ID = #{pId,jdbcType=VARCHAR} 
+	</select>
+	
+	<select id="getDayReportForm" parameterType="java.lang.String"
+		resultType="java.util.Map">
+			SELECT
+				OLD_ORG_ID,
+				CITY_NAME,
+				GRID_COUNT,
+				CHNL_COUNT,
+				CHNL_GRID,
+				CHNL_RATE,
+				CELL_COUNT,
+				CELL_GRID,
+				CELL_RATE,
+				PORT_RATE,
+				ZY_RATE,
+				CELL_ZD_COUNT,
+				ZD_GRID_COUNT,
+				GRID_COUNT_ZD,
+				GRID_CELL_COUNT,
+				CELL_ZD_RATE,
+				PORT_ZD_RATE,
+				ZY_ZD_RATE,
+				AB_COUNT,
+				AB_GRID,
+				AB_RATE,
+				CD_COUNT,
+				CD_GRID,
+				CD_RATE,
+				STATION_COUNT,
+				STATION_GRID,
+				STATION_RATE,
+				STATIS_DATE,
+				MANAGER_SB,
+				MANAGER_WG,
+				MANAGER_RATE
+			FROM
+				WG_BASIC_DATE_SUM	
+	</select>
+	
+	<select id="getChildrenNetRresourceByOrgId" parameterType="java.lang.String" resultType="com.bonc.netResources.dao.entity.NetResources">
+		SELECT 
+			NET_CODE netCode, NET_NAME netName 
+		FROM 
+			NET_RESOURCES 
+		WHERE 
+			P_ID = #{netCode} 
+		AND 
+			NET_TYPE = 'TYPE'
+		ORDER BY 
+			DISPLAY_ORDER
+	</select>
+</mapper>

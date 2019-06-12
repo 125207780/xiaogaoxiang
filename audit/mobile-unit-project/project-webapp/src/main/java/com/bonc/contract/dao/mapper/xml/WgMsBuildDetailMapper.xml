@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.contract.dao.mapper.WgMsBuildDetailMapper">
+
+	<!-- 包保小区楼宇明细信息 -->
+	<select id="getWgMsBuildDetailInfo" parameterType="java.lang.String" resultType="com.bonc.contract.dao.entity.WgMsBuildDetail">
+		SELECT 
+			c.ORG_ID as orgId, c.NAME AS areaName, a.GRID_CODE as gridCode, GRID_NAME, CHNL_CODE, CHNL_NAME, CHNL_TYPE, a.PHYSICAL_ID as physicalId,
+			PHYSICAL_NAME, ADDR, SMALL_TYPE, d.BUILDING_CODE as buildingCode, d.BUILDING_NAME AS buildingName, a.CHNL_CODE as chnlCode
+		FROM 
+			WG_MS_CONTRACT_AREA_DEVELOP a, grid_org b, GRID_ORG c, BUILDING_INFO d
+		WHERE 
+			a.GRID_CODE = b.ORG_ID 
+		AND 
+			b.PID = c.ORG_ID 
+		AND 
+			a.PHYSICAL_ID = d.PHYSICAL_ID
+		AND 
+			a.GRID_CODE in 
+			<foreach collection="sql" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		<if test="wgMsBuildDetail.chnlCode != null and wgMsBuildDetail.chnlCode != ''">
+			AND a.CHNL_CODE = #{wgMsBuildDetail.chnlCode,jdbcType=VARCHAR}
+		</if>
+		<if test="wgMsBuildDetail.buildingCode != null and wgMsBuildDetail.buildingCode != ''">
+			AND d.BUILDING_CODE = #{wgMsBuildDetail.buildingCode,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="getChannelInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			CHNL_CODE, CHNL_NAME, GRID_CODE 
+		FROM 
+			CHANNEL_INFO 
+		WHERE 
+			1=1  
+		AND 
+			GRID_CODE IN 
+			<foreach collection="sql" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+	</select>
+	
+	<select id="getBuildingInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			BUILDING_CODE, BUILDING_NAME, GRID_CODE 
+		FROM 
+			BUILDING_INFO 
+		WHERE 
+			1=1  
+		AND 
+			GRID_CODE IN 
+			<foreach collection="sql" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+	</select>
+</mapper>

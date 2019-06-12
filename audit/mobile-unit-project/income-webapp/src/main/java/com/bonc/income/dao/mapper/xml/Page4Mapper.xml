@@ -1,0 +1,71 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="com.bonc.income.dao.mapper.Page4Mapper" >
+ 
+ <select id="selectTable" resultType="java.util.Map" parameterType="java.util.Map">
+ select PROD_ID, 
+ 		AREA_ID,
+   		STATIS_MONTH,
+       PACKAGE_ID, 
+       PACKAGE_NAME, 
+       CAMPN_KIND, 
+       CAMPN_TYP, 
+	   COALESCE(OLD_ORDER_USR,0) OLD_ORDER_USR, 
+	   COALESCE(LY_ORDER_USR,0) LY_ORDER_USR, 
+	   COALESCE(LQ_ORDER_USR,0)  LQ_ORDER_USR,
+	   COALESCE(OLD_ONNET_TX_USR,0) OLD_ONNET_TX_USR, 
+	   COALESCE(LY_ONNET_TX_USR,0) LY_ONNET_TX_USR, 
+	   COALESCE(LQ_ONNET_TX_USR,0) LQ_ONNET_TX_USR, 
+	   case when COALESCE(OLD_ORDER_USR,0) = 0 then 0 else OLD_ONNET_TX_USR * 1.0000/OLD_ORDER_USR end old_ra,
+	   case when COALESCE(LY_ORDER_USR,0) = 0 then 0 else LY_ONNET_TX_USR * 1.0000/LY_ORDER_USR end ly_ra,  
+	   case when COALESCE(LQ_ORDER_USR,0) = 0 then 0 else LQ_ONNET_TX_USR * 1.0000/LQ_ORDER_USR end lq_ra  
+  from (
+SELECT PROD_ID, 
+   PACKAGE_ID, 
+   PACKAGE_NAME, 
+   CAMPN_KIND, 
+   CAMPN_TYP, 
+   AREA_ID,
+   		STATIS_MONTH,
+   SUM(CASE WHEN ACTIVE_MONTH &lt; SUBSTR(char(STATIS_MONTH),1,4)||'01' THEN ORDER_USR END) OLD_ORDER_USR  , 
+   SUM(CASE WHEN SUBSTR(char(ACTIVE_MONTH),1,4) = SUBSTR(char(STATIS_MONTH),1,4) THEN ORDER_USR END) LY_ORDER_USR,
+   SUM(CASE WHEN ACTIVE_MONTH >= substr(CHAR(INTEGER(DATE(CHAR(DATE(SUBSTR(substr(char(STATIS_MONTH),1,4)||'-'||substr(char(STATIS_MONTH),5,2)||'-01' ,1,6)||CAST(MOD((MONTH(DATE(substr(char(STATIS_MONTH),1,4)||'-'||substr(char(STATIS_MONTH),5,2)||'-01'))-1)/3*3+1,10) AS CHAR(1))||'-01'))))),1,6)  THEN ORDER_USR END) LQ_ORDER_USR, 
+   SUM(CASE WHEN ACTIVE_MONTH &lt; SUBSTR(char(STATIS_MONTH),1,4)||'01' THEN ONNET_TX_USR END) OLD_ONNET_TX_USR, 
+   SUM(CASE WHEN SUBSTR(char(ACTIVE_MONTH),1,4) = SUBSTR(char(STATIS_MONTH),1,4)  THEN ONNET_TX_USR END) LY_ONNET_TX_USR, 
+   SUM(CASE WHEN ACTIVE_MONTH >= substr(CHAR(INTEGER(DATE(CHAR(DATE(SUBSTR( substr(char(STATIS_MONTH),1,4)||'-'||substr(char(STATIS_MONTH),5,2)||'-01' ,1,6)||CAST(MOD((MONTH(DATE(substr(char(STATIS_MONTH),1,4)||'-'||substr(char(STATIS_MONTH),5,2)||'-01'))-1)/3*3+1,10) AS CHAR(1))||'-01'))))),1,6)  THEN ONNET_TX_USR END) LQ_ONNET_TX_USR 
+  from BONC03.MK_ACTIVE_LIVE_01_PORTRAIT_M  
+  WHERE STATIS_MONTH =  #{statisMonth }
+   and AREA_ID =#{areaId}  
+  group by PROD_ID, 
+       PACKAGE_ID, 
+       PACKAGE_NAME, 
+       CAMPN_KIND, 
+       CAMPN_TYP,
+       AREA_ID,
+   		STATIS_MONTH ) a
+ 
+ 
+ 
+ 
+ </select>
+	<select id="echart1"  resultType="java.util.Map" parameterType="java.util.Map">
+		 SELECT PROD_ID,
+       PACKAGE_ID, 
+       PACKAGE_NAME, 
+       CASE WHEN ACTIVE_MONTH &lt; concat(TRIM(char(STATIS_MONTH/100)) , '01' ) THEN '0000存量订购' ELSE ACTIVE_MONTH||'月订购' END ORDRE_BY, 
+	   CASE WHEN ACTIVE_MONTH &lt; concat(TRIM(char(STATIS_MONTH/100)) , '01' ) THEN '存量订购'  ELSE ACTIVE_MONTH ||'月订购' END ACTIVE_MONTH,  
+	   sum(ORDER_USR) as ORDER_USR , 
+	   sum(ONNET_TX_USR) as ONNET_TX_USR, 
+       case when sum(ORDER_USR)=0 then 0 else sum(ONNET_TX_USR)*1.0000/sum(ORDER_USR) end live_ra 
+  from BONC03.MK_ACTIVE_LIVE_01_PORTRAIT_M  
+ WHERE STATIS_MONTH = #{statisMonth}
+   and PROD_ID =#{PROD_ID}
+   and PACKAGE_ID =#{PACKAGE_ID}
+   and AREA_ID = #{areaId}  
+ group by PROD_ID,  
+          PACKAGE_ID,  
+          PACKAGE_NAME,
+          CASE WHEN ACTIVE_MONTH &lt; concat(TRIM(char(STATIS_MONTH/100)) , '01' ) THEN '0000存量订购' ELSE ACTIVE_MONTH||'月订购' END ,
+		  CASE WHEN ACTIVE_MONTH &lt;  concat(TRIM(char(STATIS_MONTH/100)) , '01' ) THEN '存量订购'  ELSE ACTIVE_MONTH||'月订购' END
+	 order by 4
+	</select>
+ </mapper>

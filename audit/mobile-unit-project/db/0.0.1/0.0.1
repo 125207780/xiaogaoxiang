@@ -1,0 +1,10 @@
+--工单表修改接单人字段名称
+alter table WF_WORKORDER rename column ASSIGN_ID to ASSIGNEE_ID;
+--工单表添加备注字段
+alter table WF_WORKORDER add (COMMENTS VARCHAR2(255) NOT NULL);
+--工单表添加文件字段
+alter table WF_WORKORDER add (FILES VARCHAR2(4000) NOT NULL);
+--工单表删除文件字段
+alter table WF_WORKORDER drop (FILES);
+--工单表修改部门id字段可以为空
+alter table WF_WORKORDER modify (ORG_ID NULL);

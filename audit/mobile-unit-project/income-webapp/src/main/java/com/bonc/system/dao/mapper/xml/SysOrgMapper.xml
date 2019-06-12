@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.system.dao.mapper.SysOrgMapper">
+
+	<select id="selectList" 
+		parameterType="com.bonc.system.dao.entity.SysOrg" 
+		resultType="com.bonc.system.dao.entity.SysOrg">
+		select 
+			t.org_id orgId, 
+			t.pid pid, 
+			t.name name, 
+			t.memo memo, 
+			t.display_order displayOrder, 
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		from 
+			SYS_ORG t 
+		where 1=1
+		<if test="name != null and name != ''">
+			and t.name like '%'||#{name}||'%'
+		</if>			
+		<if test="orgId != null and orgId != ''">
+			and t.org_id = #{orgId}
+		</if>
+		<if test="pid != null and pid != ''">
+			and t.pid = #{pid}
+		</if>
+		<if test="orgLevel != null and orgLevel != ''">
+			and t.orglevel = #{orgLevel}
+		</if>
+		<if test="orgLevel != null and orgLevel != ''">
+			and t.orglevel = #{orgLevel}
+		</if>
+		<if test="treeCode != null and treeCode != ''">
+			and t.tree_code like '%'||#{treeCode}||'%'
+		</if>
+		order by 
+			t.orglevel,t.display_order
+	</select>
+	
+	<select id="selectSysOrgById" 
+		parameterType="java.lang.String"
+		resultType="com.bonc.system.dao.entity.SysOrg">
+		select 
+			t.org_id orgId, 
+			t.pid pid, 
+			t.tenant_id tenantId, 
+			t.name name, 
+			t.memo memo, 
+			t.display_order displayOrder, 
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		from 
+			SYS_ORG t 
+		where t.org_id = #{orgId}
+	</select>
+	
+	<insert id="insertSysOrg" 
+		parameterType="com.bonc.system.dao.entity.SysOrg">
+			insert into sys_org(ORG_ID,pid,tenant_id,name,memo,display_order,orglevel,tree_code) 
+		values(#{orgId},#{pid},#{tenantId},#{name},#{memo},#{displayOrder,jdbcType=INTEGER},#{orgLevel,jdbcType=INTEGER},#{treeCode})
+	</insert>
+	
+	<update id="updateSysOrg" 
+		parameterType="com.bonc.system.dao.entity.SysOrg">
+		update sys_org set name=#{name}, display_order=#{displayOrder} where org_id=#{orgId}
+	</update>
+	
+	<delete id="deleteSysOrgByTreeCode" 
+		parameterType="java.lang.String">
+		delete from sys_org where tree_code like '%'||#{treeCode}||'%'
+	</delete>
+	
+	<select id="selectSysOrgUserOne" resultType="java.lang.String" parameterType="java.lang.String" >
+	    SELECT USER_ID
+		FROM SYS_USER
+		WHERE ORG_ID = #{orgId}
+	</select>
+	
+	<delete id="deleteSysOrgUser" parameterType="java.lang.String">
+	    DELETE FROM SYS_USER 
+		WHERE ORG_ID=#{orgId}
+  	</delete>
+  	
+  	<delete id="deleteSysOrgUserRole" parameterType="java.lang.String">
+	    DELETE FROM SYS_ROLE_USER 
+		WHERE USER_ID=#{userId}
+  	</delete>
+  
+</mapper>

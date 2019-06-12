@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.StationInfoMapper">
+
+	<!-- 基站基础信息 -->
+	<select id="getStationInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			*
+		FROM 
+			station_info_detail	
+		WHERE 
+			STATION_CODE = #{stationId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getStationInfoList" parameterType="java.util.List" resultType="java.util.Map">
+		SELECT
+			STATION_NAME stationName, STATION_CODE stationCode 
+		FROM
+			STATION_INFO
+		WHERE 
+			STATION_CODE IN 
+			<foreach collection="stationCodeList" item="obj" index="index" open="(" separator="," close=")">
+				#{obj} 
+			</foreach> 
+		AND
+			GRID_CODE IS NOT NULL
+	</select>
+	
+	<update id="updateStationInfoGridCode" parameterType="com.bonc.gridinfo.dao.entity.StationInfo">
+		UPDATE 
+			STATION_INFO
+		SET
+			GRID_CODE = #{si.gridCode}
+		WHERE
+			STATION_CODE = #{si.stationCode}
+	</update>
+	
+	<select id="selectAll" resultType="com.bonc.gridinfo.dao.entity.StationInfo">
+		SELECT 
+			ORG_ID, STATION_LON, STATION_LAT
+		FROM 
+			STATION_INFO
+		WHERE
+			ORG_ID = #{orgId}
+		AND
+			STATION_LON IS NOT NULL 
+		AND 
+			STATION_LAT IS NOT NULL
+	</select>
+	
+	<select id="getImportantAreaInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT cell_id,cell_name,chnl_name,name,phone FROM RP_BB_CELL WHERE cell_id = #{importantId}
+	</select>
+	
+</mapper>

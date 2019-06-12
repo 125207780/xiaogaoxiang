@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.task.dao.mapper.TaskListenerMapper">
+
+	<!-- 查询任务监控 -->
+	<select id="getTaskListenerTree" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskListener">
+		SELECT USER_ID, TASK_CODE, MONITOR_CODE, PID, CONTENT, TREE_CODE, DISPLAY_ORDER, TREE_LEVEL
+		FROM TASK_MONITOR_INFO T 
+		WHERE 1=1 and user_Id = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getTaskBaseInfo" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskListenerBase" >
+		SELECT DISTINCT a.monitor_code,b.task_name,b.task_bigtype,b.task_smallType,b.touch_way,b.task_target,b.finish_date,b.evaluate_date,b.marketing_plan,a.leader_advice
+		FROM 
+		TASK_MONITOR_INFO a
+		LEFT JOIN TASK_BASE_INFO b
+		ON a.USER_ID = b.USER_ID AND a.TASK_CODE = b.TASK_CODE
+		WHERE 1=1 and a.user_Id = #{userId,jdbcType=VARCHAR} and a.monitor_code = #{monitorCode,jdbcType=VARCHAR}
+	</select>
+
+</mapper>

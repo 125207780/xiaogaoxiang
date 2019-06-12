@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.waring.dao.mapper.BudgetWarningMapper">
+	
+	<select id="getRuleWarning" parameterType="com.bonc.waring.dao.entity.RuleWarning" 
+			resultType="com.bonc.waring.dao.entity.RuleWarning">
+		SELECT warn_id,obj_id,obj_name,scope,warn_way,warn_cycle,warn_type,notice_user,warn_rule,
+		warn_value,user_id,create_user,create_date,remark from WG_YJ_WARN_RULE where 1=1
+		and status = 'A'
+		<if test="objId != null and objId !=''">
+			and obj_id = #{objId,jdbcType=VARCHAR}
+		</if>
+		<if test="scope != null and scope !=''">
+			and scope = #{scope,jdbcType=VARCHAR}
+		</if>
+		<if test="warnType != null and warnType !=''">
+			and warn_type = #{warnType,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="getChnlInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT CHNL_CODE,CHNL_NAME FROM CHANNEL_INFO WHERE GRID_CODE = #{orgId,jdbcType=VARCHAR} GROUP BY CHNL_CODE,CHNL_NAME
+	</select>
+	<select id="getRangeInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT * FROM TB_LIST_VALUE WHERE "TYPE" = 'YJ_SCOPE'	
+	</select>
+	<select id="getWarnType" parameterType="java.lang.String" resultType="java.util.Map">
+		<!-- SELECT * FROM TB_LIST_VALUE WHERE "TYPE" = 'YJ_RULE' -->	
+	</select>
+	<select id="getWarnStyle" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT * FROM TB_LIST_VALUE WHERE "TYPE" = 'YJ_WAY' 
+	</select>
+	<select id="getWarnRule" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT * FROM TB_LIST_VALUE WHERE "TYPE" = 'YJ_RULE'
+	</select>
+	
+	<select id="getKpiInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT KPI_CODE,KPI_NAME FROM KPI_BASE_INFO WHERE  KPI_CODE IS NOT NULL AND KPI_CODE <![CDATA[<>]]> '' GROUP BY KPI_CODE,KPI_NAME
+	</select>
+	
+	<select id="getObject" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT LOGIN_ID,NAME FROM GRID_USER WHERE  ORG_ID=#{orgId,jdbcType=VARCHAR} GROUP BY LOGIN_ID,NAME
+	</select>
+	
+	<insert id="addWarnRule" parameterType="com.bonc.waring.dao.entity.RuleWarning">
+		INSERT INTO WG_YJ_WARN_RULE
+		(WARN_ID, OBJ_ID, OBJ_NAME, "SCOPE", WARN_WAY, WARN_CYCLE, WARN_TYPE,  WARN_KPI_ID, WARN_KPI_NAME, WARN_RULE, WARN_VALUE, USER_ID, CREATE_USER, CREATE_DATE, STATUS, REMARK)
+		VALUES(
+			#{warnId,jdbcType=VARCHAR}, 
+			#{objId,jdbcType=VARCHAR}, 
+			#{objName,jdbcType=VARCHAR}, 
+			#{scope,jdbcType=VARCHAR}, 
+			#{warnWay,jdbcType=VARCHAR},
+			#{warnCycle,jdbcType=VARCHAR},
+			#{warnType,jdbcType=VARCHAR}, 
+			#{warnKpiId,jdbcType=VARCHAR},
+			#{warnKpiName,jdbcType=VARCHAR},
+			#{warnRule,jdbcType=VARCHAR},
+			#{warnValue,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createDate,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR}
+		)
+		
+	</insert>
+	
+	<update id="updateWarnRule" parameterType="com.bonc.waring.dao.entity.RuleWarning">
+	update WG_YJ_WARN_RULE set OBJ_ID = #{objId,jdbcType=VARCHAR},
+	OBJ_NAME = #{objName,jdbcType=VARCHAR}, "SCOPE" = #{scope,jdbcType=VARCHAR}, WARN_WAY = #{warnWay,jdbcType=VARCHAR},
+	WARN_CYCLE = #{warnCycle,jdbcType=VARCHAR}, WARN_TYPE = #{warnType,jdbcType=VARCHAR},
+	WARN_KPI_ID = #{warnKpiId,jdbcType=VARCHAR}, WARN_KPI_NAME = #{warnKpiName,jdbcType=VARCHAR},WARN_RULE = #{warnRule,jdbcType=VARCHAR},
+	WARN_VALUE = #{warnValue,jdbcType=VARCHAR},USER_ID = #{userId,jdbcType=VARCHAR},CREATE_USER= #{createUser,jdbcType=VARCHAR},
+	CREATE_DATE = #{createDate,jdbcType=VARCHAR}, REMARK = #{remark,jdbcType=VARCHAR}  where WARN_ID=#{warnId,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="deleteWgYjWarnObj" parameterType="java.lang.String">
+		delete FROM WG_YJ_WARN_OBJ  where WARN_ID=#{warnId,jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="checkRuleWarning" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+	w.SCOPE,
+	w.WARN_WAY,
+	w.WARN_CYCLE,
+	w.WARN_TYPE,
+	w.WARN_RULE,
+	w.WARN_KPI_NAME,
+	w.WARN_KPI_ID,
+	w.WARN_RULE,
+	w.WARN_VALUE,
+	a.LIST_VALUE,
+	w.REMARK
+	,o.CITY_ID AS CITY_ID
+	,o.CITY_NAME         AS CITY_NAME
+	,o.AREA_ID AS AREA_ID
+	,o.AREA_NAME         AS AREA_NAME
+	,o.SALE_DEPT_CODE    AS SALE_DEPT_CODE
+	,o.SALE_DEPT_NAME    AS SALE_DEPT_NAME
+	,o.GRID_CODE         AS GRID_CODE
+	,o.GRID_NAME         AS GRID_NAME
+	,o.CHNL_CODE  AS CHNLORSTATION_ID
+	,o.CHNL_NAME	AS CHNLORSTATION_NAME
+	FROM
+	WG_YJ_WARN_RULE w
+	LEFT JOIN (
+	SELECT  DISTINCT CITY_ID, CITY_NAME, AREA_ID, a.AREA_NAME, SALE_DEPT_CODE, SALE_DEPT_NAME, a.GRID_CODE, GRID_NAME,b.CHNL_CODE,b.CHNL_NAME
+	FROM ORG_SEARCH_VIEW a
+	     LEFT JOIN CHANNEL_INFO b 
+	     ON a.GRID_CODE = b.GRID_CODE
+	WHERE a.GRID_CODE IS NOT NULL ) o 
+	ON w.OBJ_ID = o.GRID_CODE OR w.OBJ_ID = o.chnl_code
+	LEFT JOIN 
+	TB_LIST_VALUE a 
+	ON w.WARN_RULE = a.LIST_TYPE AND a."TYPE" = 'YJ_RULE'
+	WHERE WARN_ID =#{warnId,jdbcType=VARCHAR}
+	</select>
+	
+	<update id="updateStauts" parameterType="java.lang.String">
+		update  WG_YJ_WARN_RULE set status = 'P' where WARN_ID=#{warnId,jdbcType=VARCHAR}
+	</update>
+	<!-- 网格下面的预警通知对象 -->
+	<select id="getGridObject" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT  NAME, LOGIN_ID FROM  GRID_USER WHERE ORG_ID =#{gridCode,jdbcType=VARCHAR} AND USER_TYPE IN(2,3)
+	</select>
+	<!-- 渠道下面的预警通知对象 -->
+	<select id="getchnlObject" parameterType="java.lang.String" resultType="java.util.Map">
+	 	SELECT A.CHNL_CODE,A.LOGIN_ID,B.USER_NAME FROM CHANNEL_MANAGER A,SYS_USER B 
+		WHERE A.LOGIN_ID = B.LOGIN_ID  AND CHNL_CODE =#{chnlCode,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="addWgYjWarnObj" parameterType="com.bonc.waring.dao.entity.WgYjWarnObj">
+		INSERT INTO  WG_YJ_WARN_OBJ (WARN_ID,OBJ_ID) VALUES(#{warnId,jdbcType=VARCHAR},#{objId,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="selectObjectNameAndId" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT  s.USER_NAME,s.LOGIN_ID  FROM WG_YJ_WARN_OBJ w, SYS_USER s WHERE w.OBJ_ID = s.LOGIN_ID AND WARN_ID=#{warnId,jdbcType=VARCHAR}
+	</select>
+</mapper>

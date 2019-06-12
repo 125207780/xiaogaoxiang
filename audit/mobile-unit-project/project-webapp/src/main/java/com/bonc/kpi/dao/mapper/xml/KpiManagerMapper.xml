@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.kpi.dao.mapper.KpiManagerMapper">
+
+	<select id="getProvInfo" parameterType="com.bonc.kpi.dao.entity.OrgSearch" resultType="com.bonc.kpi.dao.entity.OrgSearch">
+		SELECT 
+			PROV_ID, PROV_NAME, CITY_ID, CITY_NAME, AREA_ID, AREA_NAME, SALE_DEPT_CODE,
+			SALE_DEPT_NAME, GRID_CODE, GRID_NAME, VILLAGE_ID, VILLAGE_NAME
+		FROM 
+			ORG_SEARCH_VIEW 
+		WHERE 
+			1=1
+		<if test="provId != null and provId != ''">
+		  	AND PROV_ID = #{provId,jdbcType=VARCHAR} 
+		</if>		
+	</select>
+	
+	<select id="getCityInfo" parameterType="com.bonc.kpi.dao.entity.OrgSearch" resultType="com.bonc.kpi.dao.entity.OrgSearch">
+		SELECT 
+			CITY_ID,CITY_NAME
+		FROM 
+			ORG_SEARCH_VIEW 
+		WHERE 
+			1=1 
+		AND 
+			CITY_ID IS NOT NULL 
+		AND 
+			CITY_ID <![CDATA[<>]]> ''
+		<if test="provId != null and provId != ''">
+		  	AND PROV_ID = #{provId,jdbcType=VARCHAR}
+		</if>
+		<if test="cityId != null and cityId != ''">
+		  	AND CITY_ID = #{cityId,jdbcType=VARCHAR}
+		</if>
+		<if test="areaId != null and areaId != ''">
+		  	AND AREA_ID = #{areaId,jdbcType=VARCHAR}
+		</if>
+		<if test="saleDeptCode != null and saleDeptCode != ''">
+		  	AND SALE_DEPT_CODE = #{saleDeptCode,jdbcType=VARCHAR}
+		</if>
+		<if test="gridCode != null and gridCode != ''">
+		  	AND GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+		<if test="villageId != null and villageId != ''">
+		  	AND VILLAGE_ID = #{villageId,jdbcType=VARCHAR}
+		</if>
+		<if test="communityId != null and communityId != ''">
+		  	AND COMMUNITY_ID = #{communityId,jdbcType=VARCHAR}
+		</if>
+		<if test="chnlorstationId != null and chnlorstationId != ''">
+		  	AND CHNLORSTATION_ID = #{chnlorstationId,jdbcType=VARCHAR} 
+		</if>
+		GROUP BY 
+			CITY_ID, CITY_NAME
+	</select>
+	
+	<select id="getAreaInfo" parameterType="com.bonc.kpi.dao.entity.OrgSearch" resultType="com.bonc.kpi.dao.entity.OrgSearch">
+		SELECT 
+			AREA_ID, AREA_NAME
+		FROM 
+			ORG_SEARCH_VIEW 
+		WHERE 
+			1=1 
+		AND 
+			AREA_ID IS NOT NULL 
+		AND 
+			AREA_ID <![CDATA[<>]]> ''
+		<if test="provId != null and provId != ''">
+		  	AND PROV_ID = #{provId,jdbcType=VARCHAR}
+		</if>
+		<if test="cityId != null and cityId != ''">
+		  	AND CITY_ID = #{cityId,jdbcType=VARCHAR}
+		</if>
+		<if test="areaId != null and areaId != ''">
+		  	AND AREA_ID = #{areaId,jdbcType=VARCHAR}
+		</if>
+		<if test="saleDeptCode != null and saleDeptCode != ''">
+		  	AND SALE_DEPT_CODE = #{saleDeptCode,jdbcType=VARCHAR}
+		</if>
+		<if test="gridCode != null and gridCode != ''">
+		  	AND GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+		<if test="villageId != null and villageId != ''">
+		  	AND VILLAGE_ID = #{villageId,jdbcType=VARCHAR}
+		</if>
+		<if test="communityId != null and communityId != ''">
+		  	AND COMMUNITY_ID = #{communityId,jdbcType=VARCHAR}
+		</if>
+		<if test="chnlorstationId != null and chnlorstationId != ''">
+		  	AND CHNLORSTATION_ID = #{chnlorstationId,jdbcType=VARCHAR} 
+		</if>
+		GROUP BY 
+			AREA_ID, AREA_NAME
+	</select>
+	
+	<select id="getSaleDeptInfo" parameterType="com.bonc.kpi.dao.entity.OrgSearch" resultType="com.bonc.kpi.dao.entity.OrgSearch">
+		SELECT 
+			SALE_DEPT_CODE, SALE_DEPT_NAME
+		FROM 
+			ORG_SEARCH_VIEW 
+		WHERE 
+			1=1 
+		AND 
+			SALE_DEPT_CODE IS NOT NULL 
+		AND 
+			SALE_DEPT_CODE <![CDATA[<>]]> ''
+		<if test="provId != null and provId != ''">
+		  	AND PROV_ID = #{provId,jdbcType=VARCHAR}
+		</if>
+		<if test="cityId != null and cityId != ''">
+		  	AND CITY_ID = #{cityId,jdbcType=VARCHAR}
+		</if>
+		<if test="areaId != null and areaId != ''">
+		  	AND AREA_ID = #{areaId,jdbcType=VARCHAR}
+		</if>
+		<if test="saleDeptCode != null and saleDeptCode != ''">
+		  	AND SALE_DEPT_CODE = #{saleDeptCode,jdbcType=VARCHAR}
+		</if>
+		<if test="gridCode != null and gridCode != ''">
+		  	AND GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+		<if test="villageId != null and villageId != ''">
+		  	AND VILLAGE_ID = #{villageId,jdbcType=VARCHAR}
+		</if>
+		<if test="communityId != null and communityId != ''">
+		  	AND COMMUNITY_ID = #{communityId,jdbcType=VARCHAR}
+		</if>
+		<if test="chnlorstationId != null and chnlorstationId != ''">
+		  	AND CHNLORSTATION_ID = #{chnlorstationId,jdbcType=VARCHAR} 
+		</if>
+		GROUP BY 
+			SALE_DEPT_CODE, SALE_DEPT_NAME
+	</select>
+	
+	<select id="getGridInfo" parameterType="com.bonc.kpi.dao.entity.OrgSearch" resultType="com.bonc.kpi.dao.entity.OrgSearch">
+		SELECT 
+			GRID_CODE, GRID_NAME 
+		FROM 
+			ORG_SEARCH_VIEW 
+		WHERE 
+			1=1 
+		AND 
+			GRID_CODE IS NOT NULL 
+		AND 
+			GRID_CODE <![CDATA[<>]]> ''
+		<if test="provId != null and provId != ''">
+		  	AND PROV_ID = #{provId,jdbcType=VARCHAR} 
+		</if>
+		<if test="cityId != null and cityId != ''">
+		  	AND CITY_ID = #{cityId,jdbcType=VARCHAR}
+		</if>
+		<if test="areaId != null and areaId != ''">
+		  	AND AREA_ID = #{areaId,jdbcType=VARCHAR}
+		</if>
+		<if test="saleDeptCode != null and saleDeptCode != ''">
+		  	AND SALE_DEPT_CODE = #{saleDeptCode,jdbcType=VARCHAR}
+		</if>
+		<if test="gridCode != null and gridCode != ''">
+		  	AND GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+		<if test="villageId != null and villageId != ''">
+		  	AND VILLAGE_ID = #{villageId,jdbcType=VARCHAR}
+		</if>
+		<if test="communityId != null and communityId != ''">
+		  	AND COMMUNITY_ID = #{communityId,jdbcType=VARCHAR}
+		</if>
+		<if test="chnlorstationId != null and chnlorstationId != ''">
+		  	AND CHNLORSTATION_ID = #{chnlorstationId,jdbcType=VARCHAR}
+		</if>
+		GROUP BY 
+			GRID_CODE, GRID_NAME
+	</select>
+	
+	<select id="getVillageInfo" parameterType="com.bonc.kpi.dao.entity.OrgSearch" resultType="com.bonc.kpi.dao.entity.OrgSearch">
+		SELECT 
+			VILLAGE_ID, VILLAGE_NAME
+		FROM 
+			ORG_SEARCH_VIEW 
+		WHERE 
+			1=1 
+		AND 
+			VILLAGE_ID IS NOT NULL 
+		AND 
+			VILLAGE_ID <![CDATA[<>]]> ''
+		<if test="provId != null and provId != ''">
+		  	AND PROV_ID = #{provId,jdbcType=VARCHAR}
+		</if>
+		<if test="cityId != null and cityId != ''">
+		  	AND CITY_ID = #{cityId,jdbcType=VARCHAR}
+		</if>
+		<if test="areaId != null and areaId != ''">
+		  	AND AREA_ID = #{areaId,jdbcType=VARCHAR}
+		</if>
+		<if test="saleDeptCode != null and saleDeptCode != ''">
+		  	AND SALE_DEPT_CODE = #{saleDeptCode,jdbcType=VARCHAR}
+		</if>
+		<if test="gridCode != null and gridCode != ''">
+		  	AND GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+		<if test="villageId != null and villageId != ''">
+		  	AND VILLAGE_ID = #{villageId,jdbcType=VARCHAR}
+		</if>
+		<if test="communityId != null and communityId != ''">
+		  	AND COMMUNITY_ID = #{communityId,jdbcType=VARCHAR}
+		</if>
+		<if test="chnlorstationId != null and chnlorstationId != ''">
+		  	AND CHNLORSTATION_ID = #{chnlorstationId,jdbcType=VARCHAR} 
+		</if>
+		GROUP BY 
+			VILLAGE_ID, VILLAGE_NAME
+	</select>
+	
+	<select id="getCommunityInfo" parameterType="com.bonc.kpi.dao.entity.OrgSearch" resultType="com.bonc.kpi.dao.entity.OrgSearch">
+		SELECT 
+			COMMUNITY_ID, COMMUNITY_NAME 
+		FROM 
+			ORG_SEARCH_VIEW 
+		WHERE 
+			1=1 
+		AND 
+			COMMUNITY_ID IS NOT NULL 
+		AND 
+			COMMUNITY_ID <![CDATA[<>]]> ''
+		<if test="provId != null and provId != ''">
+		  	AND PROV_ID = #{provId,jdbcType=VARCHAR}
+		</if>
+		<if test="cityId != null and cityId != ''">
+		  	AND CITY_ID = #{cityId,jdbcType=VARCHAR} 
+		</if>
+		<if test="areaId != null and areaId != ''">
+		  	AND AREA_ID = #{areaId,jdbcType=VARCHAR}
+		</if>
+		<if test="saleDeptCode != null and saleDeptCode != ''">
+		  	AND SALE_DEPT_CODE = #{saleDeptCode,jdbcType=VARCHAR}
+		</if>
+		<if test="gridCode != null and gridCode != ''">
+		  	AND GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+		<if test="villageId != null and villageId != ''">
+		  	AND VILLAGE_ID = #{villageId,jdbcType=VARCHAR}
+		</if>
+		<if test="communityId != null and communityId != ''">
+		  	AND COMMUNITY_ID = #{communityId,jdbcType=VARCHAR}
+		</if>
+		<if test="chnlorstationId != null and chnlorstationId != ''">
+		  	AND CHNLORSTATION_ID = #{chnlorstationId,jdbcType=VARCHAR} 
+		</if>
+		GROUP BY 
+			COMMUNITY_ID, COMMUNITY_NAME 
+	</select>
+	
+	<select id="getChnlorstationInfo" parameterType="com.bonc.kpi.dao.entity.OrgSearch" resultType="com.bonc.kpi.dao.entity.OrgSearch">
+		SELECT 
+			CHNLORSTATION_ID, CHNLORSTATION_NAME
+		FROM 
+			ORG_SEARCH_VIEW 
+		WHERE 
+			1=1 
+		AND 
+			CHNLORSTATION_ID IS NOT NULL 
+		AND 
+			CHNLORSTATION_ID <![CDATA[<>]]> ''
+		<if test="provId != null and provId != ''">
+		  	AND PROV_ID = #{provId,jdbcType=VARCHAR}
+		</if>
+		<if test="cityId != null and cityId != ''">
+		  	AND CITY_ID = #{cityId,jdbcType=VARCHAR}
+		</if>
+		<if test="areaId != null and areaId != ''">
+		  	AND AREA_ID = #{areaId,jdbcType=VARCHAR}
+		</if>
+		<if test="saleDeptCode != null and saleDeptCode != ''">
+		  	AND SALE_DEPT_CODE = #{saleDeptCode,jdbcType=VARCHAR}
+		</if>
+		<if test="gridCode != null and gridCode != ''">
+		  	AND GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+		<if test="villageId != null and villageId != ''">
+		  	AND VILLAGE_ID = #{villageId,jdbcType=VARCHAR}
+		</if>
+		<if test="communityId != null and communityId != ''">
+		  	AND COMMUNITY_ID = #{communityId,jdbcType=VARCHAR}
+		</if>
+		<if test="chnlorstationId != null and chnlorstationId != ''">
+		  	AND CHNLORSTATION_ID = #{chnlorstationId,jdbcType=VARCHAR} 
+		</if>
+		GROUP BY 
+			CHNLORSTATION_ID, CHNLORSTATION_NAME 
+	</select>
+	
+	<select id="getOrgLevel" parameterType="java.lang.String" resultType="com.bonc.system.dao.entity.SysOrg">
+		SELECT ORGLEVEL FROM SYS_ORG WHERE ORG_ID = #{orgId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getLevelMax" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT 
+			MAX(ORGLEVEL) 
+		FROM 
+			GRID_ORG 
+		WHERE 
+			GRID.f_split(TREE_CODE,'/', (SELECT ORGLEVEL FROM SYS_ORG WHERE ORG_ID = #{orgId,jdbcType=VARCHAR}) + 1) = #{orgId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getCountPeriod" resultType="com.bonc.kpi.dao.entity.BaseKpi">
+		SELECT STATIS_CYCLE FROM KPI_BASE_INFO GROUP BY STATIS_CYCLE
+	</select>
+	
+	<select id="initKpiInfo" resultType="com.bonc.kpi.dao.entity.KpiList">
+		SELECT 
+			"TYPE", LIST_TYPE, LIST_VALUE, DISPLAY_ORDER, REMARK
+		FROM 
+			TB_LIST_VALUE 
+		WHERE 
+			"TYPE" = 'KPI_TYPE' 
+		ORDER BY 
+			DISPLAY_ORDER
+	</select>
+	
+	<select id="getKpiScreen" parameterType="java.lang.String" resultType="com.bonc.kpi.dao.entity.KpiScreen">
+		SELECT 
+			SCREEN_CODE, SCREEN_VALUE 
+		FROM 
+			kpi_screen 
+		WHERE 
+			KPI_TYPE_COLUMN = #{kpiTypeColumn,jdbcType=VARCHAR}
+		GROUP BY 
+			SCREEN_CODE, SCREEN_VALUE
+	</select>
+	
+	<select id="getScreenChildren" parameterType="java.lang.String" resultType="com.bonc.kpi.dao.entity.KpiScreen">
+		SELECT SCREEN_CODE, SCREEN_VALUE, SCREEN_LEVEL, pid FROM kpi_screen WHERE pid = #{screenCode,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getScreenParent" parameterType="java.lang.String" resultType="com.bonc.kpi.dao.entity.KpiScreen">
+		SELECT SCREEN_CODE, SCREEN_VALUE, SCREEN_LEVEL, pid FROM kpi_screen WHERE SCREEN_CODE = #{pid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="initKpiIndex" parameterType="com.bonc.kpi.dao.entity.BaseKpi" resultType="com.bonc.kpi.dao.entity.BaseKpi">
+		SELECT 
+			ID, kpi_code, kpi_name 
+		FROM 
+			KPI_BASE_INFO 
+		WHERE 
+			1=1
+		<if test="typeLevel1 != null and typeLevel1 != ''">
+		  	AND type_level1 = #{typeLevel1,jdbcType=VARCHAR}
+		</if>
+		<if test="typeLevel2 != null and typeLevel2 != ''">
+		  	AND type_level2 = #{typeLevel2,jdbcType=VARCHAR}
+		</if>
+		<if test="typeLevel3 != null and typeLevel3 != ''">
+		  	AND type_level3 = #{typeLevel3,jdbcType=VARCHAR}
+		</if>
+		<if test="kpiUnit != null and kpiUnit != ''">
+		  	AND kpi_unit = #{kpiUnit,jdbcType=VARCHAR}
+		</if>
+		<if test="granularity != null and granularity != ''">
+		  	AND granularity = #{granularity,jdbcType=VARCHAR}
+		</if>
+		<if test="statisCycle != null and statisCycle != ''">
+		  	AND statis_cycle = #{statisCycle,jdbcType=VARCHAR}
+		</if>
+		<if test="storageCycle != null and storageCycle != ''">
+		  	AND storage_cycle = #{storageCycle,jdbcType=VARCHAR}
+		</if>
+		<if test="kpiStatus != null and kpiStatus != ''">
+		  	AND kpi_status = #{kpiStatus,jdbcType=VARCHAR}
+		</if>
+		<if test="onlineDate != null and onlineDate != ''">
+		  	AND online_date = #{onlineDate,jdbcType=VARCHAR}
+		</if>
+		<if test="offlineDate != null and offlineDate != ''">
+		  	AND offline_date = #{offlineDate,jdbcType=VARCHAR}
+		</if>
+		<if test="isShow != null and isShow != ''">
+		  	AND is_show = #{isShow,jdbcType=VARCHAR}
+		</if>
+	</select>
+	<select id="getResultInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			CITY_NAME, AREA_NAME, SALE_DEPT_NAME, GRID_NAME
+		<if test="resultMsg.kpi != null and resultMsg.kpi != ''">
+			<foreach collection="kpiCodes" item="item" index="index">
+				,sum(CASE WHEN KPI_CODE = #{item} THEN KPI_VALUE ELSE 0 END) AS ${item}
+			</foreach>
+		</if>
+		FROM
+			KPI_SUM 
+        WHERE 
+        	1=1
+        <if test="resultMsg.kpi != null and resultMsg.kpi != ''">
+			AND KPI_CODE IN 
+			<foreach collection="kpiCodes" item="item" index="index" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+        <if test="resultMsg.statisYear != null and resultMsg.statisYear != ''">
+			AND STATIS_YEAR = #{resultMsg.statisYear,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisMon != null and resultMsg.statisMon != ''">
+			AND STATIS_MON = #{resultMsg.statisMon,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisDate != null and resultMsg.statisDate != ''">
+			AND STATIS_DATE = #{resultMsg.statisDate,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.cityCode != null and resultMsg.cityCode != ''">
+			AND CITY_CODE = #{resultMsg.cityCode,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.areaCode != null and resultMsg.areaCode != ''">
+			AND AREA_CODE = #{resultMsg.areaCode,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.saleDeptCode != null and resultMsg.saleDeptCode != ''">
+			AND SALE_DEPT_CODE = #{resultMsg.saleDeptCode,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.gridCode != null and resultMsg.gridCode != ''">
+			AND GRID_CODE = #{resultMsg.gridCode,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.villageId != null and resultMsg.villageId != ''">
+			AND VILLAGE_ID = #{resultMsg.villageId,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.communityId != null and resultMsg.communityId != ''">
+			AND COMMUNITY_ID = #{resultMsg.communityId,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.chnlorstationId != null and resultMsg.chnlorstationId != ''">
+			AND CHNLORSTATION_ID = #{resultMsg.chnlorstationId,jdbcType=VARCHAR}
+		</if>
+		GROUP 
+			BY CITY_CODE, CITY_NAME, AREA_CODE, AREA_NAME, SALE_DEPT_CODE, SALE_DEPT_NAME, GRID_CODE, GRID_NAME
+	</select>
+	
+	<select id="getCityTopFive" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			city_code as orgId, city_name as orgName, sum(KPI_VALUE) top
+		FROM 
+			KPI_SUM
+		WHERE 
+			KPI_CODE = #{kpiCode,jdbcType=VARCHAR}
+		<if test="resultMsg.statisYear != null and resultMsg.statisYear != ''">
+			AND STATIS_YEAR = #{resultMsg.statisYear,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisMon != null and resultMsg.statisMon != ''">
+			AND STATIS_MON = #{resultMsg.statisMon,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisDate != null and resultMsg.statisDate != ''">
+			AND STATIS_DATE = #{resultMsg.statisDate,jdbcType=VARCHAR}
+		</if>
+		GROUP BY 
+			city_code, city_name
+		ORDER BY 
+			sum(KPI_VALUE) DESC
+		FETCH FIRST 5 ROWS ONLY
+	</select>
+	
+	<select id="getAreaTopFive" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			area_code as orgId, AREA_NAME as orgName, sum(KPI_VALUE) top
+		FROM 
+			KPI_SUM
+		WHERE 
+			KPI_CODE = #{kpiCode,jdbcType=VARCHAR} 
+		AND 
+			CITY_CODE = #{orgId,jdbcType=VARCHAR}
+		<if test="resultMsg.statisYear != null and resultMsg.statisYear != ''">
+		  	AND STATIS_YEAR = #{resultMsg.statisYear,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisMon != null and resultMsg.statisMon != ''">
+		  	AND STATIS_MON = #{resultMsg.statisMon,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisDate != null and resultMsg.statisDate != ''">
+		  	AND STATIS_DATE = #{resultMsg.statisDate,jdbcType=VARCHAR}
+		</if>
+		GROUP BY 
+			area_code, AREA_NAME
+		ORDER BY 
+			sum(KPI_VALUE) DESC
+		FETCH FIRST 5 ROWS ONLY
+	</select>
+	
+	<select id="getGridTopFive" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			grid_code as orgId, GRID_NAME as orgName, sum(KPI_VALUE) top
+		FROM 
+			KPI_SUM
+		WHERE 
+			KPI_CODE = #{kpiCode,jdbcType=VARCHAR} 
+		AND 
+			AREA_CODE = #{orgId,jdbcType=VARCHAR}
+		<if test="resultMsg.statisYear != null and resultMsg.statisYear != ''">
+		  	AND STATIS_YEAR = #{resultMsg.statisYear,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisMon != null and resultMsg.statisMon != ''">
+		  	AND STATIS_MON = #{resultMsg.statisMon,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisDate != null and resultMsg.statisDate != ''">
+		  	AND STATIS_DATE = #{resultMsg.statisDate,jdbcType=VARCHAR}
+		</if>
+		GROUP BY 
+			grid_code, GRID_NAME
+		ORDER BY 
+			sum(KPI_VALUE) DESC
+		FETCH FIRST 5 ROWS ONLY
+	</select>
+	
+	<select id="getNextOrgKpi" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgName=='CITY_NAME'.toString()">
+				CITY_NAME,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				AREA_NAME,
+			</if>
+			<if test="orgName=='SALE_DEPT_NAME'.toString()">
+				SALE_DEPT_NAME,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				GRID_NAME,
+			</if>
+			<if test="orgName=='TOWN_NAME'.toString()">
+				TOWN_NAME,
+			</if>
+			<if test="orgName=='VILLAGE_NAME'.toString()">
+				VILLAGE_NAME,
+			</if>
+			<if test="orgName=='CHNLORSTATION_NAME'.toString()">
+				CHNLORSTATION_NAME,
+			</if>
+			<foreach collection="kpiCodes" item="item" index="index" separator=",">
+				sum(CASE WHEN KPI_CODE = #{item} THEN KPI_VALUE ELSE 0 END) AS ${item}
+			</foreach>
+		FROM 
+			KPI_SUM 
+		WHERE 
+			1=1
+		<if test="resultMsg.statisYear != null and resultMsg.statisYear != ''">
+			AND STATIS_YEAR = #{resultMsg.statisYear,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisMon != null and resultMsg.statisMon != ''">
+			AND STATIS_MON = #{resultMsg.statisMon,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisDate != null and resultMsg.statisDate != ''">
+			AND STATIS_DATE = #{resultMsg.statisDate,jdbcType=VARCHAR}
+		</if>
+		<if test="orgCode != null and orgCode != ''">
+			<if test="orgCode=='CITY_CODE'.toString()">
+				AND CITY_CODE = #{orgId, jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='AREA_CODE'.toString()">
+				AND AREA_CODE = #{orgId, jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='SALE_DEPT_CODE'.toString()">
+				AND SALE_DEPT_CODE = #{orgId, jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId, jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='TOWN_CODE'.toString()">
+				AND TOWN_CODE = #{orgId, jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='VILLAGE_ID'.toString()">
+				AND VILLAGE_ID = #{orgId, jdbcType=VARCHAR}
+			</if>
+		</if>
+		GROUP BY 
+		<if test="orgName=='CITY_NAME'.toString()">
+			CITY_NAME
+		</if>
+		<if test="orgName=='AREA_NAME'.toString()">
+			AREA_NAME
+		</if>
+		<if test="orgName=='SALE_DEPT_NAME'.toString()">
+			SALE_DEPT_NAME
+		</if>
+		<if test="orgName=='GRID_NAME'.toString()">
+			GRID_NAME
+		</if>
+		<if test="orgName=='TOWN_NAME'.toString()">
+			TOWN_NAME
+		</if>
+		<if test="orgName=='VILLAGE_NAME'.toString()">
+			VILLAGE_NAME
+		</if>
+		<if test="orgName=='CHNLORSTATION_NAME'.toString()">
+			CHNLORSTATION_NAME
+		</if>
+		FETCH FIRST 14 ROWS ONLY
+	</select>
+	
+	<select id="getOrgKpiBar" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgName=='CITY_NAME'.toString()">
+				CITY_NAME,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				AREA_NAME,
+			</if>
+			<if test="orgName=='GRID_NAME'.toString()">
+				GRID_NAME,
+			</if>
+			<if test="orgName=='SALE_DEPT_NAME'.toString()">
+				SALE_DEPT_NAME,
+			</if>
+			<if test="orgName=='TOWN_NAME'.toString()">
+				TOWN_NAME,
+			</if>
+			<if test="orgName=='VILLAGE_NAME'.toString()">
+				VILLAGE_NAME,
+			</if>
+			<if test="orgName=='CHNLORSTATION_NAME'.toString()">
+				CHNLORSTATION_NAME,
+			</if>
+			<foreach collection="kpiCodes" item="item" index="index" separator=",">
+				sum(CASE WHEN KPI_CODE = #{item} THEN KPI_VALUE ELSE 0 END) AS ${item}
+			</foreach>
+		FROM 
+			KPI_SUM 
+		WHERE 
+			1=1
+		<if test="resultMsg.statisYear != null and resultMsg.statisYear != ''">
+			AND STATIS_YEAR = #{resultMsg.statisYear,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisMon != null and resultMsg.statisMon != ''">
+			AND STATIS_MON = #{resultMsg.statisMon,jdbcType=VARCHAR}
+		</if>
+		<if test="resultMsg.statisDate != null and resultMsg.statisDate != ''">
+			AND STATIS_DATE = #{resultMsg.statisDate,jdbcType=VARCHAR}
+		</if>
+		<if test="orgCode != null and orgCode != ''">
+			<if test="orgCode=='CITY_CODE'.toString()">
+				AND CITY_CODE = #{orgId, jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='AREA_CODE'.toString()">
+				AND AREA_CODE = #{orgId, jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				AND GRID_CODE = #{orgId, jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='SALE_DEPT_CODE'.toString()">
+				AND SALE_DEPT_CODE = #{orgId, jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='TOWN_CODE'.toString()">
+				AND TOWN_CODE = #{orgId, jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='CHNLORSTATION_ID'.toString()">
+				AND CHNLORSTATION_ID = #{orgId, jdbcType=VARCHAR}
+			</if>
+		</if>
+		GROUP BY 
+		<if test="orgName=='CITY_NAME'.toString()">
+			CITY_NAME
+		</if>
+		<if test="orgName=='AREA_NAME'.toString()">
+			AREA_NAME
+		</if>
+		<if test="orgName=='GRID_NAME'.toString()">
+			GRID_NAME
+		</if>
+		<if test="orgName=='SALE_DEPT_NAME'.toString()">
+			SALE_DEPT_NAME
+		</if>
+		<if test="orgName=='TOWN_NAME'.toString()">
+			TOWN_NAME
+		</if>
+		<if test="orgName=='VILLAGE_NAME'.toString()">
+			VILLAGE_NAME
+		</if>
+		<if test="orgName=='CHNLORSTATION_NAME'.toString()">
+			CHNLORSTATION_NAME
+		</if>
+	</select>
+</mapper>

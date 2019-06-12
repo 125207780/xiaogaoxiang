@@ -1,0 +1,328 @@
+.*{
+	margin: 0;
+	padding: 0;
+}
+
+.outerDiv{
+	width: 100%;
+	height: 99.5%; 
+	/* margin: 20px 20px; */
+	position: absolute;
+	text-align: center;vertical-align: middle;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+span {
+	color:#ffffff;
+}	
+
+.titleLeveL1{
+	width: 100%;
+	height: 5%;
+	font-size: 18px;
+	color: #FFFFFF;
+}
+.titleLevel1Content{
+	height: 95%;
+}
+.flex1{
+ 	 /*flex 布局*/
+ 	display: flex1;
+ 	/*实现垂直居中*/
+    align-items: center;
+    /*实现水平居中*/
+    justify-content: center;
+    text-align: justify;
+    margin: 0 auto;
+    width: 100%;
+    font-size: 18px;
+	color: #FFFFFF;
+ }
+.firstPage-left{
+	width: 32.5%;
+	height: 100%;
+	float: left;
+}
+.firstPage-middle{
+	width: 33%;
+	height: 100%;
+	float: left;
+	margin-left: 1%;
+}
+.firstPage-right{
+	width: 32.5%;
+	height: 100%;
+	float: left;
+	margin-left: 1%;
+}
+.gridTitle {
+ 	width: 100%;
+ 	height: 12%;
+ 	background: url(../../images/gis/pageOne/img_bg_ninalingjiaoyu.png) no-repeat;
+ 	background-size: 100% 100%;
+ 	text-align: left;
+ }
+ 
+  .gridInfo,.channelStation{
+ 	width: 100%;
+ 	height: 28.25%;
+ 	display: block;
+ 	margin-bottom: 1%;
+ }
+ .channelStation{
+ 	/* margin-top: 1%; */
+ }
+  .gridContent,.channelStationContent {
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+ 
+ .flex{
+ 	 /*flex 布局*/
+ 	display: flex;
+ 	/*实现垂直居中*/
+    align-items: center;
+    /*实现水平居中*/
+    justify-content: center;
+    text-align: justify;
+    margin: 0 auto;
+ }
+ .itemTitle {
+ 	height: 66.5%;
+ }
+ 
+ .itemValue{
+ 	text-align: center;
+ 	height: 33.5%;
+ 	margin-bottom: 3px;
+ }
+ .gridClass,.userSize,.operateMonitor {
+ 	width: 100%;
+ 	height: 20.5%;
+ 	display: block;
+ 	margin-bottom: 1%;
+ }
+ .clearMarginBottom{
+ 	margin-bottom: 0;
+ }
+  .gridClassContent,.userSizeContent,.operateMonitorContent {
+ 	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+ }
+ span{
+ 	font-size: 14px;
+ }
+ .gridTitle span{
+ 	margin-left: 10px;
+ }
+ .targetResourceList{
+ 	height: 20%;
+ 	border: 1px #09416e solid;
+ }
+ .ellipse{
+	width: 15.5%;
+	height: 82%;
+	border-radius: 80% / 80%;
+	text-align: center;
+	border: 1px #09416e solid;
+	float: left;
+	margin: 2% 0 2% 1%;
+}
+.ellipseTitle{
+	display: block;
+	margin-top: 17%;
+}
+
+.taskBody{
+	width: 100%;
+	height: 100%;
+	border: 1px #09416e solid;
+}
+
+.taskList{
+ 	height: 19%;
+}
+.taskEllipse{
+	width: 30%;
+	height: 90%;
+	border-radius: 80% / 80%;
+	text-align: center;
+	border: 1px #09416e solid;
+	float: left;
+	margin: 1% 0 0 2.5%;
+}
+.taskEllipseTitle{
+	display: block;
+	margin-top: 16%;
+}
+.taskEllipse span{
+	font-size: 13px;
+}
+.assessScore{
+	width: 100%;
+	height: 40%;
+}
+.gridRow3Cell3{
+	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+}
+.gridRow3Cell3 > div{
+	width: 94%;
+	margin-left: 3%;
+	float: left;
+	height: 33.3%;
+	border-bottom: 1px solid #09416e;
+}
+.cell3{
+	width: 32.333%;float: left;height: 100%;
+}
+.gridRow2Cell3{
+	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+}
+.gridRow2Cell3 > div{
+	width: 94%;
+	margin-left: 3%;
+	float: left;
+	height: 50%;
+	border-bottom: 1px solid #09416e;
+}
+.clearBorderBottom{
+	border-bottom: 0 ! important;
+}
+.cellTitle{
+	height: 60%;
+	margin-top: 2%;
+	line-height: 16px;
+	color:#ffffff;
+}
+.cellContent{
+	height: 34%;
+	color:#ffffff;
+}
+.gridRow2Cell6{
+	width: 100%;
+ 	height: 88%;
+ 	border: 1px solid #09416e;
+	border-top: none;
+}
+.gridRow2Cell6 > div{
+	width: 94%;
+	margin-left: 3%;
+	float: left;
+	height: 50%;
+	border-bottom: 1px solid #09416e;
+}
+.cell6{
+	width: 15.833%;float: left;height: 100%;
+}
+.monthAssess{
+	height: 41%;
+	border-top: 1px #09416e solid;
+	width: 100%;
+}
+.monthAssessTitle{
+	width: 99%;
+	height: 10%;
+	margin-left: 1%;
+	margin-top: 1%;
+	text-align: left;
+}
+.monthAssessCondition{
+	float: left;
+	width: 50%;
+	text-align: right;
+	height: 10%;
+	margin-top: 1%;
+}
+.monthAssessCondition input{
+	width: 65%;
+	margin-right: 5%;
+	height: 100%;
+}
+.monthAssessCondition select{
+	width: 65%;
+	margin-right: 5%;
+	height: 100%;
+}
+.monthAssessCondition span{
+	width: 30%;
+}
+.cellDividLine{
+	border-right: 1px #09416e solid;
+	width: 1%;
+	height: 60%;
+	float: left;
+	margin-top: 3%;
+}
+
+
+
+
+
+.topPanel {
+	position: absolute;
+    top: 5px;
+    z-index: 10;
+    left: 5px;
+    height: auto;
+    min-height: 80px;
+    min-width: 115px;
+ }
+ .topPanelUp {
+ 	height: 18%;
+ 	border: 1px solid #008fa7;
+ 	border-radius: 5px;
+ 	text-align: center;
+ 	font-weight:bold;
+ 	color: #FFFF00;
+ 	background: #082a5a;
+    opacity: 0.8;
+ }
+ .topPanelDown {
+ 	height: 82%;
+ 	border: 1px solid #008fa7;
+ 	border-radius: 5px;
+ 	background: #082a5a;
+    opacity: 0.8;
+ }
+ .lastPanel {
+	position: absolute;
+    bottom: 5px;
+    z-index: 10;
+    right: 5px;
+    height:auto;
+    min-height: 80px;
+    min-width: 115px;
+ }
+ .lastPanelUp {
+ 	height: 18%;
+ 	border: 1px solid #008fa7;
+ 	border-radius: 5px;
+ 	text-align: center;
+ 	font-weight:bold;
+ 	color: #FFFF00;
+ 	background: #082a5a;
+    opacity: 0.8;
+ }
+ .lastPanelDown {
+ 	height: 82%;
+ 	border: 1px solid #008fa7;
+ 	border-radius: 5px;
+ 	background: #082a5a;
+    opacity: 0.8;
+ }
+ .topValue {
+    font-size: 12px;
+    padding: 1.5px 6px;
+ }

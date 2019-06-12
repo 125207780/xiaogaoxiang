@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.dataVisualization.dao.mapper.DataVisualizationMapper">
+
+	<select id="getMapLine" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			<if test="orgCode=='CITY_ID'.toString()">
+				A.CITY_ID ORGCODE,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				A.AREA_ID ORGCODE,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				A.CITY_NAME ORGNAME,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				A.AREA_NAME ORGNAME,
+			</if>
+			SUM(CASE WHEN E.CONDITION_CODE = 'T1106' THEN NVL(A.KPI_VALUE_LAST1,0) ELSE 0 END ) NUM1,
+			SUM(CASE WHEN E.CONDITION_CODE = 'T1107' THEN NVL(A.KPI_VALUE_LAST1,0) ELSE 0 END ) NUM2,
+			SUM(CASE WHEN E.CONDITION_CODE = 'T1108' THEN NVL(A.KPI_VALUE_LAST1,0) ELSE 0 END ) NUM3,
+			SUM(CASE WHEN E.CONDITION_CODE = 'T1109' THEN NVL(A.KPI_VALUE_LAST1,0) ELSE 0 END ) NUM4,
+			SUM(CASE WHEN E.CONDITION_CODE = 'T1110' THEN NVL(A.KPI_VALUE_LAST1,0) ELSE 0 END ) NUM5,
+			SUM(CASE WHEN E.CONDITION_CODE = 'T1111' THEN NVL(A.KPI_VALUE_LAST1,0) ELSE 0 END ) NUM6,
+			SUM(CASE WHEN E.CONDITION_CODE = 'T1112' THEN NVL(A.KPI_VALUE_LAST1,0) ELSE 0 END ) NUM7,
+			SUM(CASE WHEN E.CONDITION_CODE = 'T1113' THEN NVL(A.KPI_VALUE_LAST1,0) ELSE 0 END ) NUM8 
+		FROM 
+			WG_KSH_KPI_SUM A 
+		LEFT JOIN 
+			CONDITION_SCREEN C 
+		ON 
+			A.KPI_ID = C.CONDITION_CODE 
+		AND 
+			C."TYPE" = 'KSH_KPI_TYPE' 
+		AND 
+			C.CONDITION_level = 3 
+		LEFT JOIN CONDITION_SCREEN D ON C.PARENT_ID = D.CONDITION_CODE 
+			AND 
+				D."TYPE" = 'KSH_KPI_TYPE' 
+			AND 
+				D.CONDITION_level = 2 
+		LEFT JOIN CONDITION_SCREEN E ON D.PARENT_ID = E.CONDITION_CODE AND E."TYPE" = 'KSH_KPI_TYPE' AND E.CONDITION_LEVEL = 1
+		WHERE 
+			1=1 
+		<if test="parentId != null and parentId != ''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</if>
+		GROUP BY 
+			<if test="orgCode=='CITY_ID'.toString()">
+				A.CITY_ID,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				A.AREA_ID,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				A.CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				A.AREA_NAME
+			</if>
+		FETCH FIRST 14 ROWS ONLY
+	</select>
+	
+	<select id="getBigTypePie" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			D.CONDITION_CODE,
+			D.CONDITION_NAME,
+			SUM(A.KPI_VALUE_LAST1) NUM1
+		FROM 
+			WG_KSH_KPI_SUM A
+		LEFT JOIN CONDITION_SCREEN C ON A.KPI_ID = C.CONDITION_CODE AND C."TYPE" = 'KSH_KPI_TYPE' AND C.CONDITION_level = 3 
+		LEFT JOIN CONDITION_SCREEN D ON C.PARENT_ID = D.CONDITION_CODE AND D."TYPE" = 'KSH_KPI_TYPE' AND D.CONDITION_level = 2 
+		LEFT JOIN CONDITION_SCREEN E ON D.PARENT_ID = E.CONDITION_CODE AND E."TYPE" = 'KSH_KPI_TYPE' AND E.CONDITION_LEVEL = 1
+		WHERE 
+			D.PARENT_ID = #{firstCode,jdbcType=VARCHAR} 
+		<if test="orgCode != null and orgCode != ''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</if>
+		GROUP BY 
+			D.CONDITION_CODE, D.CONDITION_NAME
+	</select>
+	
+	<select id="getSmallTypePie" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			C.CONDITION_CODE,
+			C.CONDITION_NAME,
+			SUM(A.KPI_VALUE_LAST1) NUM1
+		FROM 
+			WG_KSH_KPI_SUM A
+		LEFT JOIN CONDITION_SCREEN C ON A.KPI_ID = C.CONDITION_CODE AND C."TYPE" = 'KSH_KPI_TYPE' AND C.CONDITION_level = 3 
+		LEFT JOIN CONDITION_SCREEN D ON C.PARENT_ID = D.CONDITION_CODE AND D."TYPE" = 'KSH_KPI_TYPE' AND D.CONDITION_level = 2 
+		LEFT JOIN CONDITION_SCREEN E ON D.PARENT_ID = E.CONDITION_CODE AND E."TYPE" = 'KSH_KPI_TYPE' AND E.CONDITION_LEVEL = 1
+		WHERE 
+			C.PARENT_ID = #{secondCode,jdbcType=VARCHAR} 
+		<if test="orgCode != null and orgCode != ''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</if>
+		GROUP BY 
+			C.CONDITION_CODE,C.CONDITION_NAME
+	</select>
+	
+	<select id="getLeftBar" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			E.CONDITION_CODE,
+			E.CONDITION_NAME,
+			SUM(A.KPI_VALUE_LAST1) NUM1,
+			SUM(A.KPI_VALUE_LAST2) NUM2,
+			SUM(A.KPI_VALUE_LAST3) NUM3,
+			SUM(A.KPI_VALUE_LAST4) NUM4,
+			SUM(A.KPI_VALUE_LAST5) NUM5,
+			SUM(A.KPI_VALUE_LAST6) NUM6
+		FROM 
+			WG_KSH_KPI_SUM A
+		LEFT JOIN CONDITION_SCREEN C ON A.KPI_ID = C.CONDITION_CODE AND C."TYPE" = 'KSH_KPI_TYPE' AND C.CONDITION_level = 3 
+		LEFT JOIN CONDITION_SCREEN D ON C.PARENT_ID = D.CONDITION_CODE AND D."TYPE" = 'KSH_KPI_TYPE' AND D.CONDITION_level = 2 
+		LEFT JOIN CONDITION_SCREEN E ON D.PARENT_ID = E.CONDITION_CODE AND E."TYPE" = 'KSH_KPI_TYPE' AND E.CONDITION_LEVEL = 1
+		WHERE 
+			E.CONDITION_CODE = #{firstCode,jdbcType=VARCHAR}
+		<if test="orgCode != null and orgCode != ''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='GRID_CODE'.toString()">
+				AND A.GRID_CODE = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</if>
+		GROUP BY 
+			E.CONDITION_CODE,E.CONDITION_NAME
+	</select>
+	
+	<select id="getTopRightBar" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			<if test="orgCode=='CITY_ID'.toString()">
+				A.CITY_ID ORGCODE,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				A.AREA_ID ORGCODE,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				A.CITY_NAME ORGNAME,
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				A.AREA_NAME ORGNAME,
+			</if>
+			SUM(A.KPI_VALUE_LAST1) NUM1 
+		FROM 
+			WG_KSH_KPI_SUM A 
+		LEFT JOIN CONDITION_SCREEN C ON A.KPI_ID = C.CONDITION_CODE AND C."TYPE" = 'KSH_KPI_TYPE' AND C.CONDITION_level = 3 
+		LEFT JOIN CONDITION_SCREEN D ON C.PARENT_ID = D.CONDITION_CODE AND D."TYPE" = 'KSH_KPI_TYPE' AND D.CONDITION_level = 2 
+		LEFT JOIN CONDITION_SCREEN E ON D.PARENT_ID = E.CONDITION_CODE AND E."TYPE" = 'KSH_KPI_TYPE' AND E.CONDITION_LEVEL = 1 
+		WHERE 
+			E.CONDITION_CODE = #{firstCode,jdbcType=VARCHAR}
+		<if test="parentId != null and parentId != ''">
+			<if test="parentId=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</if>
+		GROUP BY 
+			<if test="orgCode=='CITY_ID'.toString()">
+				A.CITY_ID,
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				A.AREA_ID,
+			</if>
+			<if test="orgName=='CITY_NAME'.toString()">
+				A.CITY_NAME
+			</if>
+			<if test="orgName=='AREA_NAME'.toString()">
+				A.AREA_NAME
+			</if>
+		ORDER BY 
+			NUM1 ASC
+		FETCH FIRST 14 ROWS ONLY
+	</select>
+	
+	<select id="getRightTotalPie" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			E.CONDITION_CODE,
+			E.CONDITION_NAME,
+			SUM(A.KPI_VALUE_LAST1) NUM1 
+		FROM 
+			WG_KSH_KPI_SUM A 
+		LEFT JOIN CONDITION_SCREEN C ON A.KPI_ID = C.CONDITION_CODE AND C."TYPE" = 'KSH_KPI_TYPE' AND C.CONDITION_level = 3 
+		LEFT JOIN CONDITION_SCREEN D ON C.PARENT_ID = D.CONDITION_CODE AND D."TYPE" = 'KSH_KPI_TYPE' AND D.CONDITION_level = 2 
+		LEFT JOIN CONDITION_SCREEN E ON D.PARENT_ID = E.CONDITION_CODE AND E."TYPE" = 'KSH_KPI_TYPE' AND E.CONDITION_LEVEL = 1 
+		WHERE 
+			(E.CONDITION_CODE = 'T1112' OR E.CONDITION_CODE = 'T1113')
+		<if test="orgCode != null and orgCode != ''">
+			<if test="orgCode=='CITY_ID'.toString()">
+				AND A.CITY_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode=='AREA_ID'.toString()">
+				AND A.AREA_ID = #{orgId,jdbcType=VARCHAR}
+			</if>
+		</if>
+		GROUP BY 
+			E.CONDITION_CODE,E.CONDITION_NAME
+	</select>
+	<select id="getGridInfo" parameterType="com.bonc.kpi.dao.entity.OrgSearch" resultType="com.bonc.kpi.dao.entity.OrgSearch">
+		SELECT 
+			AREA_NAME,GRID_CODE,GRID_NAME 
+		FROM 
+			ORG_SEARCH_VIEW 
+		WHERE 
+			1=1 
+		AND 
+			GRID_CODE IS NOT NULL 
+		AND 
+			GRID_CODE <![CDATA[<>]]> ''
+		AND 
+			AREA_ID = #{areaId,jdbcType=VARCHAR} 
+		GROUP BY 
+			GRID_CODE,GRID_NAME,AREA_NAME
+	</select>
+	
+	<select id="getGridTypeNum" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			GRID_TYPE,
+			count(DISTINCT grid_code) GRID_TYPE_NUM
+		FROM 
+			wg_ksh_physical_num 
+		WHERE 
+			1=1
+		<if test="areaId != null and areaId != ''">
+			AND area_id = #{areaId,jdbcType=VARCHAR}
+		</if>
+		GROUP BY 
+			GRID_TYPE
+	</select>
+	
+		<select id="getGridTypeLevel4" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			GRID_TYPE,
+			count(DISTINCT grid_code) GRID_TYPE_NUM
+		FROM 
+		wg_ksh_physical_num WHERE 1=1
+		<if test="gridCode != null and gridCode != ''">
+			AND GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+		GROUP BY GRID_TYPE
+	</select>
+	
+	<select id="getGridByType" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT GRID_CODE,GRID_NAME,TOWN_NUM,VILLAGE_NUM,HOME_NUM,SCHOOL_NUM,CHNL_NUM,STATION_NUM
+		FROM wg_ksh_physical_num WHERE GRID_TYPE = #{typeId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getGridByTypeAjax" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT GRID_CODE,GRID_NAME,TOWN_NUM,VILLAGE_NUM,HOME_NUM,SCHOOL_NUM,CHNL_NUM,STATION_NUM
+		FROM wg_ksh_physical_num WHERE GRID_TYPE = #{typeId,jdbcType=VARCHAR}
+		<if test="gridCode != null and gridCode != '' ">
+			and GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="getTopChnlByKpi" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT a.CHNL_CODE,a.CHNL_NAME,a.LON,a.LAT,SUM(b.KPI_VALUE_LAST1) NUM1 
+		FROM CHANNEL_INFO a
+		LEFT JOIN
+		WG_KSH_KPI_SUM b
+		ON b.PHYSICAL_ID = a.CHNL_CODE AND b.PHYSICAL_TYPE = #{physicalType,jdbcType=INTEGER} AND a.LON IS NOT NULL
+		LEFT JOIN 
+		CONDITION_SCREEN c 
+		ON b.KPI_ID = c.CONDITION_CODE AND c."TYPE" = 'KSH_KPI_TYPE' AND c.CONDITION_level = 3 
+		LEFT JOIN 
+		CONDITION_SCREEN d 
+		ON c.PARENT_ID = d.CONDITION_CODE AND d."TYPE" = 'KSH_KPI_TYPE' AND d.CONDITION_level = 2 
+		LEFT JOIN 
+		CONDITION_SCREEN e 
+		ON d.PARENT_ID = e.CONDITION_CODE AND e."TYPE" = 'KSH_KPI_TYPE' AND e.CONDITION_LEVEL = 1 
+		WHERE e.CONDITION_CODE = #{firstCode,jdbcType=VARCHAR}
+		<if test="gridCode != null and gridCode != '' ">
+			AND a.GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+		GROUP BY a.CHNL_CODE,a.CHNL_NAME,a.LON,a.LAT
+		ORDER BY NUM1 DESC
+		FETCH FIRST 5 ROWS ONLY
+	</select>
+	
+	<select id="getTopStationByKpi" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT a.STATION_CODE,a.STATION_NAME,a.STATION_LON,a.STATION_LAT,SUM(b.KPI_VALUE_LAST1) NUM1 
+		FROM STATION_INFO a
+		LEFT JOIN
+		WG_KSH_KPI_SUM b
+		ON b.PHYSICAL_ID = a.STATION_CODE AND b.PHYSICAL_TYPE = 1 AND a.STATION_LON IS NOT NULL
+		LEFT JOIN 
+		CONDITION_SCREEN c 
+		ON b.KPI_ID = c.CONDITION_CODE AND c."TYPE" = 'KSH_KPI_TYPE' AND c.CONDITION_level = 3 
+		LEFT JOIN 
+		CONDITION_SCREEN d 
+		ON c.PARENT_ID = d.CONDITION_CODE AND d."TYPE" = 'KSH_KPI_TYPE' AND d.CONDITION_level = 2 
+		LEFT JOIN 
+		CONDITION_SCREEN e 
+		ON d.PARENT_ID = e.CONDITION_CODE AND e."TYPE" = 'KSH_KPI_TYPE' AND e.CONDITION_LEVEL = 1 
+		WHERE e.CONDITION_CODE = #{firstCode,jdbcType=VARCHAR}
+		<if test="gridCode != null and gridCode != '' ">
+			AND a.GRID_CODE = #{gridCode,jdbcType=VARCHAR}
+		</if>
+		GROUP BY a.STATION_CODE,a.STATION_NAME,a.STATION_LON,a.STATION_LAT
+		ORDER BY NUM1 DESC
+		FETCH FIRST 5 ROWS ONLY
+	</select>
+	
+	<select id="getTopGridByKpi" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT A.GRID_CODE,A.GRID_NAME,B.MAXLNG,B.MINLNG,B.MINLAT,B.MAXLAT,B.CPLNG,B.CPLAT
+			,SUM(A.KPI_VALUE_LAST1) NUM1
+		FROM WG_KSH_KPI_SUM A
+		LEFT JOIN
+		GRID_DETAIL B
+		ON A.GRID_CODE = B.ORG_ID 
+		LEFT JOIN 
+		CONDITION_SCREEN C
+		ON A.KPI_ID = C.CONDITION_CODE AND C."TYPE" = 'KSH_KPI_TYPE' AND C.CONDITION_level = 3 
+		LEFT JOIN 
+		CONDITION_SCREEN D 
+		ON C.PARENT_ID = D.CONDITION_CODE AND D."TYPE" = 'KSH_KPI_TYPE' AND D.CONDITION_level = 2 
+		LEFT JOIN 
+		CONDITION_SCREEN E 
+		ON D.PARENT_ID = E.CONDITION_CODE AND E."TYPE" = 'KSH_KPI_TYPE' AND E.CONDITION_LEVEL = 1
+		WHERE 
+		E.CONDITION_CODE = #{firstCode,jdbcType=VARCHAR}
+		AND B.TYPE_ID = #{typeId,jdbcType=VARCHAR}
+		AND A.GRID_CODE IS NOT NULL
+		AND A.AREA_ID = #{areaId,jdbcType=VARCHAR}
+		GROUP BY A.GRID_CODE,A.GRID_NAME,B.MAXLNG,B.MINLNG,B.MINLAT,B.MAXLAT,B.CPLNG,B.CPLAT
+		ORDER BY NUM1 DESC
+		FETCH FIRST 5 ROWS ONLY
+	</select>
+	
+	<select id="getBigTypeChnlGroupByCode" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT D.CONDITION_CODE,D.CONDITION_NAME,SUM(A.KPI_VALUE_LAST1) NUM1
+		FROM WG_KSH_KPI_SUM A
+		LEFT JOIN 
+		CONDITION_SCREEN C
+		ON A.KPI_ID = C.CONDITION_CODE AND C."TYPE" = 'KSH_KPI_TYPE' AND C.CONDITION_level = 3 
+		LEFT JOIN 
+		CONDITION_SCREEN D 
+		ON C.PARENT_ID = D.CONDITION_CODE AND D."TYPE" = 'KSH_KPI_TYPE' AND D.CONDITION_level = 2 
+		LEFT JOIN 
+		CONDITION_SCREEN E 
+		ON D.PARENT_ID = E.CONDITION_CODE AND E."TYPE" = 'KSH_KPI_TYPE' AND E.CONDITION_LEVEL = 1
+		WHERE 
+		D.PARENT_ID = #{firstCode,jdbcType=VARCHAR}
+		AND A.PHYSICAL_TYPE=0
+		AND A.PHYSICAL_ID = #{physicalId,jdbcType=VARCHAR}
+		GROUP BY D.CONDITION_CODE,D.CONDITION_NAME
+	</select>
+	
+	<select id="getBigTypeStationGroupByCode" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			D.CONDITION_CODE,D.CONDITION_NAME,SUM(A.KPI_VALUE_LAST1) NUM1
+		FROM 
+			WG_KSH_KPI_SUM A
+		LEFT JOIN CONDITION_SCREEN C ON A.KPI_ID = C.CONDITION_CODE AND C."TYPE" = 'KSH_KPI_TYPE' AND C.CONDITION_level = 3 
+		LEFT JOIN CONDITION_SCREEN D ON C.PARENT_ID = D.CONDITION_CODE AND D."TYPE" = 'KSH_KPI_TYPE' AND D.CONDITION_level = 2 
+		LEFT JOIN CONDITION_SCREEN E ON D.PARENT_ID = E.CONDITION_CODE AND E."TYPE" = 'KSH_KPI_TYPE' AND E.CONDITION_LEVEL = 1
+		WHERE 
+			D.PARENT_ID = #{firstCode,jdbcType=VARCHAR}
+		AND 
+			A.PHYSICAL_TYPE=1
+		AND 
+			A.PHYSICAL_ID = #{physicalId,jdbcType=VARCHAR}
+		GROUP BY 
+			D.CONDITION_CODE,D.CONDITION_NAME
+	</select>
+	
+	<select id="getGridPosition" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT ORG_ID, CPLNG, CPLAT FROM GRID_DETAIL WHERE ORG_ID = #{gridCode,jdbcType=VARCHAR}
+	</select>
+</mapper>

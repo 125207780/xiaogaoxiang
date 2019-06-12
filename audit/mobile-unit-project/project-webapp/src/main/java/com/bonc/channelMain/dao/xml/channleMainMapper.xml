@@ -1,0 +1,198 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="com.bonc.channelMain.dao.mapper.channleMainMapper">
+ 	
+ 	<select id="initChanelName" parameterType="java.lang.String" resultType="java.util.Map">
+ 	 	SELECT CHNL_NAME ,CHNL_CODE FROM CHANNEL_INFO WHERE GRID_CODE = #{gridCode}
+ 	</select>
+ 	
+	<select id="initGridCode"  parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT ORG_ID FROM SYS_USER WHERE LOGIN_ID=#{loginId,jdbcType=VARCHAR}
+	</select>
+ 	
+ 	<select id="initGrid" parameterType="java.util.Map" resultType="java.util.Map">
+	 	SELECT 
+	 		a.CHNL_CODE,
+			CHNL_NAME,
+			a.CHNL_TYPE,
+			a.CHNL_TYPE_LEVEL1,
+			a.CHNL_TYPE_LEVEL2,
+			a.CHNL_TYPE_LEVEL3,
+			a.CHNL_STAR,
+			a.MANAGE_DEPT,
+			a.BUSICIRCLE_TYPE,
+			a.CHNL_ADDR
+		FROM 
+			CHANNEL_INFO a
+		WHERE 
+			a.CHNL_TYPE != '直销渠道'
+		AND 
+			a.GRID_CODE =#{gridCode} 
+		AND 
+			not EXISTS (SELECT * FROM CHANNEL_MANAGER b WHERE a.CHNL_CODE = b.CHNL_CODE)
+		<if test="chnlCode !='' and chnlCode !=null ">
+			AND a.CHNL_CODE =#{chnlCode} 
+		</if>
+ 	</select>
+ 	
+	<select id="changeGrid" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+ 			a.CHNL_CODE,
+			CHNL_NAME,
+			a.CHNL_TYPE,
+			a.CHNL_TYPE_LEVEL1,
+			a.CHNL_TYPE_LEVEL2,
+			a.CHNL_TYPE_LEVEL3,
+			a.CHNL_STAR,
+			a.MANAGE_DEPT,
+			a.BUSICIRCLE_TYPE,
+			a.CHNL_ADDR,
+			c.NAME,
+			c.PHONE
+		FROM 
+			CHANNEL_INFO a
+		LEFT JOIN CHANNEL_MANAGER b ON a.CHNL_CODE = b.CHNL_CODE 
+		LEFT JOIN GRID_USER c ON b.LOGIN_ID = c.LOGIN_ID AND a.GRID_CODE = c.ORG_ID AND c.USER_TYPE = 1
+		WHERE 
+			a.CHNL_TYPE != '直销渠道'
+		AND 
+			b.CHNL_CODE IS NOT NULL
+		AND 
+			a.GRID_CODE =#{gridCode} 
+			<!-- AND    EXISTS (
+			  SELECT * FROM  CHANNEL_MANAGER b WHERE a.CHNL_CODE = b.CHNL_CODE
+			) -->
+		<if test="chnlCode !='' and chnlCode !=null ">
+			AND a.CHNL_CODE =#{chnlCode}
+		</if>
+ 	</select>
+ 	
+ 	<select id="getPID" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT PID FROM SYS_ORG WHERE ORG_ID = #{gridCode} 
+ 	</select>
+ 	
+ 	<select id="ChannelManager" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			b.NAME,
+			b.PHONE
+		FROM
+			GRID_USER b
+		WHERE
+			b.ORG_ID =#{gridCode}
+		AND 
+			b.USER_TYPE = 1
+		GROUP BY
+			b.name, b.PHONE
+ 	</select>
+ 	
+ 	<select id="initTable" parameterType="java.util.Map" resultType="java.util.Map">	
+		SELECT
+			b.NAME,
+			b.PHONE,
+			COUNT( a.CHNL_CODE ) AS SU,
+			b.LOGIN_ID
+		FROM 
+		   	GRID_USER b
+		LEFT JOIN CHANNEL_MANAGER a ON a.LOGIN_ID = b.LOGIN_ID
+		WHERE
+			b.ORG_ID =#{gridCode}
+		AND 
+			b.USER_TYPE = 1
+		<if test="subject_id !=null and subject_id !='' " >
+			AND b.name LIKE '%'||#{subject_id}||'%'
+		</if>
+		GROUP BY 
+			b.name, b.PHONE, b.LOGIN_ID
+		ORDER BY 
+			SU DESC 	
+ 	</select>
+ 	
+ 	<select id="changeTable" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT  
+			b.NAME, b.PHONE, COUNT(a.CHNL_CODE) AS SU, a.LOGIN_ID 
+		FROM 
+			CHANNEL_MANAGER a, GRID_USER b 
+		WHERE 
+			a.LOGIN_ID = b.LOGIN_ID 
+		AND 
+			b.ORG_ID = #{gridCode} 
+		AND 
+			b.USER_TYPE = 1 
+		AND 
+			a.CHNL_CODE IS NOT NULL
+ 		<if test="LOGIN_ID !=null and LOGIN_ID !='' " >
+ 			AND a.LOGIN_ID = #{LOGIN_ID}
+ 		</if>
+		GROUP BY 
+			b.name, b.PHONE, a.LOGIN_ID 
+ 	</select>
+ 	
+ 	<select id="getChnlCode" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT CHNL_CODE FROM CHANNEL_MANAGER WHERE LOGIN_ID = #{LOGIN_ID}
+ 	</select>
+ 	
+ 	<select id="chnlInformationGrid" parameterType="java.util.List" resultType="java.util.Map">
+		SELECT 
+			CHNL_CODE, CHNL_NAME, CHNL_ADDR, CHNL_TYPE_LEVEL1, CHNL_TYPE_LEVEL2,
+ 			OPEN_DATE, CHNL_COUNTER_NUM, CHNL_STAR, CHNL_CAPACITY_SCORE, CHNL_TAG,
+ 			CHNL_MNGR_NAME, CHNL_MNGR_NUMBER, USE_AREA, CHNL_CLERK_NUM
+ 		FROM 
+ 			CHANNEL_INFO 
+ 		WHERE 
+ 			CHNL_CODE IN 
+ 	 		<foreach collection="ChnlList" open="(" close=")" separator="," item="ChnlList">
+    			#{ChnlList}
+    		</foreach>
+ 	</select>
+ 	
+ 	<insert id="UpdatetChnlManager" parameterType="java.util.Map" >
+		INSERT INTO CHANNEL_MANAGER (CHNL_CODE, LOGIN_ID) VALUES (#{CHNL_CODE}, #{LOGIN_ID})	 
+ 	</insert>
+ 	
+ 	<select id="getInFullOA" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			NAME 
+		FROM 
+			GRID_USER_SELECT 
+		WHERE 
+			pid = #{pid} 
+		AND 
+			USER_NAME = #{name} 
+		AND 
+			LOGIN_ID = #{OAID}
+ 	</select>
+ 	
+ 	<select id="getGridChnlManager" parameterType="java.lang.String" resultType="java.util.Map">
+	 	SELECT  
+			b.NAME,b.PHONE
+		FROM 
+			CHANNEL_MANAGER a, GRID_USER b 
+		WHERE 
+			a.LOGIN_ID = b.LOGIN_ID 
+		AND 
+			b.ORG_ID = #{gridCode} 
+		AND
+			b.USER_TYPE = 1 
+		AND 
+			a.CHNL_CODE IS NOT NULL
+		GROUP BY 
+			b.name, b.PHONE
+ 	</select>
+ 	
+ 	<select id="selectCountyUserByGridCode" parameterType="java.lang.String" resultType="java.util.Map" >
+  		SELECT USER_NAME, LOGIN_ID FROM SYS_USER WHERE ORG_ID = #{gridCode, jdbcType=VARCHAR} AND USER_LEVEL = '3'
+ 	</select>
+ 	
+ 	<select id="selectGridName"  parameterType="java.lang.String" resultType="java.util.Map">
+ 		SELECT NAME FROM SYS_ORG WHERE ORG_ID = #{gridCode}
+ 	</select>
+ 	
+ 	<insert id="insertCountyInfo" parameterType="java.util.Map">
+ 		INSERT INTO 
+ 			GRID_ITEM_INFO(USER_ID,USER_NAME,ITEM_CODE,ITEM_NAME,ITEM_STATUS,ITEM_DESC,ITEM_CONTENT,ITEM_HANDLER,ITEM_ISSUEDER,ISSUED_DATE)
+		VALUES(
+			#{userId,jdbcType=VARCHAR}, #{gridName,jdbcType=VARCHAR}, #{itemCode,jdbcType=VARCHAR}, #{itemName,jdbcType=VARCHAR},
+			#{itemStatus,jdbcType=VARCHAR}, #{itemContent,jdbcType=VARCHAR}, #{itemContent,jdbcType=VARCHAR}, #{itemHandler,jdbcType=VARCHAR}, 
+			#{itemIssueder,jdbcType=VARCHAR}, #{issuedDate,jdbcType=VARCHAR}
+		)
+	</insert>
+ </mapper>

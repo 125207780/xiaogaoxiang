@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.task.dao.mapper.TaskManagerMapper">
+
+	<!-- 查询创建任务 -->
+	<select id="getTaskCreateInfo" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskBase">
+		select user_id,task_code,task_name,task_type,task_bigtype,task_smallType,task_target_desc,task_creater,creater_owner,task_sender,
+		task_handler,task_owner,task_status,handle_date,create_date,finish_date,task_target,finish_state,problem_recode,is_monitor,off_monitor_date,evaluate_date,touch_way,marketing_plan
+		from task_base_info where task_type='0' and (is_monitor IS NULL OR IS_MONITOR = 'A' OR IS_MONITOR = '') and user_id=#{userId,jdbcType=VARCHAR}
+		<if test="startTime != null and startTime != ''">
+			<if test="endTime != null and endTime != ''">
+				and  timestamp(trim(create_date))  between to_date(#{startTime},'yyyy-mm-dd') and to_date(#{endTime},'yyyy-mm-dd')
+			</if>
+		</if>
+		<if test="taskName != null and taskName != ''">
+				and task_name like '%'||#{taskName}||'%'
+		</if>
+	</select>
+	<!-- 查询执行任务 -->
+	<select id="getTaskHandleInfo" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskBase">
+		select user_id,task_code,task_name,task_type,task_bigtype,task_smallType,task_target_desc,task_creater,creater_owner,task_sender,
+		task_handler,task_owner,task_status,handle_date,create_date,finish_date,task_target,finish_state,problem_recode,is_monitor,off_monitor_date,evaluate_date,touch_way,marketing_plan
+		from task_base_info where task_type='1' and (is_monitor IS NULL OR IS_MONITOR = 'A' OR IS_MONITOR = '') and user_id=#{userId,jdbcType=VARCHAR}
+		<if test="taskName != null and taskName != ''">
+				and task_name like '%'||#{taskName}||'%'
+		</if>
+		<if test="startTime != null and startTime != ''">
+			<if test="endTime != null and endTime != ''">
+				and  timestamp(trim(create_date))  between to_date(#{startTime},'yyyy-mm-dd') and to_date(#{endTime},'yyyy-mm-dd')
+			</if>
+		</if>
+	</select>
+	<!-- 查询我取消的任务 -->
+	<select id="getTaskHistoryInfo" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskBase">
+		select user_id,task_code,task_name,task_type,task_bigtype,task_smallType,task_target_desc,task_creater,creater_owner,task_sender,
+		task_handler,task_owner,task_status,handle_date,create_date,finish_date,task_target,finish_state,problem_recode,is_monitor,off_monitor_date,evaluate_date,touch_way,marketing_plan
+		from task_base_info where task_type='1' and is_monitor = 'P' and user_id=#{userId,jdbcType=VARCHAR}
+		<if test="taskName != null and taskName != ''">
+				and task_name like '%'||#{taskName}||'%'
+		</if>
+		<if test="startTime != null and startTime != ''">
+			<if test="endTime != null and endTime != ''">
+				and  timestamp(trim(create_date))  between to_date(#{startTime},'yyyy-mm-dd') and to_date(#{endTime},'yyyy-mm-dd')
+			</if>
+		</if>
+	</select>
+	
+	<!-- 监控任务 -->
+	<update id="updateListener" parameterType="com.bonc.task.dao.entity.TaskBase">
+		update task_base_info set is_monitor='A' where user_id=#{userId,jdbcType=VARCHAR} and
+		task_code=#{taskCode,jdbcType=VARCHAR}
+	</update>
+	<!-- 取消任务 -->
+	<update id="cancelTask" parameterType="com.bonc.task.dao.entity.TaskBase">
+		update task_base_info set is_monitor='P' where user_id=#{userId,jdbcType=VARCHAR} and
+		task_code=#{taskCode,jdbcType=VARCHAR}
+	</update>
+	<!-- 恢复任务 -->
+	<update id="recoveryTask" parameterType="com.bonc.task.dao.entity.TaskBase">
+		update task_base_info set is_monitor='' where user_id=#{userId,jdbcType=VARCHAR} and
+		task_code=#{taskCode,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 查看问题列表 -->
+	<select id="getTaskProblem" parameterType="java.lang.String" resultType="com.bonc.task.dao.entity.TaskProblem">
+		select task_code,task_name,problem_type,problem_desc,recode_date,recoder,is_solve
+		from task_problem_info where  task_code=#{taskCode,jdbcType=VARCHAR}
+	</select>
+</mapper>

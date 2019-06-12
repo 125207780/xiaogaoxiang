@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridschoolinfo.dao.mapper.GridSchoolInfoMapper">
+
+	<!-- 网格学校基础信息 -->
+	<select id="getBaseGridSchoolInfo" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT
+			*
+		FROM
+			bonc02.DIM_SCH_INFO_M 
+		WHERE 
+			SCH_ID = #{schId,jdbcType=VARCHAR}
+	</select>
+	<select id="getBaseGridSchoolYWBLInfoL" parameterType="java.lang.String" resultType="java.util.Map">
+		select 
+			UID,
+			AREA_CITY_ID, 
+			CNTY_ID, 
+			SCH_ID, 
+			SCH_NAME,
+			CMCC_SCH_USERS , 
+			cast(CMCC_SCH_USERS AS DOUBLE)/SCH_USERS  CMCC_SCH_USERS_p,  
+			CMCC_SCH_KD_USERS , 
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_KD_USERS AS DOUBLE)/CMCC_SCH_USERS end CMCC_SCH_KD_USERS_p,  
+			CMCC_SCH_UNLIM_USERS, 
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_UNLIM_USERs AS DOUBLE)/CMCC_SCH_USERS end  CMCC_SCH_UNLIM_USERs_p, 
+			CMCC_SCH_UNLIMDIN_USERS, 
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_UNLIMDIN_USERS AS DOUBLE)/CMCC_SCH_USERS end  CMCC_SCH_UNLIMDIN_USERS_p, 
+			CMCC_SCH_UNLIMFLUX_USERS, 
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_UNLIMFLUX_USERS AS DOUBLE)/CMCC_SCH_USERS END CMCC_SCH_UNLIMFLUX_USERS_p, 
+			CMCC_SCH_ACTIV_USERS, 
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_ACTIV_USERS AS DOUBLE)/CMCC_SCH_USERS  end  CMCC_SCH_ACTIV_USERS_p , 
+			CMCC_SCH_TERM_ACTIV_USERS,   
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_TERM_ACTIV_USERS AS DOUBLE)/CMCC_SCH_USERS  END CMCC_SCH_TERM_ACTIV_USERS_p,    	
+			CMCC_SCH_FEE_ACTIV_USERS ,  
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_FEE_ACTIV_USERS AS DOUBLE)/CMCC_SCH_USERS end CMCC_SCH_FEE_ACTIV_USERS_p,   
+			CMCC_SCH_SERV_ACTIV_USERS,   
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_SERV_ACTIV_USERS AS DOUBLE)/CMCC_SCH_USERS END CMCC_SCH_SERV_ACTIV_USERS_p,  	
+			CMCC_SCH_OTH_ACTIV_USERS, 
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_OTH_ACTIV_USERS AS DOUBLE)/CMCC_SCH_USERS END CMCC_SCH_OTH_ACTIV_USERS_p,   	
+			CMCC_SCH_4G_USERS, 
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_4G_USERS AS DOUBLE)/CMCC_SCH_USERS  end    CMCC_SCH_4G_USERS_p, 	
+			CMCC_SCH_VNET_USERS, 
+			case when  CMCC_SCH_USERS=0 then 0 else cast(CMCC_SCH_VNET_USERS AS DOUBLE)/CMCC_SCH_USERS  end CMCC_SCH_VNET_USERS_p 
+		from BONC03.RPT_SCH_PORT_M where   
+			STATIS_MONTH= YEAR(CURRENT DATE -1 MONTH )*100  +  MONTH(CURRENT DATE -1 MONTH )
+			and   SCH_ID=#{schId,jdbcType=VARCHAR}
+	</select>
+	<select id="getBaseGridSchoolYWBLInfoR" parameterType="java.lang.String" resultType="java.util.Map">
+			select 
+			b.uid,
+			b.AREA_ID AREA_city_ID, 
+			b.CNTY_ID, 
+			 
+			a.SCH_NAME, 
+			a.AREA_ID, 
+			a.AREA_NAME, 
+			case when a.TYPE_ID='00' then '校园用户'
+			         when a.TYPE_ID='01' then '校园宽带'
+			         when a.TYPE_ID='02' then '校园不限量类型'
+			         when a.TYPE_ID='03' then '校园合约类型'
+			         when a.TYPE_ID='04' then '校园4G类型'
+			         when a.TYPE_ID='05' then '校园V网类型' end  TYPE_ID, 
+			a.SERV_ID, 
+			a.SERV_NAME, 
+			a.CMCC_SCH_USERS 
+			from BONC03.RPT_SCH_PORT_DISTR_M  a
+			  JOIN BONC02.DIM_SCH_ID_INFO b
+			ON a.SCH_ID=b.SCH_ID
+			where a.statis_month= YEAR(CURRENT DATE -1 MONTH )*100  +  MONTH(CURRENT DATE -1 MONTH ) 
+			AND a.TYPE_ID =#{selected,jdbcType=VARCHAR}
+			AND b.SCH_ID =#{schoolId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getGridSchoolNewDevelopL" parameterType="java.lang.String" resultType="java.util.Map">
+	 select 
+			UID,
+			AREA_CITY_ID, 
+			CNTY_ID, 
+			AREA_ID, 
+			AREA_NAME, 
+			SCH_ID, 
+			SCH_NAME, 
+			CMCC_SCH_DEV_USERS , 
+			case when LM1_CMCC_SCH_DEV_USERS=0 then 0 else CAST((CMCC_SCH_DEV_USERS-LM1_CMCC_SCH_DEV_USERS) AS DOUBLE)/LM1_CMCC_SCH_DEV_USERS end CMCC_SCH_USERS_p,  
+			CMCC_SCH_KD_DEV_USERS , 
+			case when LM1_CMCC_SCH_KD_DEV_USERS=0 then 0 else CAST((CMCC_SCH_KD_DEV_USERS-LM1_CMCC_SCH_KD_DEV_USERS)AS DOUBLE)/LM1_CMCC_SCH_KD_DEV_USERS end CMCC_SCH_KD_USERS_p,  
+			CMCC_SCH_UNLIM_DEV_USERS, 
+			case when LM1_CMCC_SCH_UNLIM_DEV_USERS =0 then 0 else CAST((CMCC_SCH_UNLIM_DEV_USERS-LM1_CMCC_SCH_UNLIM_DEV_USERS) AS DOUBLE)/LM1_CMCC_SCH_UNLIM_DEV_USERS   end CMCC_SCH_UNLIM_USERs_p, 
+			CMCC_SCH_UNLIMDIN_DEV_USERS, 
+			case when LM1_CMCC_SCH_UNLIMDIN_DEV_USERS =0 then 0 ELSE CAST((CMCC_SCH_UNLIMDIN_DEV_USERS-LM1_CMCC_SCH_UNLIMDIN_DEV_USERS) AS DOUBLE)/LM1_CMCC_SCH_UNLIMDIN_DEV_USERS END CMCC_SCH_UNLIMDIN_DEV_USERS_p, 
+			CMCC_SCH_UNLIMFLUX_DEV_USERS, 
+			case when LM1_CMCC_SCH_UNLIMFLUX_DEV_USERS =0 then 0 ELSE CAST((CMCC_SCH_UNLIMFLUX_DEV_USERS-LM1_CMCC_SCH_UNLIMFLUX_DEV_USERS) AS DOUBLE)/LM1_CMCC_SCH_UNLIMFLUX_DEV_USERS END CMCC_SCH_UNLIMFLUX_DEV_USERS_p, 
+			CMCC_SCH_ACTIV_DEV_USERS, 
+			case when LM1_CMCC_SCH_ACTIV_DEV_USERS =0 then 0 else CAST((CMCC_SCH_ACTIV_DEV_USERS-LM1_CMCC_SCH_ACTIV_DEV_USERS) AS DOUBLE)/LM1_CMCC_SCH_ACTIV_DEV_USERS  end CMCC_SCH_ACTIV_USERS_p, 
+			CMCC_SCH_TERM_ACTIV_DEV_USERS,  
+			case when LM1_CMCC_SCH_TERM_ACTIV_DEV_USERS=0 then 0 ELSE  CAST((CMCC_SCH_TERM_ACTIV_DEV_USERS-LM1_CMCC_SCH_TERM_ACTIV_DEV_USERS) AS DOUBLE)/LM1_CMCC_SCH_TERM_ACTIV_DEV_USERS end CMCC_SCH_TERM_ACTIV_DEV_USERS_p,  
+			CMCC_SCH_FEE_ACTIV_DEV_USERS , 
+			case when LM1_CMCC_SCH_TERM_ACTIV_DEV_USERS=0 then 0 ELSE CAST((CMCC_SCH_FEE_ACTIV_DEV_USERS-LM1_CMCC_SCH_FEE_ACTIV_DEV_USERS) AS DOUBLE)/LM1_CMCC_SCH_FEE_ACTIV_DEV_USERS  END CMCC_SCH_FEE_ACTIV_DEV_USERS_p,  
+			CMCC_SCH_SERV_ACTIV_DEV_USERS, 
+			case when LM1_CMCC_SCH_TERM_ACTIV_DEV_USERS=0 then 0 else CAST((CMCC_SCH_SERV_ACTIV_DEV_USERS-LM1_CMCC_SCH_SERV_ACTIV_DEV_USERS)AS DOUBLE)/LM1_CMCC_SCH_SERV_ACTIV_DEV_USERS END CMCC_SCH_SERV_ACTIV_DEV_USERS_p,  	
+			CMCC_SCH_OTH_ACTIV_DEV_USERS, 
+			case when  LM1_CMCC_SCH_OTH_ACTIV_DEV_USERS=0 then 0 else cast((CMCC_SCH_OTH_ACTIV_DEV_USERS-LM1_CMCC_SCH_OTH_ACTIV_DEV_USERS) AS DOUBLE)/LM1_CMCC_SCH_OTH_ACTIV_DEV_USERS END CMCC_SCH_OTH_ACTIV_DEV_USERS_p, 
+			CMCC_SCH_4G_DEV_USERS, 
+			case when LM1_CMCC_SCH_4G_DEV_USERS=0 then 0 ELSE CAST((CMCC_SCH_4G_DEV_USERS-LM1_CMCC_SCH_4G_DEV_USERS) AS DOUBLE)/LM1_CMCC_SCH_4G_DEV_USERS  end   CMCC_SCH_4G_USERS_p, 
+			CMCC_SCH_VNET_DEV_USERS, 
+			case when LM1_CMCC_SCH_VNET_DEV_USERS=0 then 0 else CAST((CMCC_SCH_VNET_DEV_USERS-LM1_CMCC_SCH_VNET_DEV_USERS) AS DOUBLE)/LM1_CMCC_SCH_VNET_DEV_USERS  end  CMCC_SCH_VNET_USERS_p 
+		from BONC03.RPT_SCH_PORT_M 
+			where  
+			STATIS_MONTH= YEAR(CURRENT DATE -1 MONTH )*100  +  MONTH(CURRENT DATE -1 MONTH )
+			and    SCH_ID= #{schId,jdbcType=VARCHAR}
+	</select>
+	
+	
+	<select id="getGridSchoolNewDevelopR" parameterType="java.lang.String" resultType="java.util.Map">
+	  select 
+			b.uid,
+			b.AREA_ID AREA_city_ID, 
+			b.CNTY_ID, 
+			a.SCH_ID, 
+			a.SCH_NAME, 
+			a.AREA_ID, 
+			a.AREA_NAME, 
+			case when a.TYPE_ID='00' then '校园用户'
+			         when a.TYPE_ID='01' then '校园宽带'
+			         when a.TYPE_ID='02' then '校园不限量类型'
+			         when a.TYPE_ID='03' then '校园合约类型'
+			         when a.TYPE_ID='04' then '校园4G类型'
+			         when a.TYPE_ID='05' then '校园V网类型' end  TYPE_ID,
+			a.DEV_DATE, 
+			a.CMCC_SCH_USERS 
+			from BONC03.RPT_SCH_PORT_DEV_DISTR_M A
+			  JOIN BONC02.DIM_SCH_ID_INFO b
+			ON a.SCH_ID=b.SCH_ID
+			where a.statis_month= YEAR(CURRENT DATE -1 MONTH )*100  +  MONTH(CURRENT DATE -1 MONTH )
+			AND a.TYPE_ID = #{selected,jdbcType=VARCHAR}
+			AND b.SCH_ID =#{schId,jdbcType=VARCHAR}
+			order  BY a.DEV_DATE
+	</select>
+	
+	<select id="getGridSchoolUseL" parameterType="java.lang.String" resultType="java.util.Map">
+	 select 
+				UID,
+				AREA_CITY_ID, 
+				CNTY_ID, 
+				AREA_ID, 
+				 AREA_NAME, 
+				SCH_NAME, 
+				SCH_ID, 
+				CMCC_SCH_ARPU, 
+				CMCC_SCH_ARPU_REAL_FEE,
+				CMCC_SCH_DOU, 
+				CMCC_SCH_MOU, 
+				CMCC_SCH_CALL_USERS, 
+				case when LM1_CMCC_SCH_ARPU=0 then 0 else (CMCC_SCH_ARPU-LM1_CMCC_SCH_ARPU)/LM1_CMCC_SCH_ARPU end LM1_CMCC_SCH_ARPU_p, 
+				case when LM1_CMCC_SCH_ARPU_REAL_FEE=0 then 0 else (CMCC_SCH_ARPU_REAL_FEE-LM1_CMCC_SCH_ARPU_REAL_FEE)/LM1_CMCC_SCH_ARPU_REAL_FEE end LM1_CMCC_SCH_ARPU_REAL_FEE_p,
+				case when LM1_CMCC_SCH_DOU=0 then 0 else(CMCC_SCH_DOU-LM1_CMCC_SCH_DOU)/LM1_CMCC_SCH_DOU end LM1_CMCC_SCH_MOU_p, 
+				case when LM1_CMCC_SCH_MOU=0 then 0 else(CMCC_SCH_MOU-LM1_CMCC_SCH_MOU)/LM1_CMCC_SCH_MOU end LM1_CMCC_SCH_DOU_p, 
+				case when LM1_CMCC_SCH_CALL_USERS=0 then 0 else(CMCC_SCH_CALL_USERS-LM1_CMCC_SCH_CALL_USERS)/LM1_CMCC_SCH_CALL_USERS   end LM1_CMCC_SCH_CALL_USERS_p 
+			from BONC03.RPT_SCH_PORT_M   
+				where  
+				STATIS_MONTH= YEAR(CURRENT DATE -1 MONTH )*100  +  MONTH(CURRENT DATE -1 MONTH ) 
+				and   SCH_ID=#{schId,jdbcType=VARCHAR}
+	</select>
+	<select id="getGridSchoolUseR" parameterType="java.lang.String" resultType="java.util.Map">
+	 SELECT
+			b.uid,
+			b.AREA_ID AREA_city_ID, 
+			b.CNTY_ID, 
+			a.SCH_ID, 
+			a.SCH_NAME, 
+			a.AREA_ID, 
+			a.AREA_NAME, 
+			case when a.TYPE_ID='01' then '校园用户ARPU'
+			         when a.TYPE_ID='02' then '校园用户DOU'
+			         when a.TYPE_ID='03' then '校园用户MOU'
+			         when a.TYPE_ID='04' then '通话次数'
+			          when a.TYPE_ID='05' then '校园用户ARPU(折让后)'
+			 end  TYPE_ID, 
+			a.LVL_TYPE_ID, 
+			a.LVL_TYPE,	 
+			a.CMCC_SCH_USERS	 
+			from BONC03.RPT_SCH_PORT_LVL_DISTR_M A
+			  JOIN BONC02.DIM_SCH_ID_INFO b
+			ON a.SCH_ID=b.SCH_ID
+			where a.statis_month= YEAR(CURRENT DATE -1 MONTH )*100  +  MONTH(CURRENT DATE -1 MONTH ) 
+			AND b.SCH_ID = #{schId,jdbcType=VARCHAR}
+			AND a.TYPE_ID =#{selected,jdbcType=VARCHAR}
+	</select>
+	
+		<select id="getGridSchoolUserDetailInit" parameterType="java.util.Map" resultType = "com.bonc.school.dao.entity.SchoolUserDetail">
+	SELECT 
+		a.STATIS_MONTH, a.AREA_ID, a.AREA_NAME, a.CNTY_ID, a.CNTY_NAME, a.SCH_AREA_ID, 
+		a.SCH_AREA_NAME, a.SCH_ID, a.SCH_NAME, a.USR_ID, a.TAOCAN_ID, a.TAOCAN_NAME,
+		a.ONLINE_MONTH, a.OPEN_DATE, a.SEX, a.AGE, a.IS_4G, a.IS_UNLIMIT, a.IS_VNET, a.IS_KD, a.IS_DISCNT, 
+		a.DISCNT_ID, a.DISCNT_NAME, a.ACTVI_TYPE_ID, a.ACTVI_TYPE, a.ACTVI_PROD, a.ACTVI_PROD_NAME, 
+		a.ACTVI_EFF_DATE, a.ACTVI_EXP_DATE, a.ARPU, a.MOU, a.DOU, a.CALL_FREQ, a.GPRS_LEVEL_ID, a.GPRS_LEVEL,
+		a.VOICE_LEVEL_ID, a.VOICE_LEVEL, a.FEE_LEVEL_ID, a.FEE_LEVEL, a.FEE_DISCNT, a.TERM_BRND||a.TERM_TYP AS  termInfo,
+	  	a.APP_TYPE_ID,
+	    a.APP_TYPE_NAME,
+	    a.DISC_FEE_ID,
+	    a.DISC_FEE_NAME
+	FROM BONC03.RP_SCH_USER_LABEL_M a
+	JOIN BONC02.DIM_SCH_ID_INFO b ON a.SCH_ID=b.SCH_ID
+	 where a.STATIS_MONTH =#{schoolUserDetail.statisMonth}
+	 AND b.SCH_ID= #{schoolUserDetail.schId} 
+	<if test="schoolUserDetail.actviTypeId != null and schoolUserDetail.actviTypeId != ''">
+			and a.ACTVI_TYPE_ID like '%'||#{schoolUserDetail.actviTypeId}||'%'
+	</if>
+	<if test="schoolUserDetail.usrType != null and schoolUserDetail.usrType != ''">
+			and a.USR_TYPE like '%'||#{schoolUserDetail.usrType}||'%'
+	</if>
+	<if test="schoolUserDetail.feeLevelId != null and schoolUserDetail.feeLevelId != ''">
+			and a.FEE_LEVEL_ID like '%'||#{schoolUserDetail.feeLevelId}||'%'
+	</if>
+	<if test="schoolUserDetail.gprsLevelId != null and schoolUserDetail.gprsLevelId != ''">
+			and a.GPRS_LEVEL_ID like '%'||#{schoolUserDetail.gprsLevelId}||'%'
+	</if>
+	<if test="schoolUserDetail.voiceLevelId != null and schoolUserDetail.voiceLevelId != ''">
+			and a.VOICE_LEVEL_ID like '%'||#{schoolUserDetail.voiceLevelId}||'%'
+	</if>
+	<if test="schoolUserDetail.appTypeId != null and schoolUserDetail.appTypeId != ''">
+			and a.APP_TYPE_ID like '%'||#{schoolUserDetail.appTypeId}||'%'
+	</if>
+	<if test="schoolUserDetail.discFeeId != null and schoolUserDetail.discFeeId != ''">
+			and a.DISC_FEE_ID like '%'||#{schoolUserDetail.discFeeId}||'%'
+	</if>
+	order by a.SVC_CODE
+	</select>
+	
+	
+	<select id="findSchoolUserDetailInfo"  parameterType="java.util.Map" resultType = "com.bonc.school.dao.entity.SchoolUserDetail" >
+	SELECT a.STATIS_MONTH, a.AREA_ID, a.AREA_NAME, a.CNTY_ID, a.CNTY_NAME, a.SCH_AREA_ID, 
+	a.SCH_AREA_NAME, a.SCH_ID, a.SCH_NAME, a.USR_ID, a.TAOCAN_ID, a.TAOCAN_NAME,
+	a.ONLINE_MONTH, a.OPEN_DATE, a.SEX, a.AGE, a.IS_4G, a.IS_UNLIMIT, a.IS_VNET, a.IS_KD, a.IS_DISCNT, 
+	a.DISCNT_ID, a.DISCNT_NAME, a.ACTVI_TYPE_ID, a.ACTVI_TYPE, a.ACTVI_PROD, a.ACTVI_PROD_NAME, 
+	a.ACTVI_EFF_DATE, a.ACTVI_EXP_DATE, a.ARPU, a.MOU, a.DOU, a.CALL_FREQ, a.GPRS_LEVEL_ID, a.GPRS_LEVEL,
+	a.VOICE_LEVEL_ID, a.VOICE_LEVEL, a.FEE_LEVEL_ID, a.FEE_LEVEL, a.FEE_DISCNT, a.TERM_BRND||a.TERM_TYP AS  termInfo,
+  	a.APP_TYPE_ID,
+    a.APP_TYPE_NAME,
+    a.DISC_FEE_ID,
+    a.DISC_FEE_NAME
+	FROM BONC03.RP_SCH_USER_LABEL_M a
+	 JOIN BONC03.DIM_SCH_ID_INFO b ON a.SCH_ID=b.SCH_ID
+	 where a.STATIS_MONTH =#{schoolUserDetail.statisMonth}
+	 AND b.UID= #{schoolUserDetail.schoolId} 
+	<if test="schoolUserDetail.actviTypeId != null and schoolUserDetail.actviTypeId != ''">
+			and a.ACTVI_TYPE_ID like '%'||#{schoolUserDetail.actviTypeId}||'%'
+	</if>
+	<if test="schoolUserDetail.usrType != null and schoolUserDetail.usrType != ''">
+			and a.USR_TYPE like '%'||#{schoolUserDetail.usrType}||'%'
+	</if>
+	<if test="schoolUserDetail.feeLevelId != null and schoolUserDetail.feeLevelId != ''">
+			and a.FEE_LEVEL_ID like '%'||#{schoolUserDetail.feeLevelId}||'%'
+	</if>
+	<if test="schoolUserDetail.gprsLevelId != null and schoolUserDetail.gprsLevelId != ''">
+			and a.GPRS_LEVEL_ID like '%'||#{schoolUserDetail.gprsLevelId}||'%'
+	</if>
+	<if test="schoolUserDetail.voiceLevelId != null and schoolUserDetail.voiceLevelId != ''">
+			and a.VOICE_LEVEL_ID like '%'||#{schoolUserDetail.voiceLevelId}||'%'
+	</if>
+	
+	<if test="AppTypeIdList != null and AppTypeIdList.size()>0">
+	and
+		<foreach collection="AppTypeIdList" item="AppTypeIdList"  index="index" open="("  separator="or" close=")">
+			 a.APP_TYPE_ID  =#{AppTypeIdList}
+			</foreach> 
+	</if>
+	<if test="schoolUserDetail.discFeeId != null and schoolUserDetail.discFeeId != ''">
+			and a.DISC_FEE_ID like '%'||#{schoolUserDetail.discFeeId}||'%'
+	</if>
+	order by a.SVC_CODE
+	</select>
+	
+	<select id="findUserInfo"  parameterType="java.lang.Integer" resultType = "com.bonc.school.dao.entity.SchoolUserDetail" >
+	SELECT STATIS_MONTH, AREA_ID, AREA_NAME, CNTY_ID, CNTY_NAME, SCH_AREA_ID, 
+	SCH_AREA_NAME, SCH_ID, SCH_NAME, USR_ID, SVC_CODE, TAOCAN_ID, TAOCAN_NAME,
+	ONLINE_MONTH, OPEN_DATE,USR_TYPE, SEX, AGE, IS_4G, IS_UNLIMIT, IS_VNET, IS_KD, IS_DISCNT, 
+	DISCNT_ID, DISCNT_NAME, ACTVI_TYPE_ID, ACTVI_TYPE, ACTVI_PROD, ACTVI_PROD_NAME, 
+	ACTVI_EFF_DATE, ACTVI_EXP_DATE, ARPU, MOU, DOU, CALL_FREQ, GPRS_LEVEL_ID, GPRS_LEVEL,
+	VOICE_LEVEL_ID, VOICE_LEVEL, FEE_LEVEL_ID, FEE_LEVEL, FEE_DISCNT, TERM_BRND||TERM_TYP AS  termInfo
+	FROM BONC03.RP_SCH_USER_LABEL_M where STATIS_MONTH =#{statisMonth} and USR_ID= #{usrId}
+	</select>
+
+	
+	<select id="selectAll"  parameterType="java.util.Map" resultType = "com.bonc.school.dao.entity.SchoolUserDetail" >
+		SELECT a.STATIS_MONTH, a.AREA_ID, a.AREA_NAME, a.CNTY_ID, a.CNTY_NAME, a.SCH_AREA_ID, 
+	a.SCH_AREA_NAME, a.SCH_ID, a.SCH_NAME, a.USR_ID,  a.TAOCAN_ID, a.TAOCAN_NAME,
+	a.ONLINE_MONTH, a.OPEN_DATE, a.SEX, a.AGE, a.IS_4G, a.IS_UNLIMIT, a.IS_VNET, a.IS_KD, a.IS_DISCNT, 
+	a.DISCNT_ID, a.DISCNT_NAME, a.ACTVI_TYPE_ID, a.ACTVI_TYPE, a.ACTVI_PROD, a.ACTVI_PROD_NAME, 
+	a.ACTVI_EFF_DATE, a.ACTVI_EXP_DATE, a.ARPU, a.MOU, a.DOU, a.CALL_FREQ, a.GPRS_LEVEL_ID, a.GPRS_LEVEL,
+	a.VOICE_LEVEL_ID, a.VOICE_LEVEL, a.FEE_LEVEL_ID, a.FEE_LEVEL, a.FEE_DISCNT, a.TERM_BRND||a.TERM_TYP AS  termInfo,
+	a.APP_TYPE_ID,
+    a.APP_TYPE_NAME,
+    a.DISC_FEE_ID,
+    a.DISC_FEE_NAME
+	FROM BONC03.RP_SCH_USER_LABEL_M a
+	 JOIN BONC02.DIM_SCH_ID_INFO b ON a.SCH_ID=b.SCH_ID
+	 where a.STATIS_MONTH =#{statisMonth}
+	 AND b.SCH_ID= #{schoolId} 
+	<if test="actviTypeId != null and actviTypeId != ''">
+			and a.ACTVI_TYPE_ID like '%'||#{actviTypeId}||'%'
+	</if>
+	<if test="usrType != null and usrType != ''">
+			and a.USR_TYPE like '%'||#{usrType}||'%'
+	</if>
+	<if test="feeLevelId != null and feeLevelId != ''">
+			and a.FEE_LEVEL_ID like '%'||#{feeLevelId}||'%'
+	</if>
+	<if test="gprsLevelId != null and gprsLevelId != ''">
+			and a.GPRS_LEVEL_ID like '%'||#{gprsLevelId}||'%'
+	</if>
+	<if test="voiceLevelId != null and voiceLevelId != ''">
+			and a.VOICE_LEVEL_ID like '%'||#{voiceLevelId}||'%'
+	</if>
+	<if test="appTypeId != null and appTypeId != ''">
+	<!-- <if test="appTypeId != null and AppTypeIdList.size()>0"> -->
+	and
+	 a.APP_TYPE_ID  =#{appTypeId}
+		<!-- <foreach collection="AppTypeIdList" item="AppTypeIdList" index="index" open="("  separator="or" close=")">
+			 a.APP_TYPE_ID  =#{AppTypeIdList}
+			</foreach>  -->
+	</if>
+	<if test="discFeeId != null and discFeeId != ''">
+			and a.DISC_FEE_ID like '%'||#{discFeeId}||'%'
+	</if>
+	order by a.SVC_CODE
+	</select>
+	
+	<select id="findContractType" resultType="java.util.Map">
+		SELECT ACTVI_TYPE_ID, ACTVI_TYPE FROM BONC02.DIM_SCH_USER_LABEL_CONTRACT
+	</select>
+	
+	<select id="findStockAdditions" resultType="java.util.Map">
+		SELECT TYPE_ID, USR_TYPE FROM BONC02.DIM_SCH_USER_LABEL_ISNEW
+	</select>
+	
+	<select id="findIncomeFiling" resultType="java.util.Map">
+		SELECT FEE_LEVEL_ID, FEE_LEVEL FROM BONC02.DIM_SCH_USER_LABEL_ARPU
+	</select>
+	
+	<select id="findAPPFiling" resultType="java.util.Map">
+		SELECT APP_TYPE_ID, APP_TYPE_NAME FROM BONC02.DIM_SCH_USER_LABEL_APP
+	</select>
+	
+	<select id="findTaocanFiling" resultType="java.util.Map">
+		SELECT DISC_FEE_ID,DISC_FEE_NAME FROM  BONC02.DIM_SCH_USER_LABEL_DISC_FEE
+	</select>
+	
+	<select id="findFlowFiling" resultType="java.util.Map">
+		SELECT GPRS_LEVEL_ID, GPRS_LEVEL FROM BONC02.DIM_SCH_USER_LABEL_DOU
+	</select>
+	
+	<select id="findPhoneticFiling" resultType="java.util.Map">
+		SELECT VOICE_LEVEL_ID, VOICE_LEVEL FROM BONC02.DIM_SCH_USER_LABEL_MOU
+	</select>
+	
+	<select id="findByDate" resultType="java.lang.String">
+		SELECT MAX(STATIS_MONTH) AS STATIS_MONTH FROM BONC03.RPT_SCH_PORT_M
+	</select>
+</mapper>

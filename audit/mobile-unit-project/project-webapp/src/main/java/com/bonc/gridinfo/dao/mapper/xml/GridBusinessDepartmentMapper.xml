@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.gridinfo.dao.mapper.GridBusinessDepartmentMapper">
+
+	<!-- 查询营业部信息 -->
+	<select id="getDepartment" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.SaleDeptInfo">
+		SELECT 
+			sale_dept_code, sale_dept_name, manager_oa, manager_name,
+			manager_number, prov_code, prov_name, city_code, city_name, org_id, county_name
+		FROM 
+			SALE_DEPT_INFO
+		WHERE 
+			org_id = #{orgId,jdbcType=VARCHAR} 
+		<if test="saleDeptName != null and saleDeptName != ''">
+			AND sale_dept_name LIKE '%'||#{saleDeptName}||'%'
+		</if>
+	</select>
+	
+	<select id="getGridDeptInfo" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.OrgGridDepartment">
+		SELECT 
+			area_code, area_name, org_id, county_name, sale_dept_code, sale_dept_name,
+			grid_code, grid_name, grid_type, status, join_date, update_date
+		FROM 
+			org_grid_department
+		WHERE 
+			org_id = #{orgId,jdbcType=VARCHAR} 
+		AND 
+			status = 'A'
+		<if test="saleDeptCode != null and saleDeptCode != ''">
+			AND sale_dept_code like '%'||#{saleDeptCode}||'%'
+		</if>
+	</select>
+	
+	<select id="getGridDeptInfoByName" parameterType="java.lang.String" resultType="com.bonc.gridinfo.dao.entity.OrgGridDepartment">
+		SELECT 
+			area_code, area_name, org_id, county_name, sale_dept_code, sale_dept_name,
+			grid_code, grid_name, grid_type, status, join_date, update_date
+		FROM 
+			org_grid_department
+		WHERE 
+			org_id = #{orgId,jdbcType=VARCHAR} 
+		AND 
+			status = 'A'
+		<if test="saleDeptName != null and saleDeptName != ''">
+			AND sale_dept_name like '%'||#{saleDeptName}||'%'
+		</if>
+	</select>
+	
+	<select id="getNoGridDept" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			a.ORG_ID AS grid_code, NAME AS grid_name, c.TYPE_NAME AS grid_type
+		FROM 
+			SYS_ORG a 
+		LEFT JOIN GRID_DETAIL b ON a.ORG_ID = b.ORG_ID 
+		LEFT JOIN GRID_TYPE c ON b.TYPE_ID = c.TYPE_ID
+		LEFT JOIN ORG_GRID_DEPARTMENT d ON a.ORG_ID = d.GRID_CODE AND d.STATUS = 'A'
+		WHERE 
+			(d.ORG_ID IS NULL OR trim(d.ORG_ID) = '') 
+		AND 
+			a.ORGLEVEL = 4
+		AND 
+			PID = #{orgId,jdbcType=VARCHAR}
+		<if test="gridName != null and gridName != ''">
+			AND a.name like '%'||#{gridName}||'%'
+		</if>
+	</select>
+	
+	<update id="removeSingleGrid" parameterType="java.lang.String">
+		UPDATE 
+			org_grid_department 
+		SET 
+			update_date = #{updateDate,jdbcType=VARCHAR},
+			status = 'P' 
+		WHERE
+			org_id = #{orgId,jdbcType=VARCHAR} 
+		AND
+			grid_code = #{gridCode,jdbcType=VARCHAR} 
+		AND
+			sale_dept_code = #{saleDeptCode,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="getParenOrg" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT 
+			b.ORG_ID AS areaCode, b.name AS areaName, a.name AS countyName
+		FROM 
+			SYS_ORG a
+		LEFT JOIN SYS_ORG b ON a.PID = b.ORG_ID 
+		WHERE 
+			a.org_id = #{orgId,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="addSingleGrid" parameterType="com.bonc.gridinfo.dao.entity.OrgGridDepartment">
+		INSERT INTO 
+			org_grid_department(area_code,area_name,org_id,county_name,sale_dept_code,sale_dept_name,
+				grid_code,grid_name,grid_type,status,join_date,update_date)
+		VALUES(
+			#{areaCode,jdbcType=VARCHAR},
+			#{areaName,jdbcType=VARCHAR},
+			#{orgId,jdbcType=VARCHAR},
+			#{countyName,jdbcType=VARCHAR},
+			#{saleDeptCode,jdbcType=VARCHAR},
+			#{saleDeptName,jdbcType=VARCHAR},
+			#{gridCode,jdbcType=VARCHAR},
+			#{gridName,jdbcType=VARCHAR},
+			#{gridType,jdbcType=VARCHAR},
+			'A',
+			#{joinDate,jdbcType=VARCHAR},
+			#{updateDate,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	 <select id="CallDb2GXWH" parameterType="java.util.Map" statementType="CALLABLE">
+	    <![CDATA[  
+	    {call BD2ADMIN.SP_WG_GXWH_UPDATE(#{orgId,mode=IN,jdbcType=VARCHAR},#{OUTPARA,mode=OUT,jdbcType=VARCHAR})}
+	  	]]>  
+	  </select>
+</mapper>
